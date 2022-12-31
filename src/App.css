@@ -1,5 +1,5 @@
 :root {
-  --card-width: 10vw;
+  --card-width: clamp(70px, 10vw, 150px);
   --card-height: calc(var(--card-width) * 1.5);
   --card-font-size: calc(var(--card-width) / 2);
   --card-border-radius: 0.25em;
@@ -53,8 +53,6 @@ button {
 
 .tableau {
   grid-row: 2;
-
-  gap: 1rem;
 }
 
 .stack {
