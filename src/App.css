@@ -60,6 +60,7 @@ button {
 }
 
 .stack {
+  position: relative;
   width: var(--card-width);
   display: grid;
   filter: drop-shadow(0 0 0.5em #00000077);
