@@ -18,10 +18,21 @@ export function Stack({ stack, onClick }: StackProps) {
 
   const autoMove = useAutoMove();
 
+  const style: React.CSSProperties = {
+    gridColumn: getStackGridColumn(stack),
+  };
+
+  if (isFannedOut) {
+    style.gridTemplateRows = [
+      `repeat(${cards.length - numFaceUp}, var(--card-fanout-gap-face-down))`,
+      `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`,
+    ].join(" ");
+  }
+
   return (
     <div
       className={`stack ${stack} ${isFannedOut ? "fanned-out" : ""}`}
-      style={{ gridColumn: getStackGridColumn(stack) }}
+      style={style}
       onClick={onClick}
     >
       {cards.map((card, index) => (
