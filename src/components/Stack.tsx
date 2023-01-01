@@ -39,11 +39,21 @@ function getStackStyle({
   // `--card-fanout-gap-face-up` to control the spacing (see `index.css`).
   if (getStackType(stack) === "tableau") {
     const numFaceDown = Math.max(cards.length - numFaceUp, 0);
+    const gridTemplateRows = [];
 
-    style.gridTemplateRows = [
-      `repeat(${numFaceDown}, var(--card-fanout-gap-face-down))`,
-      `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`,
-    ].join(" ");
+    if (numFaceDown > 0) {
+      gridTemplateRows.push(
+        `repeat(${numFaceDown}, var(--card-fanout-gap-face-down))`
+      );
+    }
+
+    if (numFaceUp > 0) {
+      gridTemplateRows.push(
+        `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`
+      );
+    }
+
+    style.gridTemplateRows = gridTemplateRows.join(" ");
   }
 
   if (isDropTarget) {
