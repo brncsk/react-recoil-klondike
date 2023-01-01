@@ -17,6 +17,7 @@ import {
 
 import {
   generateDeck,
+  shuffleDeck,
   getStackType,
   getCardRank,
   getCardRankIndex,
@@ -32,7 +33,7 @@ export function useNewGame() {
   return useRecoilCallback(
     ({ set, reset }) =>
       () => {
-        const deck = generateDeck();
+        const deck = shuffleDeck(generateDeck());
 
         // Deal the deck into the tableau
         for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
