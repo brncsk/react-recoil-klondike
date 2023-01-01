@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useDrag } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 
 import { Card as CardType, CardDragInfo, Stack } from "./model";
 import { getCardColor, getCardRank, getCardSuit } from "./util";
@@ -32,7 +34,7 @@ export function Card({
 
   const dragType: CardDragInfo["type"] = topmost ? "single" : "multiple";
 
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     type: dragType,
     item: { type: dragType, card, sourceStack: stack } as CardDragInfo,
     canDrag: faceUp,
@@ -41,6 +43,10 @@ export function Card({
       isDragging: !!monitor.isDragging(),
     }),
   });
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
 
   return (
     <div
