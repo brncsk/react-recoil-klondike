@@ -50,7 +50,8 @@ export function Card({
 
   return (
     <div
-      ref={drag}
+      // Only set the drag ref if we have a stack (e.g. not in the preview)
+      ref={stack ? drag : undefined}
       className={`card ${faceUp ? "face-up" : "face-down"}`}
       style={{ color, opacity: isDragging ? 0 : 1 }}
       onDoubleClick={onDoubleClick}
