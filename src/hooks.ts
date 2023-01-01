@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useRecoilCallback } from "recoil";
 
 import {
@@ -218,34 +219,34 @@ export function useDealFromDeck() {
 }
 
 /**
- * Returns a function that automatically moves the last card in a stack to
+ * Returns a function that automatically moves the topmost card in a stack to
  * another stack if possible.
  *
+ * @param stack The stack to move the topmost card from
  * @param foundationOnly If true, only move to foundations, not tableaus.
  */
 export function useAutoMove() {
   const isValidMove = useIsValidMove();
   const moveCard = useMoveCard();
 
-  return useRecoilCallback(
-    () =>
-      (stack: Stack, foundationOnly = false) => {
-        for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
-          if (isValidMove(stack, foundationStack(i))) {
-            moveCard(stack, foundationStack(i));
+  return useCallback(
+    (stack: Stack, foundationOnly = false) => {
+      for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
+        if (isValidMove(stack, foundationStack(i))) {
+          moveCard(stack, foundationStack(i));
+          return;
+        }
+      }
+
+      if (!foundationOnly) {
+        for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
+          if (isValidMove(stack, tableauStack(i))) {
+            moveCard(stack, tableauStack(i));
             return;
           }
         }
-
-        if (!foundationOnly) {
-          for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-            if (isValidMove(stack, tableauStack(i))) {
-              moveCard(stack, tableauStack(i));
-              return;
-            }
-          }
-        }
-      },
-    []
+      }
+    },
+    [isValidMove, moveCard]
   );
 }
