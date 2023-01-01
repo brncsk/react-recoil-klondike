@@ -18,22 +18,30 @@ function getStackStyle({
   stack,
   cards,
   numFaceUp,
-  isFannedOut,
   isDropTarget,
 }: {
   stack: StackId;
   cards: CardDragInfo["card"][];
   numFaceUp: number;
-  isFannedOut: boolean;
   isDropTarget: boolean;
 }) {
   const style: React.CSSProperties = {
     gridColumn: getStackGridColumn(stack),
   };
 
-  if (isFannedOut) {
+  // If the stack is a tableau, we need to set the grid template rows so that
+  // the cards are spaced out correctly.
+  //
+  // We use `repeat()` twice, once for the face-down cards and once for the
+  // face-up cards (face-up cards are spaced out more than face-down cards).
+  //
+  // We use the CSS custom properties `--card-fanout-gap-face-down` and
+  // `--card-fanout-gap-face-up` to control the spacing (see `index.css`).
+  if (getStackType(stack) === "tableau") {
+    const numFaceDown = Math.max(cards.length - numFaceUp, 0);
+
     style.gridTemplateRows = [
-      `repeat(${cards.length - numFaceUp}, var(--card-fanout-gap-face-down))`,
+      `repeat(${numFaceDown}, var(--card-fanout-gap-face-down))`,
       `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`,
     ].join(" ");
   }
@@ -50,7 +58,6 @@ export function Stack({ stack, onClick }: StackProps) {
   const numFaceUp = useRecoilValue(stackNumFaceUpCardsState(stack));
 
   const monitor = useDragDropManager().getMonitor();
-  const isFannedOut = stack.startsWith("tableau");
 
   const moveCard = useMoveCard();
   const isValidMove = useIsValidMove();
@@ -99,12 +106,11 @@ export function Stack({ stack, onClick }: StackProps) {
   return (
     <div
       ref={drop}
-      className={`stack ${stack} ${isFannedOut ? "fanned-out" : ""}`}
+      className={`stack ${stack}`}
       style={getStackStyle({
         stack,
         cards,
         numFaceUp,
-        isFannedOut,
         isDropTarget: isOver && canDrop,
       })}
       onClick={onClick}

@@ -47,7 +47,7 @@ export function DragPreview() {
 
   return (
     <div
-      className="stack drag-preview fanned-out"
+      className="stack drag-preview tableau"
       style={getPreviewStyle(initialOffset, currentOffset)}
     >
       {cards.slice(cards.indexOf(card)).map((card) => (

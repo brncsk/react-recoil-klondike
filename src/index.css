@@ -78,7 +78,7 @@ button {
   will-change: transform, filter;
 }
 
-.stack.fanned-out {
+.stack.tableau {
   grid-auto-rows: calc(var(--card-height) / 5);
   gap: 0.25rem;
 }
