@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil";
 import { useDragLayer, XYCoord } from "react-dnd";
 
-import { CardDragInfo } from "../model";
+import { CardDragInfo } from "../types";
 import { stackCardsState } from "../state";
 
 import { Card } from "./Card";

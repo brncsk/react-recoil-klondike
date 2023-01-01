@@ -1,6 +1,6 @@
 import { atomFamily, selectorFamily } from "recoil";
 
-import { Card, Stack } from "./model";
+import { Card, Stack } from "./types";
 import { getStackNumber, getStackType } from "./util";
 
 /** Stores the cards in a stack. */

@@ -1,4 +1,4 @@
-import { Suit, Rank } from "./model";
+import { Suit, Rank } from "./types";
 
 export const NUM_TABLEAU_STACKS = 7;
 export const NUM_FOUNDATION_STACKS = Object.keys(Suit).length;

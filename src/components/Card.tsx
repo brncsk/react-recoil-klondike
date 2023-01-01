@@ -4,7 +4,7 @@ import { getEmptyImage } from "react-dnd-html5-backend";
 import clsx from "clsx";
 
 import { useAutoMove } from "../hooks";
-import { Card as CardType, CardDragInfo, Stack } from "../model";
+import { Card as CardType, CardDragInfo, Stack } from "../types";
 import { getCardColor, getCardRank, getCardSuit } from "../util";
 
 interface CardProps {

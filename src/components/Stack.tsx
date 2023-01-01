@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 import { useDragDropManager, useDrop } from "react-dnd";
 import clsx from "clsx";
 
-import { CardDragInfo, Stack as StackId } from "../model";
+import { CardDragInfo, Stack as StackId } from "../types";
 import { stackCardsState, stackNumFaceUpCardsState } from "../state";
 import { getStackGridColumn, getStackType } from "../util";
 import { useIsValidMove, useMoveCard } from "../hooks";

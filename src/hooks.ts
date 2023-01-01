@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useRecoilCallback } from "recoil";
 
-import { Card, Stack } from "./model";
+import { Card, Stack } from "./types";
 
 import {
   NUM_FOUNDATION_STACKS,

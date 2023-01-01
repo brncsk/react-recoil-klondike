@@ -1,4 +1,4 @@
-import { Card, Suit, Rank, StackType as stack, Stack } from "./model";
+import { Card, Suit, Rank, StackType as stack, Stack } from "./types";
 
 export function generateDeck(): Card[] {
   const deck: Card[] = [];
