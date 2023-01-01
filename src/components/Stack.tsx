@@ -5,7 +5,7 @@ import { useDragDropManager, useDrop } from "react-dnd";
 import { CardDragInfo, Stack as StackId } from "../model";
 import { stackCardsState, stackNumFaceUpCardsState } from "../state";
 import { getStackGridColumn, getStackType } from "../util";
-import { useAutoMove, useIsValidMove, useMoveCard } from "../hooks";
+import { useIsValidMove, useMoveCard } from "../hooks";
 
 import { Card } from "./Card";
 
@@ -21,7 +21,6 @@ export function Stack({ stack, onClick }: StackProps) {
   const monitor = useDragDropManager().getMonitor();
   const isFannedOut = stack.startsWith("tableau");
 
-  const autoMove = useAutoMove();
   const moveCard = useMoveCard();
   const isValidMove = useIsValidMove();
 
@@ -101,7 +100,6 @@ export function Stack({ stack, onClick }: StackProps) {
             visible={
               lastVisibleCardIndex === null || index <= lastVisibleCardIndex
             }
-            onDoubleClick={topmost ? () => autoMove(stack) : undefined}
           />
         );
       })}

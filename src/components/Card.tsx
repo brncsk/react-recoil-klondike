@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
+import { useAutoMove } from "../hooks";
 
 import { Card as CardType, CardDragInfo, Stack } from "../model";
 import { getCardColor, getCardRank, getCardSuit } from "../util";
@@ -11,7 +12,6 @@ interface CardProps {
   visible?: boolean;
   faceUp?: boolean;
   topmost?: boolean;
-  onDoubleClick?: () => void;
 }
 
 export function Card({
@@ -20,7 +20,6 @@ export function Card({
   visible = true,
   faceUp = false,
   topmost = false,
-  onDoubleClick,
 }: CardProps) {
   const suit = getCardSuit(card);
   const rank = getCardRank(card);
@@ -49,13 +48,19 @@ export function Card({
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
 
+  const autoMove = useAutoMove();
+
   return (
     <div
       // Only set the drag ref if we have a stack (e.g. not in the preview)
       ref={stack ? drag : undefined}
       className={`card ${faceUp ? "face-up" : "face-down"}`}
       style={{ color, opacity: visible && !isDragging ? 1 : 0 }}
-      onDoubleClick={onDoubleClick}
+      onDoubleClick={
+        topmost && visible && faceUp && stack
+          ? () => autoMove(stack)
+          : undefined
+      }
     >
       <div className="corner top-left">{indices}</div>
       <div className="center">{suit}</div>
