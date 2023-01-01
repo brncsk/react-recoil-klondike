@@ -67,9 +67,12 @@ export function Card({
           : undefined
       }
     >
-      <div className="corner top-left">{indices}</div>
-      <div className="center">{suit}</div>
-      <div className="corner bottom-right">{indices}</div>
+      <div className="back" />
+      <div className="front">
+        <div className="corner top-left">{indices}</div>
+        <div className="center">{suit}</div>
+        <div className="corner bottom-right">{indices}</div>
+      </div>
     </div>
   );
 }

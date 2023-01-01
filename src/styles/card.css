@@ -15,11 +15,8 @@
 .card {
   position: relative;
 
-  display: flex;
-
   width: var(--card-width);
   height: var(--card-height);
-  padding: 0.25em;
 
   background: lightgray;
   border: 1px solid black;
@@ -28,6 +25,9 @@
   color: var(--card-color-black);
   font-weight: bold;
   cursor: pointer;
+
+  transition: transform 0.2s ease-in-out;
+  transform-style: preserve-3d;
 }
 
 .card * {
@@ -42,12 +42,39 @@
   color: var(--card-color-red);
 }
 
-.card.face-up {
-  background: white;
+.card.face-down {
+  transform: rotateY(180deg);
 }
 
 .card.face-up * {
   visibility: visible;
+}
+
+.card .back,
+.card .front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: inherit;
+  border-radius: inherit;
+
+  backface-visibility: hidden;
+}
+
+.card .back {
+  transform: rotateY(180deg);
+  background-color: lightgrey;
+  z-index: -1;
+}
+
+.card .front {
+  display: flex;
+  flex-direction: row;
+  padding: 0.25em;
+  background: white;
 }
 
 .card .corner {
