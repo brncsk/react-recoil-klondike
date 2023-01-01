@@ -1,4 +1,4 @@
-import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../model";
+import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 import { useDealFromDeck } from "../hooks";
 
 import { Stack } from "./Stack";

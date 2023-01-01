@@ -1,12 +1,13 @@
 import { useCallback } from "react";
 import { useRecoilCallback } from "recoil";
 
+import { Card, Stack } from "./model";
+
 import {
-  Card,
-  Stack,
   NUM_FOUNDATION_STACKS,
   NUM_TABLEAU_STACKS,
-} from "./model";
+  NUM_CARDS_PER_SUIT,
+} from "./const";
 
 import {
   stackCardsState,
