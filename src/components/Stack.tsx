@@ -14,6 +14,37 @@ interface StackProps {
   onClick?: () => void;
 }
 
+function getStackStyle({
+  stack,
+  cards,
+  numFaceUp,
+  isFannedOut,
+  isDropTarget,
+}: {
+  stack: StackId;
+  cards: CardDragInfo["card"][];
+  numFaceUp: number;
+  isFannedOut: boolean;
+  isDropTarget: boolean;
+}) {
+  const style: React.CSSProperties = {
+    gridColumn: getStackGridColumn(stack),
+  };
+
+  if (isFannedOut) {
+    style.gridTemplateRows = [
+      `repeat(${cards.length - numFaceUp}, var(--card-fanout-gap-face-down))`,
+      `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`,
+    ].join(" ");
+  }
+
+  if (isDropTarget) {
+    style.backgroundColor = "var(--color-stack-hover)";
+  }
+
+  return style;
+}
+
 export function Stack({ stack, onClick }: StackProps) {
   const cards = useRecoilValue(stackCardsState(stack));
   const numFaceUp = useRecoilValue(stackNumFaceUpCardsState(stack));
@@ -65,26 +96,17 @@ export function Stack({ stack, onClick }: StackProps) {
     [monitor, stack, cards]
   );
 
-  const style: React.CSSProperties = {
-    gridColumn: getStackGridColumn(stack),
-  };
-
-  if (isFannedOut) {
-    style.gridTemplateRows = [
-      `repeat(${cards.length - numFaceUp}, var(--card-fanout-gap-face-down))`,
-      `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`,
-    ].join(" ");
-  }
-
-  if (isOver && canDrop) {
-    style.backgroundColor = "var(--color-stack-hover)";
-  }
-
   return (
     <div
       ref={drop}
       className={`stack ${stack} ${isFannedOut ? "fanned-out" : ""}`}
-      style={style}
+      style={getStackStyle({
+        stack,
+        cards,
+        numFaceUp,
+        isFannedOut,
+        isDropTarget: isOver && canDrop,
+      })}
       onClick={onClick}
     >
       {cards.map((card, index) => {
