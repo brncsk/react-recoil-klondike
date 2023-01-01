@@ -34,16 +34,15 @@ export function Card({
     </>
   );
 
-  const dragType: CardDragInfo["type"] = topmost ? "single" : "multiple";
+  const [{ isDragging }, drag, preview] = useDrag(() => {
+    const type: CardDragInfo["type"] = topmost ? "single" : "multiple";
 
-  const [{ isDragging }, drag, preview] = useDrag({
-    type: dragType,
-    item: { type: dragType, card, sourceStack: stack } as CardDragInfo,
-    canDrag: faceUp,
-
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+    return {
+      type,
+      item: { type, card, sourceStack: stack } as CardDragInfo,
+      canDrag: faceUp,
+      collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+    };
   });
 
   useEffect(() => {
