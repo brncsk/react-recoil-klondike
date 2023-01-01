@@ -3,11 +3,13 @@ import { atomFamily, selectorFamily } from "recoil";
 import { Card, Stack } from "./model";
 import { getStackNumber, getStackType } from "./util";
 
+/** Stores the cards in a stack. */
 export const stackCardsState = atomFamily<Card[], Stack>({
   key: "stack",
   default: [],
 });
 
+/** Returns the topmost card in a stack. */
 export const topmostCardState = selectorFamily<Card | null, Stack>({
   key: "topmost-card",
   get:
@@ -18,11 +20,13 @@ export const topmostCardState = selectorFamily<Card | null, Stack>({
     },
 });
 
+/** Stores the number of cards that are face-up in a tableau stack. */
 export const tableauNumFaceUpCardsState = atomFamily<number, number>({
   key: "tableau-num-face-up-cards",
   default: 1,
 });
 
+/** Returns the number of cards that are face-up in a stack. */
 export const stackNumFaceUpCardsState = selectorFamily<number, Stack>({
   key: "stack-num-face-up-cards",
   get:
