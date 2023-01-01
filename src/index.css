@@ -1,4 +1,6 @@
 :root {
+  --board-background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxmaWx0ZXIgaWQ9ImJvYXJkLWJhY2tncm91bmQtZmlsdGVyIj4KICAgIDxmZUZsb29kIGZsb29kLWNvbG9yPSIjNGNhZjUwIiByZXN1bHQ9ImJhY2tncm91bmQiIC8+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iNSIgbnVtT2N0YXZlcz0iMTAiIHN0aXRjaFRpbGVzPSJzdGl0Y2giIHJlc3VsdD0ibm9pc2UiIC8+CiAgICA8ZmVCbGVuZCBpbj0iYmFja2dyb3VuZCIgaW4yPSJub2lzZSIgbW9kZT0ibXVsdGlwbHkiIC8+CiAgPC9maWx0ZXI+CiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2JvYXJkLWJhY2tncm91bmQtZmlsdGVyKSIgLz4KPC9zdmc+Cg==");
+
   --card-width: clamp(70px, 10vw, 150px);
   --card-height: calc(var(--card-width) * 1.5);
 
@@ -21,7 +23,8 @@
 body {
   margin: 0;
   padding: 0;
-  background: #4caf50;
+  height: 100vh;
+  background: var(--board-background) repeat;
 
   user-select: none;
 
