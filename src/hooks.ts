@@ -1,6 +1,11 @@
 import { useRecoilCallback } from "recoil";
 
-import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS, Stack } from "./model";
+import {
+  Card,
+  Stack,
+  NUM_FOUNDATION_STACKS,
+  NUM_TABLEAU_STACKS,
+} from "./model";
 
 import {
   stackCardsState,
@@ -56,51 +61,54 @@ export function useNewGame() {
 export function useCanMoveBetweenStacks() {
   return useRecoilCallback(
     ({ snapshot: { getLoadable: get } }) =>
-      (fromStack: Stack, toStack: Stack) => {
+      (
+        fromStack: Stack,
+        toStack: Stack,
+        bottommostFromCard: Card | null = get(
+          topmostCardState(fromStack)
+        ).valueOrThrow() ?? null
+      ) => {
         const fromType = getStackType(fromStack);
         const toType = getStackType(toStack);
 
-        const topmostFromCard = get(topmostCardState(fromStack)).valueOrThrow();
         const topmostToCard = get(topmostCardState(toStack)).valueOrThrow();
 
         // Moving from empty stacks is not allowed
-        if (topmostFromCard === null) {
+        if (bottommostFromCard === null) {
           return false;
         }
 
         // Moving to empty stacks (either foundations or tableaus)
-
         if (topmostToCard === null) {
           return (
             // Aces can be moved to empty foundations
-            (getCardRank(topmostFromCard) === "A" && toType === "foundation") ||
+            (getCardRank(bottommostFromCard) === "A" &&
+              toType === "foundation") ||
             // Kings can be moved to empty tableaus
-            (getCardRank(topmostFromCard) === "K" && toType === "tableau")
+            (getCardRank(bottommostFromCard) === "K" && toType === "tableau")
           );
         }
 
         // Cards can be moved from the waste or another tableau to a tableau
         // if the rank is one less and the color is different
-
         if (fromType === "tableau" || fromType === "waste") {
           if (toType === "tableau") {
             return (
-              getCardRankIndex(topmostFromCard) ===
+              getCardRankIndex(bottommostFromCard) ===
                 getCardRankIndex(topmostToCard) - 1 &&
-              getCardColor(topmostFromCard) !== getCardColor(topmostToCard)
+              getCardColor(bottommostFromCard) !== getCardColor(topmostToCard)
             );
           }
         }
 
         // Cards can be moved from a tableau or waste to a foundation if the
         // rank is one more and the suit is the same
-
         if (fromType === "tableau" || fromType === "waste") {
           if (toType === "foundation") {
             return (
-              getCardRankIndex(topmostFromCard) ===
+              getCardRankIndex(bottommostFromCard) ===
                 getCardRankIndex(topmostToCard) + 1 &&
-              getCardSuit(topmostFromCard) === getCardSuit(topmostToCard)
+              getCardSuit(bottommostFromCard) === getCardSuit(topmostToCard)
             );
           }
         }
@@ -115,19 +123,35 @@ export function useCanMoveBetweenStacks() {
 export function useMoveCard() {
   return useRecoilCallback(
     ({ set, snapshot: { getLoadable: get } }) =>
-      (fromStack: Stack, toStack: Stack) => {
+      (fromStack: Stack, toStack: Stack, bottommostCard?: Card) => {
         const fromCards = get(stackCardsState(fromStack)).valueOrThrow();
         const toCards = get(stackCardsState(toStack)).valueOrThrow();
 
-        set(stackCardsState(fromStack), fromCards.slice(0, -1));
-        set(stackCardsState(toStack), [...toCards, fromCards.slice(-1)[0]]);
+        // Find the index of the bottom card in the from stack
+        const bottomCardIndex = bottommostCard
+          ? fromCards.findIndex((card) => card === bottommostCard)
+          : fromCards.length - 1;
 
-        // If we moved a card from a tableau, increase the number of face-up
-        // cards in that tableau by one
+        const movedCards = fromCards.slice(bottomCardIndex);
+
+        set(stackCardsState(fromStack), fromCards.slice(0, bottomCardIndex));
+        set(stackCardsState(toStack), [...toCards, ...movedCards]);
+
+        // If the from stack is a tableau, update the number of face-up cards
+        // in the tableau
+        if (getStackType(fromStack) === "tableau") {
+          const fromStackNumber = getStackNumber(fromStack);
+          set(tableauNumFaceUpCardsState(fromStackNumber), (num) =>
+            Math.max(1, num - movedCards.length)
+          );
+        }
+
+        // If we moved a card to a tableau, increase the number of face-up
+        // cards in that tableau by the number of cards we moved
         if (getStackType(toStack) === "tableau") {
           set(
             tableauNumFaceUpCardsState(getStackNumber(toStack)),
-            (num) => num + 1
+            (num) => num + movedCards.length
           );
         }
       },
