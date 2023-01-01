@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useDragDropManager, useDrop } from "react-dnd";
+import clsx from "clsx";
 
 import { CardDragInfo, Stack as StackId } from "../model";
 import { stackCardsState, stackNumFaceUpCardsState } from "../state";
@@ -18,12 +19,10 @@ function getStackStyle({
   stack,
   cards,
   numFaceUp,
-  isDropTarget,
 }: {
   stack: StackId;
   cards: CardDragInfo["card"][];
   numFaceUp: number;
-  isDropTarget: boolean;
 }) {
   const style: React.CSSProperties = {
     gridColumn: getStackGridColumn(stack),
@@ -54,10 +53,6 @@ function getStackStyle({
     }
 
     style.gridTemplateRows = gridTemplateRows.join(" ");
-  }
-
-  if (isDropTarget) {
-    style.backgroundColor = "var(--color-stack-hover)";
   }
 
   return style;
@@ -116,12 +111,16 @@ export function Stack({ stack, onClick }: StackProps) {
   return (
     <div
       ref={drop}
-      className={`stack ${stack}`}
+      className={clsx(
+        "stack",
+        getStackType(stack),
+        stack,
+        isOver && canDrop && "drop-target"
+      )}
       style={getStackStyle({
         stack,
         cards,
         numFaceUp,
-        isDropTarget: isOver && canDrop,
       })}
       onClick={onClick}
     >

@@ -59,11 +59,11 @@ button {
   justify-content: space-between;
 }
 
-.foundation {
+.section.foundation {
   grid-row: 1;
 }
 
-.tableau {
+.section.tableau {
   grid-row: 2;
 }
 
@@ -86,6 +86,10 @@ button {
 .stack.drag-preview {
   filter: drop-shadow(0 0 0.5em #00000077);
   background: transparent;
+}
+
+.stack.drop-target {
+  background: #00000011;
 }
 
 .stack:hover {
