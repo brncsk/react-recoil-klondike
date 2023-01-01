@@ -43,7 +43,7 @@ export function Card({
       canDrag: faceUp,
       collect: (monitor) => ({ isDragging: monitor.isDragging() }),
     };
-  });
+  }, [card, topmost, faceUp]);
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
