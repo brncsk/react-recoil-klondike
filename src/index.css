@@ -8,6 +8,9 @@
   --card-fanout-gap-face-down: calc(var(--card-height) / 10);
   --card-fanout-gap-face-up: calc(var(--card-height) / 5);
 
+  --card-color-black: #000000;
+  --card-color-red: #f44336;
+
   --color-stack-hover: #000000;
 }
 
@@ -120,12 +123,21 @@ button {
   border: 1px solid black;
   border-radius: var(--card-border-radius);
 
+  color: var(--card-color-black);
   font-weight: bold;
   cursor: pointer;
 }
 
 .card * {
   visibility: hidden;
+}
+
+.card.hidden {
+  opacity: 0;
+}
+
+.card.red {
+  color: var(--card-color-red);
 }
 
 .card.face-up {

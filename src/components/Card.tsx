@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
-import { useAutoMove } from "../hooks";
+import clsx from "clsx";
 
+import { useAutoMove } from "../hooks";
 import { Card as CardType, CardDragInfo, Stack } from "../model";
 import { getCardColor, getCardRank, getCardSuit } from "../util";
 
@@ -54,8 +55,12 @@ export function Card({
     <div
       // Only set the drag ref if we have a stack (e.g. not in the preview)
       ref={stack ? drag : undefined}
-      className={`card ${faceUp ? "face-up" : "face-down"}`}
-      style={{ color, opacity: visible && !isDragging ? 1 : 0 }}
+      className={clsx(
+        "card",
+        color,
+        faceUp ? "face-up" : "face-down",
+        visible && !isDragging ? "visible" : "hidden"
+      )}
       onDoubleClick={
         topmost && visible && faceUp && stack
           ? () => autoMove(stack)
