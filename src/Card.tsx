@@ -40,7 +40,7 @@ export function Card({
     canDrag: faceUp,
 
     collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
+      isDragging: monitor.isDragging(),
     }),
   });
 
@@ -52,11 +52,7 @@ export function Card({
     <div
       ref={drag}
       className={`card ${faceUp ? "face-up" : "face-down"}`}
-      style={{
-        color,
-        opacity: isDragging ? 0 : 1,
-        transform: `scale(${isDragging ? 1.1 : 1})`,
-      }}
+      style={{ color, opacity: isDragging ? 0 : 1 }}
       onDoubleClick={onDoubleClick}
     >
       <div className="corner top-left">{indices}</div>
