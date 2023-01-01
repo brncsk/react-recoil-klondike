@@ -5,9 +5,9 @@ import clsx from "clsx";
 
 import { useAutoMove } from "../hooks";
 import { Card as CardType, CardDragInfo, Stack } from "../types";
-import { getCardColor, getCardRank, getCardSuit } from "../util";
+import { CardFace } from "./CardFace";
 
-interface CardProps {
+export interface CardProps {
   card: CardType;
   stack?: Stack;
   visible?: boolean;
@@ -22,19 +22,7 @@ export function Card({
   faceUp = false,
   topmost = false,
 }: CardProps) {
-  const suit = getCardSuit(card);
-  const rank = getCardRank(card);
-  const color = getCardColor(card);
-
-  const indices = (
-    <>
-      {rank}
-      <br />
-      {suit}
-    </>
-  );
-
-  const [{ isDragging }, drag, preview] = useDrag(() => {
+  const [, drag, preview] = useDrag(() => {
     const type: CardDragInfo["type"] = topmost ? "single" : "multiple";
 
     return {
@@ -55,24 +43,14 @@ export function Card({
     <div
       // Only set the drag ref if we have a stack (e.g. not in the preview)
       ref={stack ? drag : undefined}
-      className={clsx(
-        "card",
-        color,
-        faceUp ? "face-up" : "face-down",
-        visible && !isDragging ? "visible" : "hidden"
-      )}
+      className={clsx("card")}
       onDoubleClick={
         topmost && visible && faceUp && stack
           ? () => autoMove(stack)
           : undefined
       }
     >
-      <div className="back" />
-      <div className="front">
-        <div className="corner top-left">{indices}</div>
-        <div className="center">{suit}</div>
-        <div className="corner bottom-right">{indices}</div>
-      </div>
+      <CardFace card={card} visible={visible} faceUp={faceUp} />
     </div>
   );
 }

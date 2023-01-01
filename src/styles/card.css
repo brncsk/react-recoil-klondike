@@ -18,20 +18,19 @@
   width: var(--card-width);
   height: var(--card-height);
 
+  cursor: pointer;
+}
+
+.card.face {
   background: lightgray;
   border: 1px solid black;
   border-radius: var(--card-border-radius);
 
   color: var(--card-color-black);
   font-weight: bold;
-  cursor: pointer;
 
   transition: transform 0.2s ease-in-out;
   transform-style: preserve-3d;
-}
-
-.card * {
-  visibility: hidden;
 }
 
 .card.hidden {
