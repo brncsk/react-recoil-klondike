@@ -16,19 +16,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-button {
-  position: absolute;
-  z-index: 1;
-  padding: 0.5em;
-  border: none;
-  border-radius: 0.5em;
-  background: #4caf50;
-  color: white;
-  font-size: 1.5em;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 @import url("./board.css");
 @import url("./card.css");
 @import url("./stack.css");
+@import url("./hud.css");

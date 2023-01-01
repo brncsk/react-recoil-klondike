@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNewGame } from "./hooks";
 
 import { Board } from "./components/Board";
+import { Hud } from "./components/Hud";
 import { DragPreview } from "./components/DragPreview";
 
 function App() {
@@ -11,8 +12,8 @@ function App() {
 
   return (
     <>
-      <button onClick={newGame}>Deal New Game</button>
       <Board />
+      <Hud />
       <DragPreview />
     </>
   );
