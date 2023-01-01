@@ -7,7 +7,7 @@ import { getCardColor, getCardRank, getCardSuit } from "./util";
 
 interface CardProps {
   card: CardType;
-  stack: Stack;
+  stack?: Stack;
   faceUp?: boolean;
   topmost?: boolean;
   onDoubleClick?: () => void;
