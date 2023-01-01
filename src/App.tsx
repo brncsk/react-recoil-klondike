@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 
-import "./App.css";
-
 import { useDealFromDeck, useNewGame } from "./hooks";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "./model";
 

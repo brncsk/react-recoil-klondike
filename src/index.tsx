@@ -5,6 +5,7 @@ import { RecoilRoot } from "recoil";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
+import "./index.css";
 import App from "./App";
 
 const root = ReactDOM.createRoot(
