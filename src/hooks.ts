@@ -169,11 +169,9 @@ export function useMoveCard() {
           : sourceCards.length - 1;
 
         const movedCards = sourceCards.slice(bottommostCardIndex);
+        const remainingCards = sourceCards.slice(0, bottommostCardIndex);
 
-        set(
-          stackCardsState(sourceStack),
-          sourceCards.slice(0, bottommostCardIndex)
-        );
+        set(stackCardsState(sourceStack), remainingCards);
         set(stackCardsState(targetStack), [...targetCards, ...movedCards]);
 
         // If the from stack is a tableau, update the number of face-up cards
@@ -181,7 +179,7 @@ export function useMoveCard() {
         if (getStackType(sourceStack) === "tableau") {
           const sourceStackNumber = getStackNumber(sourceStack);
           set(tableauNumFaceUpCardsState(sourceStackNumber), (num) =>
-            Math.max(1, num - movedCards.length)
+            Math.max(remainingCards.length > 0 ? 1 : 0, num - movedCards.length)
           );
         }
 
