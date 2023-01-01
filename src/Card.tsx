@@ -15,6 +15,7 @@ export function Card({
   card,
   stack,
   faceUp = false,
+  topmost = false,
   onDoubleClick,
 }: CardProps) {
   const suit = getCardSuit(card);
@@ -29,19 +30,16 @@ export function Card({
     </>
   );
 
+  const dragType: CardDragInfo["type"] = topmost ? "single" : "multiple";
+
   const [{ isDragging }, drag] = useDrag({
-    type: "card",
-    item: { card, stack } as CardDragInfo,
+    type: dragType,
+    item: { type: dragType, card, sourceStack: stack } as CardDragInfo,
+    canDrag: faceUp,
 
-    canDrag() {
-      return faceUp;
-    },
-
-    collect(monitor) {
-      return {
-        isDragging: !!monitor.isDragging(),
-      };
-    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
   });
 
   return (
