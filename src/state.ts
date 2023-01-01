@@ -1,7 +1,7 @@
 import { atomFamily, selectorFamily } from "recoil";
 
 import { Card, Stack } from "./model";
-import { getStackNumber } from "./util";
+import { getStackNumber, getStackType } from "./util";
 
 export const stackCardsState = atomFamily<Card[], Stack>({
   key: "stack",
@@ -28,17 +28,20 @@ export const stackNumFaceUpCardsState = selectorFamily<number, Stack>({
   get:
     (stack) =>
     ({ get }) => {
-      if (stack === "deck") {
-        // The deck is always face down
-        return 0;
-      } else if (stack === "waste" || stack.startsWith("foundation-")) {
-        // The waste and foundations are always face up
-        return get(stackCardsState(stack)).length;
-      } else {
-        // Tableaus are partially face up depending on the number of cards
-        // that have been moved to them
-        const tableauNum = getStackNumber(stack);
-        return get(tableauNumFaceUpCardsState(tableauNum));
+      switch (getStackType(stack)) {
+        // The deck is always face-down
+        case "deck":
+          return 0;
+
+        // Waste and foundation stacks are always face-up
+        case "waste":
+        case "foundation":
+          return get(stackCardsState(stack)).length;
+
+        // Tableau stacks have a variable number of face-up cards
+        // depending on the number of cards that have been moved to them
+        case "tableau":
+          return get(tableauNumFaceUpCardsState(getStackNumber(stack)));
       }
     },
 });
