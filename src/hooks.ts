@@ -58,8 +58,10 @@ export function useNewGame() {
 }
 
 /**
- * Returns a function that determines whether a card can be moved from one stack
- * to another.
+ * Returns a function that determines whether a move is valid from one stack
+ * to another, optionally specifying the bottommost card to move from the
+ * source stack (handy for moving multiple cards at once by dragging between
+ * tableaus).
  *
  * @param sourceStack The stack to move the card from
  * @param targetStack The stack to move the card to
@@ -67,7 +69,7 @@ export function useNewGame() {
  *   the source stack. All cards above this card will be moved. If not
  *   specified, the topmost card in the source stack is used.
  */
-export function useCanMoveBetweenStacks() {
+export function useIsValidMove() {
   return useRecoilCallback(
     ({ snapshot: { getLoadable: get } }) =>
       (
@@ -134,7 +136,9 @@ export function useCanMoveBetweenStacks() {
 }
 
 /**
- * Moves a card from one stack to another.
+ * Moves one or more cards from one stack to another, optionally specifying
+ * the bottommost card to move from the source stack (handy for moving
+ * multiple cards at once by dragging between tableaus).
  *
  * @param sourceStack The stack to move the card from
  * @param targetStack The stack to move the card to
@@ -220,14 +224,14 @@ export function useDealFromDeck() {
  * @param foundationOnly If true, only move to foundations, not tableaus.
  */
 export function useAutoMove() {
-  const canMoveBetweenStacks = useCanMoveBetweenStacks();
+  const isValidMove = useIsValidMove();
   const moveCard = useMoveCard();
 
   return useRecoilCallback(
     () =>
       (stack: Stack, foundationOnly = false) => {
         for (let i = 1; i <= 4; i++) {
-          if (canMoveBetweenStacks(stack, foundationStack(i))) {
+          if (isValidMove(stack, foundationStack(i))) {
             moveCard(stack, foundationStack(i));
             return;
           }
@@ -235,7 +239,7 @@ export function useAutoMove() {
 
         if (!foundationOnly) {
           for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-            if (canMoveBetweenStacks(stack, tableauStack(i))) {
+            if (isValidMove(stack, tableauStack(i))) {
               moveCard(stack, tableauStack(i));
               return;
             }

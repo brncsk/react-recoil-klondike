@@ -5,7 +5,7 @@ import { useDragDropManager, useDrop } from "react-dnd";
 import { CardDragInfo, Stack as StackId } from "../model";
 import { stackCardsState, stackNumFaceUpCardsState } from "../state";
 import { getStackGridColumn, getStackType } from "../util";
-import { useAutoMove, useCanMoveBetweenStacks, useMoveCard } from "../hooks";
+import { useAutoMove, useIsValidMove, useMoveCard } from "../hooks";
 
 import { Card } from "./Card";
 
@@ -23,7 +23,7 @@ export function Stack({ stack, onClick }: StackProps) {
 
   const autoMove = useAutoMove();
   const moveCard = useMoveCard();
-  const canMove = useCanMoveBetweenStacks();
+  const isValidMove = useIsValidMove();
 
   const [lastVisibleCardIndex, setLastVisibleCardIndex] = useState<
     number | null
@@ -34,7 +34,7 @@ export function Stack({ stack, onClick }: StackProps) {
       getStackType(stack) === "tableau" ? ["single", "multiple"] : "single",
 
     canDrop(item: CardDragInfo) {
-      return canMove(item.sourceStack, stack, item.card);
+      return isValidMove(item.sourceStack, stack, item.card);
     },
 
     async drop({ sourceStack, card }: CardDragInfo) {
