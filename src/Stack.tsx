@@ -22,11 +22,15 @@ export function Stack({ stack, onClick }: StackProps) {
   const moveCard = useMoveCard();
   const canMove = useCanMoveBetweenStacks();
 
-  const [{ isOver }, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: "card",
 
+    canDrop(item: CardDragInfo) {
+      return canMove(item.stack, stack);
+    },
+
     async drop({ stack: sourceStack }: CardDragInfo) {
-      if (await canMove(sourceStack, stack)) {
+      if (canMove(sourceStack, stack)) {
         moveCard(sourceStack, stack);
       }
     },
@@ -34,6 +38,7 @@ export function Stack({ stack, onClick }: StackProps) {
     collect(monitor) {
       return {
         isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
       };
     },
   });
@@ -49,7 +54,7 @@ export function Stack({ stack, onClick }: StackProps) {
     ].join(" ");
   }
 
-  if (isOver) {
+  if (isOver && canDrop) {
     style.backgroundColor = "var(--color-stack-hover)";
   }
 
