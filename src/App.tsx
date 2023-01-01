@@ -7,10 +7,7 @@ import { DragPreview } from "./components/DragPreview";
 
 function App() {
   const newGame = useNewGame();
-
-  useEffect(() => {
-    newGame();
-  }, [newGame]);
+  useEffect(() => void newGame(), [newGame]);
 
   return (
     <>
