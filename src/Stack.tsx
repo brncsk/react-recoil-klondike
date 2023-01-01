@@ -65,19 +65,20 @@ export function Stack({ stack, onClick }: StackProps) {
       style={style}
       onClick={onClick}
     >
-      {cards.map((card, index) => (
-        <Card
-          key={index}
-          stack={stack}
-          card={card}
-          faceUp={index >= cards.length - numFaceUp}
-          onDoubleClick={() => {
-            if (index === cards.length - 1) {
-              autoMove(stack);
-            }
-          }}
-        />
-      ))}
+      {cards.map((card, index) => {
+        const topmost = index === cards.length - 1;
+
+        return (
+          <Card
+            key={index}
+            stack={stack}
+            card={card}
+            faceUp={index >= cards.length - numFaceUp}
+            topmost={topmost}
+            onDoubleClick={topmost ? () => autoMove(stack) : undefined}
+          />
+        );
+      })}
     </div>
   );
 }

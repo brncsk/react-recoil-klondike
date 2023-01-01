@@ -7,6 +7,7 @@ interface CardProps {
   card: CardType;
   stack: Stack;
   faceUp?: boolean;
+  topmost?: boolean;
   onDoubleClick?: () => void;
 }
 
