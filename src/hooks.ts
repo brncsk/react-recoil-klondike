@@ -55,13 +55,13 @@ export function useNewGame() {
 /** Returns a function that determines whether a card can be moved from one stack to another. */
 export function useCanMoveBetweenStacks() {
   return useRecoilCallback(
-    ({ snapshot: { getPromise: get } }) =>
-      async (fromStack: Stack, toStack: Stack) => {
+    ({ snapshot: { getLoadable: get } }) =>
+      (fromStack: Stack, toStack: Stack) => {
         const fromType = getStackType(fromStack);
         const toType = getStackType(toStack);
 
-        const topmostFromCard = await get(topmostCardState(fromStack));
-        const topmostToCard = await get(topmostCardState(toStack));
+        const topmostFromCard = get(topmostCardState(fromStack)).valueOrThrow();
+        const topmostToCard = get(topmostCardState(toStack)).valueOrThrow();
 
         // Moving from empty stacks is not allowed
         if (topmostFromCard === null) {
@@ -114,10 +114,10 @@ export function useCanMoveBetweenStacks() {
 /** Moves a card from one stack to another. */
 export function useMoveCard() {
   return useRecoilCallback(
-    ({ set, snapshot: { getPromise: get } }) =>
-      async (fromStack: Stack, toStack: Stack) => {
-        const fromCards = await get(stackCardsState(fromStack));
-        const toCards = await get(stackCardsState(toStack));
+    ({ set, snapshot: { getLoadable: get } }) =>
+      (fromStack: Stack, toStack: Stack) => {
+        const fromCards = get(stackCardsState(fromStack)).valueOrThrow();
+        const toCards = get(stackCardsState(toStack)).valueOrThrow();
 
         set(stackCardsState(fromStack), fromCards.slice(0, -1));
         set(stackCardsState(toStack), [...toCards, fromCards.slice(-1)[0]]);
@@ -143,10 +143,10 @@ export function useDealFromDeck() {
   const moveCard = useMoveCard();
 
   return useRecoilCallback(
-    ({ set, snapshot: { getPromise: get } }) =>
-      async () => {
-        const deck = await get(stackCardsState("deck"));
-        const waste = await get(stackCardsState("waste"));
+    ({ set, snapshot: { getLoadable: get } }) =>
+      () => {
+        const deck = get(stackCardsState("deck")).valueOrThrow();
+        const waste = get(stackCardsState("waste")).valueOrThrow();
 
         if (deck.length > 0) {
           moveCard("deck", "waste");
@@ -171,9 +171,9 @@ export function useAutoMove() {
 
   return useRecoilCallback(
     () =>
-      async (stack: Stack, foundationOnly = false) => {
+      (stack: Stack, foundationOnly = false) => {
         for (let i = 1; i <= 4; i++) {
-          if (await canMoveBetweenStacks(stack, foundationStack(i))) {
+          if (canMoveBetweenStacks(stack, foundationStack(i))) {
             moveCard(stack, foundationStack(i));
             return;
           }
@@ -181,7 +181,7 @@ export function useAutoMove() {
 
         if (!foundationOnly) {
           for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-            if (await canMoveBetweenStacks(stack, tableauStack(i))) {
+            if (canMoveBetweenStacks(stack, tableauStack(i))) {
               moveCard(stack, tableauStack(i));
               return;
             }
