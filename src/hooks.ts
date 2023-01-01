@@ -104,30 +104,34 @@ export function useIsValidMove() {
           );
         }
 
-        // Cards can be moved from the waste or another tableau to a tableau
-        // if the rank is one less and the color is different
-        if (sourceStackType === "tableau" || sourceStackType === "waste") {
-          if (targetStackType === "tableau") {
-            return (
-              getCardRankIndex(bottommostCardFromSource) ===
-                getCardRankIndex(topmostCardOnTarget) - 1 &&
-              getCardColor(bottommostCardFromSource) !==
-                getCardColor(topmostCardOnTarget)
-            );
-          }
+        // Cards can be moved from the waste, a foundation, or another tableau
+        // to a tableau if the rank is one less and the color is different
+        if (
+          (sourceStackType === "tableau" ||
+            sourceStackType === "waste" ||
+            sourceStackType === "foundation") &&
+          targetStackType === "tableau"
+        ) {
+          return (
+            getCardRankIndex(bottommostCardFromSource) ===
+              getCardRankIndex(topmostCardOnTarget) - 1 &&
+            getCardColor(bottommostCardFromSource) !==
+              getCardColor(topmostCardOnTarget)
+          );
         }
 
         // Cards can be moved from a tableau or waste to a foundation if the
         // rank is one more and the suit is the same
-        if (sourceStackType === "tableau" || sourceStackType === "waste") {
-          if (targetStackType === "foundation") {
-            return (
-              getCardRankIndex(bottommostCardFromSource) ===
-                getCardRankIndex(topmostCardOnTarget) + 1 &&
-              getCardSuit(bottommostCardFromSource) ===
-                getCardSuit(topmostCardOnTarget)
-            );
-          }
+        if (
+          (sourceStackType === "tableau" || sourceStackType === "waste") &&
+          targetStackType === "foundation"
+        ) {
+          return (
+            getCardRankIndex(bottommostCardFromSource) ===
+              getCardRankIndex(topmostCardOnTarget) + 1 &&
+            getCardSuit(bottommostCardFromSource) ===
+              getCardSuit(topmostCardOnTarget)
+          );
         }
 
         return false;
