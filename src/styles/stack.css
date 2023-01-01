@@ -1,0 +1,43 @@
+:root {
+  --color-stack-hover: #000000;
+}
+
+.stack {
+  position: relative;
+  width: var(--card-width);
+  display: grid;
+  filter: drop-shadow(0 0 0.5em #00000077);
+  grid-auto-rows: calc(var(--card-height) / 500);
+  transition: filter 0.2s ease-in-out;
+  cursor: pointer;
+  will-change: transform, filter;
+}
+
+.stack.tableau {
+  grid-auto-rows: calc(var(--card-height) / 5);
+  gap: 0.25rem;
+}
+
+.stack.drag-preview {
+  filter: drop-shadow(0 0 0.5em #00000077);
+  background: transparent;
+}
+
+.stack.drop-target {
+  background: #00000011;
+}
+
+.stack:hover {
+  filter: drop-shadow(0 0 0.5em #000000);
+}
+
+.stack:before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: var(--card-width);
+  height: var(--card-height);
+  background: #00000011;
+  border-radius: var(--card-border-radius);
+}

@@ -1,0 +1,69 @@
+:root {
+  --card-width: clamp(70px, 10vw, 150px);
+  --card-height: calc(var(--card-width) * 1.5);
+
+  --card-font-size: calc(var(--card-width) / 2);
+  --card-border-radius: 0.25em;
+
+  --card-fanout-gap-face-down: calc(var(--card-height) / 10);
+  --card-fanout-gap-face-up: calc(var(--card-height) / 5);
+
+  --card-color-black: #000000;
+  --card-color-red: #f44336;
+}
+
+.card {
+  position: relative;
+
+  display: flex;
+
+  width: var(--card-width);
+  height: var(--card-height);
+  padding: 0.25em;
+
+  background: lightgray;
+  border: 1px solid black;
+  border-radius: var(--card-border-radius);
+
+  color: var(--card-color-black);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.card * {
+  visibility: hidden;
+}
+
+.card.hidden {
+  opacity: 0;
+}
+
+.card.red {
+  color: var(--card-color-red);
+}
+
+.card.face-up {
+  background: white;
+}
+
+.card.face-up * {
+  visibility: visible;
+}
+
+.card .corner {
+  font-size: calc(var(--card-font-size) / 4);
+  text-align: center;
+}
+
+.card .corner.bottom-right {
+  transform: rotate(180deg);
+}
+
+.card .center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: var(--card-font-size);
+}
