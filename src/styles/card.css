@@ -1,5 +1,5 @@
 :root {
-  --card-width: clamp(70px, 10vw, 150px);
+  --card-width: clamp(40px, 10vw, 150px);
   --card-height: calc(var(--card-width) * 1.5);
 
   --card-font-size: calc(var(--card-width) / 2);
