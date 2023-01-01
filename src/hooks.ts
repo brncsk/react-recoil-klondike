@@ -60,6 +60,12 @@ export function useNewGame() {
 /**
  * Returns a function that determines whether a card can be moved from one stack
  * to another.
+ *
+ * @param sourceStack The stack to move the card from
+ * @param targetStack The stack to move the card to
+ * @param bottommostCardFromSource Specifies the bottommost card to move from
+ *   the source stack. All cards above this card will be moved. If not
+ *   specified, the topmost card in the source stack is used.
  */
 export function useCanMoveBetweenStacks() {
   return useRecoilCallback(
@@ -127,7 +133,15 @@ export function useCanMoveBetweenStacks() {
   );
 }
 
-/** Moves a card from one stack to another. */
+/**
+ * Moves a card from one stack to another.
+ *
+ * @param sourceStack The stack to move the card from
+ * @param targetStack The stack to move the card to
+ * @param bottommostCardFromSource Specifies the bottommost card to move from
+ *   the source stack. All cards above this card will be moved. If not
+ *   specified, the topmost card in the source stack is used.
+ */
 export function useMoveCard() {
   return useRecoilCallback(
     ({ set, snapshot: { getLoadable: get } }) =>
