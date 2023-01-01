@@ -36,5 +36,5 @@ export const NUM_FOUNDATION_STACKS = Object.keys(Suit).length;
 
 export interface CardDragInfo {
   card: Card;
-  stack: Stack;
+  sourceStack: Stack;
 }

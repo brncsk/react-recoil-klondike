@@ -26,10 +26,10 @@ export function Stack({ stack, onClick }: StackProps) {
     accept: "card",
 
     canDrop(item: CardDragInfo) {
-      return canMove(item.stack, stack);
+      return canMove(item.sourceStack, stack);
     },
 
-    async drop({ stack: sourceStack }: CardDragInfo) {
+    async drop({ sourceStack }: CardDragInfo) {
       if (canMove(sourceStack, stack)) {
         moveCard(sourceStack, stack);
       }
