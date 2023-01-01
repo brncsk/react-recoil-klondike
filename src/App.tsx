@@ -1,7 +1,9 @@
 import { useEffect } from "react";
-import { Board } from "./components/Board";
 
 import { useNewGame } from "./hooks";
+
+import { Board } from "./components/Board";
+import { DragPreview } from "./components/DragPreview";
 
 function App() {
   const newGame = useNewGame();
@@ -14,6 +16,7 @@ function App() {
     <>
       <button onClick={newGame}>Deal New Game</button>
       <Board />
+      <DragPreview />
     </>
   );
 }

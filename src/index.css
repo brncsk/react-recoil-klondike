@@ -73,13 +73,19 @@ button {
   display: grid;
   filter: drop-shadow(0 0 0.5em #00000077);
   grid-auto-rows: calc(var(--card-height) / 500);
-  transition: all 0.2s ease-in-out;
+  transition: filter 0.2s ease-in-out;
   cursor: pointer;
+  will-change: transform, filter;
 }
 
 .stack.fanned-out {
   grid-auto-rows: calc(var(--card-height) / 5);
   gap: 0.25rem;
+}
+
+.stack.drag-preview {
+  filter: drop-shadow(0 0 0.5em #00000077);
+  background: transparent;
 }
 
 .stack:hover {

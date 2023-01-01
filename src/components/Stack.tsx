@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { useDrop } from "react-dnd";
+import { useDragDropManager, useDrop } from "react-dnd";
 
 import { CardDragInfo, Stack as StackId } from "../model";
 import { stackCardsState, stackNumFaceUpCardsState } from "../state";
@@ -16,11 +17,17 @@ interface StackProps {
 export function Stack({ stack, onClick }: StackProps) {
   const cards = useRecoilValue(stackCardsState(stack));
   const numFaceUp = useRecoilValue(stackNumFaceUpCardsState(stack));
+
+  const monitor = useDragDropManager().getMonitor();
   const isFannedOut = stack.startsWith("tableau");
 
   const autoMove = useAutoMove();
   const moveCard = useMoveCard();
   const canMove = useCanMoveBetweenStacks();
+
+  const [lastVisibleCardIndex, setLastVisibleCardIndex] = useState<
+    number | null
+  >(null);
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept:
@@ -41,6 +48,23 @@ export function Stack({ stack, onClick }: StackProps) {
       };
     },
   });
+
+  // Hide cards that are being dragged
+  useEffect(
+    () =>
+      monitor.subscribeToStateChange(() => {
+        if (monitor.isDragging()) {
+          const { sourceStack, card } = monitor.getItem() as CardDragInfo;
+          if (sourceStack === stack) {
+            setLastVisibleCardIndex(cards.indexOf(card) - 1);
+          }
+        } else {
+          setLastVisibleCardIndex(null);
+        }
+      }),
+
+    [monitor, stack, cards]
+  );
 
   const style: React.CSSProperties = {
     gridColumn: getStackGridColumn(stack),
@@ -74,6 +98,9 @@ export function Stack({ stack, onClick }: StackProps) {
             card={card}
             faceUp={index >= cards.length - numFaceUp}
             topmost={topmost}
+            visible={
+              lastVisibleCardIndex === null || index <= lastVisibleCardIndex
+            }
             onDoubleClick={topmost ? () => autoMove(stack) : undefined}
           />
         );

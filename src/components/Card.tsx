@@ -8,6 +8,7 @@ import { getCardColor, getCardRank, getCardSuit } from "../util";
 interface CardProps {
   card: CardType;
   stack?: Stack;
+  visible?: boolean;
   faceUp?: boolean;
   topmost?: boolean;
   onDoubleClick?: () => void;
@@ -16,6 +17,7 @@ interface CardProps {
 export function Card({
   card,
   stack,
+  visible = true,
   faceUp = false,
   topmost = false,
   onDoubleClick,
@@ -53,7 +55,7 @@ export function Card({
       // Only set the drag ref if we have a stack (e.g. not in the preview)
       ref={stack ? drag : undefined}
       className={`card ${faceUp ? "face-up" : "face-down"}`}
-      style={{ color, opacity: isDragging ? 0 : 1 }}
+      style={{ color, opacity: visible && !isDragging ? 1 : 0 }}
       onDoubleClick={onDoubleClick}
     >
       <div className="corner top-left">{indices}</div>
