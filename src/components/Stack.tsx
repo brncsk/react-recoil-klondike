@@ -1,10 +1,10 @@
 import { useRecoilValue } from "recoil";
 import { useDrop } from "react-dnd";
 
-import { CardDragInfo, Stack as StackId } from "./model";
-import { stackCardsState, stackNumFaceUpCardsState } from "./state";
-import { getStackGridColumn, getStackType } from "./util";
-import { useAutoMove, useCanMoveBetweenStacks, useMoveCard } from "./hooks";
+import { CardDragInfo, Stack as StackId } from "../model";
+import { stackCardsState, stackNumFaceUpCardsState } from "../state";
+import { getStackGridColumn, getStackType } from "../util";
+import { useAutoMove, useCanMoveBetweenStacks, useMoveCard } from "../hooks";
 
 import { Card } from "./Card";
 

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDealFromDeck, useNewGame } from "./hooks";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "./model";
 
-import { Stack } from "./Stack";
+import { Stack } from "./components/Stack";
 
 function App() {
   const newGame = useNewGame();

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 
-import { Card as CardType, CardDragInfo, Stack } from "./model";
-import { getCardColor, getCardRank, getCardSuit } from "./util";
+import { Card as CardType, CardDragInfo, Stack } from "../model";
+import { getCardColor, getCardRank, getCardSuit } from "../util";
 
 interface CardProps {
   card: CardType;
