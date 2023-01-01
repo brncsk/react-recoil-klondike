@@ -7,6 +7,8 @@
 
   --card-fanout-gap-face-down: calc(var(--card-height) / 10);
   --card-fanout-gap-face-up: calc(var(--card-height) / 5);
+
+  --color-stack-hover: #000000;
 }
 
 * {

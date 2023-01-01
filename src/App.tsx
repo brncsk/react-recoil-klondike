@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 import "./App.css";
 
@@ -16,7 +18,7 @@ function App() {
   }, [newGame]);
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <button onClick={newGame}>Deal New Game</button>
       <div
         className="board"
@@ -48,7 +50,7 @@ function App() {
             ))}
         </div>
       </div>
-    </>
+    </DndProvider>
   );
 }
 

@@ -1,10 +1,12 @@
 import { useRecoilValue } from "recoil";
-import { Stack as StackId } from "./model";
+import { useDrop } from "react-dnd";
+
+import { CardDragInfo, Stack as StackId } from "./model";
 import { stackCardsState, stackNumFaceUpCardsState } from "./state";
 import { getStackGridColumn } from "./util";
+import { useAutoMove, useCanMoveBetweenStacks, useMoveCard } from "./hooks";
 
 import { Card } from "./Card";
-import { useAutoMove } from "./hooks";
 
 interface StackProps {
   stack: StackId;
@@ -17,6 +19,24 @@ export function Stack({ stack, onClick }: StackProps) {
   const isFannedOut = stack.startsWith("tableau");
 
   const autoMove = useAutoMove();
+  const moveCard = useMoveCard();
+  const canMove = useCanMoveBetweenStacks();
+
+  const [{ isOver }, drop] = useDrop({
+    accept: "card",
+
+    async drop({ stack: sourceStack }: CardDragInfo) {
+      if (await canMove(sourceStack, stack)) {
+        moveCard(sourceStack, stack);
+      }
+    },
+
+    collect(monitor) {
+      return {
+        isOver: !!monitor.isOver(),
+      };
+    },
+  });
 
   const style: React.CSSProperties = {
     gridColumn: getStackGridColumn(stack),
@@ -29,8 +49,13 @@ export function Stack({ stack, onClick }: StackProps) {
     ].join(" ");
   }
 
+  if (isOver) {
+    style.backgroundColor = "var(--color-stack-hover)";
+  }
+
   return (
     <div
+      ref={drop}
       className={`stack ${stack} ${isFannedOut ? "fanned-out" : ""}`}
       style={style}
       onClick={onClick}
@@ -38,6 +63,7 @@ export function Stack({ stack, onClick }: StackProps) {
       {cards.map((card, index) => (
         <Card
           key={index}
+          stack={stack}
           card={card}
           faceUp={index >= cards.length - numFaceUp}
           onDoubleClick={() => {

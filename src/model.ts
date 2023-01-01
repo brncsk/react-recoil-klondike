@@ -33,3 +33,8 @@ export type Stack =
 
 export const NUM_TABLEAU_STACKS = 7;
 export const NUM_FOUNDATION_STACKS = Object.keys(Suit).length;
+
+export interface CardDragInfo {
+  card: Card;
+  stack: Stack;
+}
