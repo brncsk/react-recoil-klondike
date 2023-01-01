@@ -230,7 +230,7 @@ export function useAutoMove() {
   return useRecoilCallback(
     () =>
       (stack: Stack, foundationOnly = false) => {
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
           if (isValidMove(stack, foundationStack(i))) {
             moveCard(stack, foundationStack(i));
             return;
