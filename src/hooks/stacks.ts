@@ -1,10 +1,16 @@
 import React, { useCallback, useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
-import { CanDrop, CardDragInfo, Stack } from "../types";
+import { CanDrop, Rank, Stack } from "../types";
 import { useStackDropListeners } from "./drag-and-drop";
-import { debounce, getStackType } from "../util";
-import { useRecoilState } from "recoil";
+import {
+  debounce,
+  getCardColor,
+  getCardRank,
+  getCardRankIndex,
+  getStackType,
+} from "../util";
 import { stackPositionState } from "../state/stacks";
 
 const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
@@ -73,3 +79,36 @@ function useDeckPositionObserver({ stack }: { stack: Stack }) {
 
   return ref;
 }
+
+export const canDropOntoFoundation: CanDrop = (dragInfo, topmostCard) => {
+  if (dragInfo.type === "multiple") {
+    // Multiple cards can't be dropped on a foundation
+    return false;
+  }
+
+  if (!topmostCard) {
+    // Empty foundation, only aces can be dropped
+    return getCardRank(dragInfo.card) === Rank.Ace;
+  } else {
+    // Non-empty stack, only cards of the same suit
+    // and one rank higher can be dropped
+    return (
+      getCardRankIndex(dragInfo.card) === getCardRankIndex(topmostCard) + 1 &&
+      getCardColor(dragInfo.card) === getCardColor(topmostCard)
+    );
+  }
+};
+
+export const canDropOntoTableau: CanDrop = (dragInfo, topmostCard) => {
+  if (!topmostCard) {
+    // Empty stack, only kings can be dropped
+    return getCardRank(dragInfo.card) === Rank.King;
+  } else {
+    // Non-empty stack, only cards of the opposite color
+    // and one rank lower can be dropped
+    return (
+      getCardRankIndex(dragInfo.card) === getCardRankIndex(topmostCard) - 1 &&
+      getCardColor(dragInfo.card) !== getCardColor(topmostCard)
+    );
+  }
+};
