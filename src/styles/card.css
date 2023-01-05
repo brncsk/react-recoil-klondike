@@ -21,22 +21,23 @@
   height: var(--card-height);
 
   cursor: pointer;
-}
 
-.card.face {
   background: lightgray;
   border: 1px solid black;
   border-radius: var(--card-border-radius);
 
   color: var(--card-color-black);
   font-weight: bold;
+  cursor: grab;
 
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease;
   transform-style: preserve-3d;
 }
 
-.card.hidden {
-  opacity: 0;
+.card.dragged {
+  transition: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 .card.red {
@@ -45,6 +46,7 @@
 
 .card.face-down {
   transform: rotateY(180deg);
+  cursor: pointer;
 }
 
 .card.face-up * {

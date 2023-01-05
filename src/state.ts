@@ -160,6 +160,17 @@ export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
       (card) =>
       ({ get }) => {
         const staticPosition = get(cardStaticPositionState(card));
+        const isDragged = get(cardDraggedState(card));
+
+        if (isDragged) {
+          const dragOffset = get(dragOffsetState);
+          const dragInitialOffset = get(dragInitialOffsetState);
+
+          return {
+            x: staticPosition.x + dragOffset.x - dragInitialOffset.x,
+            y: staticPosition.y + dragOffset.y - dragInitialOffset.y,
+          };
+        }
 
         return staticPosition;
       },

@@ -26,6 +26,7 @@ export function Card({ card }: CardProps) {
 
   const position = useRecoilValue(cardPositionState(card));
   const zIndex = useRecoilValue(cardZIndexState(card));
+  const dragged = useRecoilValue(cardDraggedState(card));
 
   return (
     <div
@@ -36,7 +37,7 @@ export function Card({ card }: CardProps) {
       })}
       style={getCardStyles({ position, faceUp, dragged, zIndex })}
       {...useCardEventProps(card)}
-      }
+      draggable="false"
     >
       <CardFace card={card} />
     </div>
