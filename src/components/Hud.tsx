@@ -1,4 +1,4 @@
-import { useNewGame } from "../hooks";
+import { useNewGame } from "../hooks/game";
 
 export function Hud() {
   const newGame = useNewGame();

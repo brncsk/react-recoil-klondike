@@ -1,18 +1,18 @@
 import { startTransition, useCallback, useState } from "react";
 import { CallbackInterface, useRecoilCallback } from "recoil";
 
-import { Card, CardDragInfo, Stack } from "./types";
-import { generateDeck, emptyImage } from "./util";
-import { useIsValidMove, useMoveCard } from "./hooks";
+import { Card, CardDragInfo, Stack } from "../types";
+import { generateDeck, emptyImage } from "../util";
+import { useIsValidMove, useMoveCard } from "./game";
 
-import { stackCardsState } from "./state/stacks";
-import { cardStackIndexState } from "./state/cards";
+import { stackCardsState } from "../state/stacks";
+import { cardStackIndexState } from "../state/cards";
 import {
   dragInfoState,
   dragInitialOffsetState,
   dragOffsetState,
   cardDraggedState,
-} from "./state/drag-and-drop";
+} from "../state/drag-and-drop";
 
 export function useBoardDragListeners() {
   const [isDragging, setIsDragging] = useState(false);

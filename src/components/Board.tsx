@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
-import { useBoardDragListeners } from "../drag-and-drop";
+import { useBoardDragListeners } from "../hooks/drag-and-drop";
 import { generateDeck } from "../util";
 
 import { Card } from "./Card";

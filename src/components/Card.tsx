@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 import { Card as CardType, Stack } from "../types";
 import { getCardColor, getCardStyles } from "../util";
-import { useCardEventProps } from "../hooks";
+import { useCardEventProps } from "../hooks/cards";
 
 import {
   cardIsFaceUpState,

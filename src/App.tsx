@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useNewGame } from "./hooks";
+import { useNewGame } from "./hooks/game";
 
 import { Board } from "./components/Board";
 import { Hud } from "./components/Hud";

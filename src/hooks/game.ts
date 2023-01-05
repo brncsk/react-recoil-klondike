@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
-import { useRecoilCallback, useRecoilValue } from "recoil";
+import { useCallback } from "react";
+import { useRecoilCallback } from "recoil";
 
-import { Card, Stack } from "./types";
+import { Card, Stack } from "../types";
 
-import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "./const";
+import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 
 import {
   generateDeck,
@@ -16,16 +16,14 @@ import {
   tableauStack,
   foundationStack,
   getCardColor,
-} from "./util";
+} from "../util";
 
 import {
   cardStackState,
   tableauNumFaceUpCardsState,
   topmostCardState,
-  cardIsFaceUpState,
-  cardIsTopmostState,
-} from "./state/cards";
-import { stackCardsState } from "./state/stacks";
+} from "../state/cards";
+import { stackCardsState } from "../state/stacks";
 
 /** Returns a function that deals a new game. */
 export function useNewGame() {
@@ -275,21 +273,4 @@ export function useAutoMove() {
     },
     [isValidMove, moveCard]
   );
-}
-
-export function useCardEventProps(
-  card: Card
-): React.HTMLAttributes<HTMLDivElement> {
-  const autoMove = useAutoMove();
-  const dealFromDeck = useDealFromDeck();
-
-  const stack = useRecoilValue(cardStackState(card));
-  const stackType = getStackType(stack);
-  const faceUp = useRecoilValue(cardIsFaceUpState(card));
-  const topmost = useRecoilValue(cardIsTopmostState(card));
-
-  return {
-    onClick: topmost && stackType === "deck" ? () => dealFromDeck() : undefined,
-    onDoubleClick: topmost && faceUp ? () => autoMove(stack) : undefined,
-  };
 }
