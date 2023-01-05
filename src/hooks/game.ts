@@ -2,7 +2,11 @@ import { useContext } from "react";
 import { useRecoilCallback } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
-import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
+import {
+  NUM_CARDS_PER_SUIT,
+  NUM_FOUNDATION_STACKS,
+  NUM_TABLEAU_STACKS,
+} from "../const";
 
 import {
   cardStackState,
@@ -211,5 +215,24 @@ export function useAutoMove() {
         }
       },
     [moveCard]
+  );
+}
+
+/** Returns a function that determines if the game is won. */
+export function useIsGameWon() {
+  return useRecoilCallback(
+    ({ snapshot: { getLoadable: get } }) =>
+      () => {
+        for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
+          const cards = get(stackCardsState(foundationStack(i))).valueOrThrow();
+
+          if (cards.length !== NUM_CARDS_PER_SUIT) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+    []
   );
 }
