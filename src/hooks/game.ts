@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { useRecoilCallback } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
@@ -18,9 +19,12 @@ import {
   getStackType,
   getStackNumber,
 } from "../util/stacks";
+import { HistoryContext } from "../util/history";
 
 /** Returns a function that deals a new game. */
 export function useNewGame() {
+  const { reset: resetHistory } = useContext(HistoryContext);
+
   return useRecoilCallback(
     ({ set, reset }) =>
       () => {
@@ -57,6 +61,9 @@ export function useNewGame() {
         for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
           reset(tableauNumFaceUpCardsState(i));
         }
+
+        // Reset the history
+        resetHistory();
       },
     []
   );
