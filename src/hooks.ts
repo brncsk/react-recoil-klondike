@@ -6,15 +6,6 @@ import { Card, Stack } from "./types";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "./const";
 
 import {
-  cardIsFaceUpState,
-  cardIsTopmostState,
-  cardStackState,
-  stackCardsState,
-  tableauNumFaceUpCardsState,
-  topmostCardState,
-} from "./state";
-
-import {
   generateDeck,
   shuffleDeck,
   getStackType,
@@ -26,6 +17,15 @@ import {
   foundationStack,
   getCardColor,
 } from "./util";
+
+import {
+  cardStackState,
+  tableauNumFaceUpCardsState,
+  topmostCardState,
+  cardIsFaceUpState,
+  cardIsTopmostState,
+} from "./state/cards";
+import { stackCardsState } from "./state/stacks";
 
 /** Returns a function that deals a new game. */
 export function useNewGame() {

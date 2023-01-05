@@ -3,16 +3,17 @@ import clsx from "clsx";
 
 import { Card as CardType, Stack } from "../types";
 import { getCardColor, getCardStyles } from "../util";
+import { useCardEventProps } from "../hooks";
+
 import {
-  cardDraggedState,
   cardIsFaceUpState,
   cardPositionState,
   cardStackState,
   cardZIndexState,
-} from "../state";
+} from "../state/cards";
+import { cardDraggedState } from "../state/drag-and-drop";
 
 import { CardFace } from "./CardFace";
-import { useCardEventProps } from "../hooks";
 
 export interface CardProps {
   card: CardType;

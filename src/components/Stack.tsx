@@ -3,10 +3,10 @@ import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
 import { Stack as StackId } from "../types";
-import { stackPositionState } from "../state";
 import { debounce, getStackGridColumn, getStackType } from "../util";
 import { useStackDropListeners } from "../drag-and-drop";
 import { useDealFromDeck } from "../hooks";
+import { stackPositionState } from "../state/stacks";
 
 const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
 

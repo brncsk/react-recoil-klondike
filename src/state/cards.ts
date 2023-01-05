@@ -1,13 +1,14 @@
-import { atom, atomFamily, selectorFamily } from "recoil";
+import { atomFamily, selectorFamily } from "recoil";
 
-import { Card, CardDragInfo, Stack } from "./types";
-import { getTableauFanoutOffset, getStackNumber, getStackType } from "./util";
+import { Stack, Card } from "../types";
+import { getStackType, getStackNumber, getTableauFanoutOffset } from "../util";
 
-/** Stores the cards in a stack. */
-export const stackCardsState = atomFamily<Card[], Stack>({
-  key: "stack",
-  default: [],
-});
+import {
+  cardDraggedState,
+  dragOffsetState,
+  dragInitialOffsetState,
+} from "./drag-and-drop";
+import { stackCardsState, stackPositionState } from "./stacks";
 
 export const cardStackState = atomFamily<Stack, Card>({
   key: "card-stack",
@@ -92,33 +93,6 @@ export const cardStackIndexState = selectorFamily<number, Card>({
 
       return cards.findIndex((c) => c === card);
     },
-});
-
-export const stackPositionState = atomFamily<{ x: number; y: number }, Stack>({
-  key: "stack-position",
-  default: { x: 0, y: 0 },
-});
-
-/** Returns details about the current drag operation. */
-export const dragInfoState = atom<CardDragInfo | null>({
-  key: "drag-info",
-  default: null,
-});
-
-/** Returns whether a card is being dragged. */
-export const cardDraggedState = atomFamily<boolean, Card>({
-  key: "card-dragged",
-  default: false,
-});
-
-export const dragInitialOffsetState = atom<{ x: number; y: number }>({
-  key: "drag-initial-offset",
-  default: { x: 0, y: 0 },
-});
-
-export const dragOffsetState = atom<{ x: number; y: number }>({
-  key: "drag-offset",
-  default: { x: 0, y: 0 },
 });
 
 export const cardStaticPositionState = selectorFamily<
