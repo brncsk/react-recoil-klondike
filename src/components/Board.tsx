@@ -5,6 +5,8 @@ import { generateDeck } from "../util";
 
 import { Card } from "./Card";
 import { Stack } from "./Stack";
+import { Deck } from "./stacks/Deck";
+import { Waste } from "./stacks/Waste";
 
 export function Board() {
   const [{ isDragging }, handlers] = useBoardDragListeners();
@@ -17,8 +19,8 @@ export function Board() {
       {...handlers}
     >
       <div className="section foundation">
-        <Stack stack="deck" />
-        <Stack stack="waste" />
+        <Deck />
+        <Waste />
 
         {Array(NUM_FOUNDATION_STACKS)
           .fill(0)
