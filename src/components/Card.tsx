@@ -10,14 +10,13 @@ import {
   cardStackState,
   cardZIndexState,
 } from "../state";
+
 import { CardFace } from "./CardFace";
+import { useCardEventProps } from "../hooks";
 
 export interface CardProps {
   card: CardType;
   stack?: Stack;
-  visible?: boolean;
-  faceUp?: boolean;
-  topmost?: boolean;
 }
 
 export function Card({ card }: CardProps) {
@@ -36,7 +35,7 @@ export function Card({ card }: CardProps) {
         dragged,
       })}
       style={getCardStyles({ position, faceUp, dragged, zIndex })}
-          : undefined
+      {...useCardEventProps(card)}
       }
     >
       <CardFace card={card} />

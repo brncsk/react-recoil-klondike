@@ -1,15 +1,13 @@
-import { useCallback } from "react";
-import { useRecoilCallback } from "recoil";
+import React, { useCallback } from "react";
+import { useRecoilCallback, useRecoilValue } from "recoil";
 
 import { Card, Stack } from "./types";
 
-import {
-  NUM_FOUNDATION_STACKS,
-  NUM_TABLEAU_STACKS,
-  NUM_CARDS_PER_SUIT,
-} from "./const";
+import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "./const";
 
 import {
+  cardIsFaceUpState,
+  cardIsTopmostState,
   cardStackState,
   stackCardsState,
   tableauNumFaceUpCardsState,
@@ -277,4 +275,21 @@ export function useAutoMove() {
     },
     [isValidMove, moveCard]
   );
+}
+
+export function useCardEventProps(
+  card: Card
+): React.HTMLAttributes<HTMLDivElement> {
+  const autoMove = useAutoMove();
+  const dealFromDeck = useDealFromDeck();
+
+  const stack = useRecoilValue(cardStackState(card));
+  const stackType = getStackType(stack);
+  const faceUp = useRecoilValue(cardIsFaceUpState(card));
+  const topmost = useRecoilValue(cardIsTopmostState(card));
+
+  return {
+    onClick: topmost && stackType === "deck" ? () => dealFromDeck() : undefined,
+    onDoubleClick: topmost && faceUp ? () => autoMove(stack) : undefined,
+  };
 }
