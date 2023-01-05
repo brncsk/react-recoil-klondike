@@ -4,8 +4,9 @@ import { useBoardDragListeners } from "../hooks/drag-and-drop";
 import { generateDeck } from "../util";
 
 import { Card } from "./Card";
-import { Stack } from "./Stack";
 import { Deck } from "./stacks/Deck";
+import { Foundation } from "./stacks/Foundation";
+import { Tableau } from "./stacks/Tableau";
 import { Waste } from "./stacks/Waste";
 
 export function Board() {
@@ -25,20 +26,14 @@ export function Board() {
         {Array(NUM_FOUNDATION_STACKS)
           .fill(0)
           .map((_, index) => (
-            <Stack
-              key={`foundation-${index + 1}`}
-              stack={`foundation-${index + 1}`}
-            />
+            <Foundation key={`foundation-${index + 1}`} n={index + 1} />
           ))}
       </div>
       <div className="section tableau">
         {Array(NUM_TABLEAU_STACKS)
           .fill(0)
           .map((_, index) => (
-            <Stack
-              key={`tableau-${index + 1}`}
-              stack={`tableau-${index + 1}`}
-            />
+            <Tableau key={`tableau-${index + 1}`} n={index + 1} />
           ))}
       </div>
       {generateDeck().map((card) => (
