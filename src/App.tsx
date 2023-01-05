@@ -4,7 +4,6 @@ import { useNewGame } from "./hooks";
 
 import { Board } from "./components/Board";
 import { Hud } from "./components/Hud";
-import { DragPreview } from "./components/DragPreview";
 
 function App() {
   const newGame = useNewGame();
@@ -14,7 +13,6 @@ function App() {
     <>
       <Board />
       <Hud />
-      <DragPreview />
     </>
   );
 }

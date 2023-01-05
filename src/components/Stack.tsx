@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { useDragDropManager, useDrop } from "react-dnd";
+import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
 import { CardDragInfo, Stack as StackId } from "../types";
