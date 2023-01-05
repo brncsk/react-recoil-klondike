@@ -1,18 +1,20 @@
+import clsx from "clsx";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
+import { useBoardDragListeners } from "../drag-and-drop";
 import { generateDeck } from "../util";
 
 import { Card } from "./Card";
 import { Stack } from "./Stack";
 
 export function Board() {
-  const dealFromDeck = useDealFromDeck();
-
+  const [{ isDragging }, handlers] = useBoardDragListeners();
   return (
     <div
-      className="board"
+      className={clsx("board", { dragging: isDragging })}
       style={
         { "--num-tableau-stacks": NUM_TABLEAU_STACKS } as React.CSSProperties
       }
+      {...handlers}
     >
       <div className="section foundation">
         <Stack stack="deck" />

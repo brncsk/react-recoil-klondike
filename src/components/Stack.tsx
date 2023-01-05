@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Stack as StackId } from "../types";
 import { stackPositionState } from "../state";
 import { debounce, getStackGridColumn, getStackType } from "../util";
+import { useStackDropListeners } from "../drag-and-drop";
 import { useDealFromDeck } from "../hooks";
 
 const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
@@ -45,53 +46,16 @@ export function Stack({ stack }: { stack: StackId }) {
     return () => resizeObserver.disconnect();
   }, [updatePosition]);
 
-  const [lastVisibleCardIndex, setLastVisibleCardIndex] = useState<
-    number | null
-  >(null);
-
-  const [{ isOver, canDrop }, drop] = useDrop({
-    accept:
-      getStackType(stack) === "tableau" ? ["single", "multiple"] : "single",
-
-    canDrop(item: CardDragInfo) {
-      return isValidMove(item.sourceStack, stack, item.card);
-    },
-
-    async drop({ sourceStack, card }: CardDragInfo) {
-      moveCard(sourceStack, stack, card);
-    },
-
-    collect(monitor) {
-      return {
-        isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
-      };
-    },
-  });
-
-  // Hide cards that are being dragged
-  useEffect(
-    () =>
-      monitor.subscribeToStateChange(() => {
-        if (monitor.isDragging()) {
-          const { sourceStack, card } = monitor.getItem() as CardDragInfo;
-          if (sourceStack === stack) {
-            setLastVisibleCardIndex(cards.indexOf(card) - 1);
-          }
-        } else {
-          setLastVisibleCardIndex(null);
-        }
-      }),
-
-    [monitor, stack, cards]
-  );
+  const [{ isDropTarget }, handlers] = useStackDropListeners({ stack });
 
   return (
     <div
       ref={ref}
       className={clsx("stack", getStackType(stack), stack, {
+        "drop-target": isDropTarget,
       })}
       style={{ gridColumn: getStackGridColumn(stack) }}
+      {...handlers}
       onClick={getStackType(stack) === "deck" ? dealFromDeck : undefined}
     />
   );
