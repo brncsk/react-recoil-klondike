@@ -15,7 +15,6 @@
   z-index: 1;
 
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 
@@ -41,4 +40,9 @@
   font-weight: bold;
   cursor: pointer;
   background: transparent;
+}
+
+.hud button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
