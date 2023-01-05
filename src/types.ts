@@ -32,7 +32,9 @@ export type Stack =
   | `tableau-${number}`;
 
 export interface CardDragInfo {
-  type: "single" | "multiple";
+  /** The bottommost card being dragged. */
   card: Card;
+
+  /** The stack that the card(s) are being dragged from. */
   sourceStack: Stack;
 }
