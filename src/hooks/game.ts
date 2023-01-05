@@ -1,21 +1,15 @@
-import { useCallback } from "react";
 import { useRecoilCallback } from "recoil";
 
-import { Card, Stack } from "../types";
-
+import { Card, CardDragInfo, Stack } from "../types";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 
 import {
   generateDeck,
   shuffleDeck,
   getStackType,
-  getCardRank,
-  getCardRankIndex,
-  getCardSuit,
   getStackNumber,
   tableauStack,
   foundationStack,
-  getCardColor,
 } from "../util";
 
 import {
@@ -24,6 +18,8 @@ import {
   topmostCardState,
 } from "../state/cards";
 import { stackCardsState } from "../state/stacks";
+
+import { canDropOntoFoundation, canDropOntoTableau } from "./stacks";
 
 /** Returns a function that deals a new game. */
 export function useNewGame() {
@@ -63,88 +59,6 @@ export function useNewGame() {
         for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
           reset(tableauNumFaceUpCardsState(i));
         }
-      },
-    []
-  );
-}
-
-/**
- * Returns a function that determines whether a move is valid from one stack
- * to another, optionally specifying the bottommost card to move from the
- * source stack (handy for moving multiple cards at once by dragging between
- * tableaus).
- *
- * @param sourceStack The stack to move the card from
- * @param targetStack The stack to move the card to
- * @param bottommostCardFromSource Specifies the bottommost card to move from
- *   the source stack. All cards above this card will be moved. If not
- *   specified, the topmost card in the source stack is used.
- */
-export function useIsValidMove() {
-  return useRecoilCallback(
-    ({ snapshot: { getLoadable: get } }) =>
-      (
-        sourceStack: Stack,
-        targetStack: Stack,
-        bottommostCardFromSource: Card | null = get(
-          topmostCardState(sourceStack)
-        ).valueOrThrow() ?? null
-      ) => {
-        const sourceStackType = getStackType(sourceStack);
-        const targetStackType = getStackType(targetStack);
-
-        const topmostCardOnTarget = get(
-          topmostCardState(targetStack)
-        ).valueOrThrow();
-
-        // Moving from empty stacks is not allowed
-        if (bottommostCardFromSource === null) {
-          return false;
-        }
-
-        // Moving to empty stacks (either foundations or tableaus)
-        if (topmostCardOnTarget === null) {
-          return (
-            // Aces can be moved to empty foundations
-            (getCardRank(bottommostCardFromSource) === "A" &&
-              targetStackType === "foundation") ||
-            // Kings can be moved to empty tableaus
-            (getCardRank(bottommostCardFromSource) === "K" &&
-              targetStackType === "tableau")
-          );
-        }
-
-        // Cards can be moved from the waste, a foundation, or another tableau
-        // to a tableau if the rank is one less and the color is different
-        if (
-          (sourceStackType === "tableau" ||
-            sourceStackType === "waste" ||
-            sourceStackType === "foundation") &&
-          targetStackType === "tableau"
-        ) {
-          return (
-            getCardRankIndex(bottommostCardFromSource) ===
-              getCardRankIndex(topmostCardOnTarget) - 1 &&
-            getCardColor(bottommostCardFromSource) !==
-              getCardColor(topmostCardOnTarget)
-          );
-        }
-
-        // Cards can be moved from a tableau or waste to a foundation if the
-        // rank is one more and the suit is the same
-        if (
-          (sourceStackType === "tableau" || sourceStackType === "waste") &&
-          targetStackType === "foundation"
-        ) {
-          return (
-            getCardRankIndex(bottommostCardFromSource) ===
-              getCardRankIndex(topmostCardOnTarget) + 1 &&
-            getCardSuit(bottommostCardFromSource) ===
-              getCardSuit(topmostCardOnTarget)
-          );
-        }
-
-        return false;
       },
     []
   );
@@ -250,27 +164,47 @@ export function useDealFromDeck() {
  * @param foundationOnly If true, only move to foundations, not tableaus.
  */
 export function useAutoMove() {
-  const isValidMove = useIsValidMove();
   const moveCard = useMoveCard();
 
-  return useCallback(
-    (stack: Stack, foundationOnly = false) => {
-      for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
-        if (isValidMove(stack, foundationStack(i))) {
-          moveCard(stack, foundationStack(i));
+  return useRecoilCallback(
+    ({ snapshot: { getLoadable: get } }) =>
+      (stack: Stack, foundationOnly = false) => {
+        const card = get(topmostCardState(stack)).valueOrThrow();
+
+        if (!card) {
           return;
         }
-      }
 
-      if (!foundationOnly) {
-        for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-          if (isValidMove(stack, tableauStack(i))) {
-            moveCard(stack, tableauStack(i));
+        const dragInfo: CardDragInfo = {
+          type: "single",
+          sourceStack: stack,
+          card,
+        };
+
+        for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
+          const topmostCardOnTarget = get(
+            topmostCardState(foundationStack(i))
+          ).valueOrThrow();
+
+          if (canDropOntoFoundation(dragInfo, topmostCardOnTarget)) {
+            moveCard(stack, foundationStack(i));
             return;
           }
         }
-      }
-    },
-    [isValidMove, moveCard]
+
+        if (!foundationOnly) {
+          for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
+            const topmostCardOnTarget = get(
+              topmostCardState(tableauStack(i))
+            ).valueOrThrow();
+
+            if (canDropOntoTableau(dragInfo, topmostCardOnTarget)) {
+              moveCard(stack, tableauStack(i));
+              return;
+            }
+          }
+        }
+      },
+    [moveCard]
   );
 }
