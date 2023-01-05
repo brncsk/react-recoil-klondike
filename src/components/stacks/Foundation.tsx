@@ -5,7 +5,7 @@ export function Foundation({ n }: { n: number }) {
     <div
       {...useStack({
         stack: `foundation-${n}`,
-        gridColumn: 1,
+        gridColumn: 3 + n,
         canDrop: canDropOntoFoundation,
       })}
     />

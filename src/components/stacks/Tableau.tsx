@@ -5,7 +5,7 @@ export function Tableau({ n }: { n: number }) {
     <div
       {...useStack({
         stack: `tableau-${n}`,
-        gridColumn: 1,
+        gridColumn: n,
         canDrop: canDropOntoTableau,
       })}
     />

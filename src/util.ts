@@ -44,18 +44,6 @@ export function getStackNumber(stack: Stack): number {
   }
 }
 
-export function getStackGridColumn(stack: Stack): number {
-  if (stack === "deck") {
-    return 1;
-  } else if (stack === "waste") {
-    return 2;
-  } else if (stack.startsWith("foundation-")) {
-    return 3 + getStackNumber(stack);
-  } else {
-    return getStackNumber(stack);
-  }
-}
-
 export function getCardColor(card: Card): "red" | "black" {
   const suit = card.slice(-1);
   return suit === Suit.Hearts || suit === Suit.Diamonds ? "red" : "black";
