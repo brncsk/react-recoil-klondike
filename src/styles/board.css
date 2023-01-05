@@ -12,7 +12,11 @@
   padding: 4em;
   gap: 4em;
 
-  background: var(--board-background) repeat;
+  background-image: radial-gradient(
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.25) 100%
+    ),
+    var(--board-background);
 }
 
 .board.dragging:active * {
