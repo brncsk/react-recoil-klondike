@@ -5,7 +5,11 @@ import { CanDrop, Card, CardDragInfo, Stack } from "../types";
 import { generateDeck, emptyImage } from "../util";
 
 import { stackCardsState } from "../state/stacks";
-import { cardStackIndexState, topmostCardState } from "../state/cards";
+import {
+  cardIsTopmostState,
+  cardStackIndexState,
+  topmostCardState,
+} from "../state/cards";
 import {
   dragInfoState,
   dragInitialOffsetState,
@@ -38,7 +42,15 @@ export function useBoardDragListeners() {
       const card = cardElement.dataset.card as Card;
       const stack = cardElement.dataset.stack as Stack;
 
-      iface.set(dragInfoState, { card, sourceStack: stack });
+      const isCardTopmost = iface.snapshot
+        .getLoadable(cardIsTopmostState(card))
+        .valueOrThrow();
+
+      iface.set(dragInfoState, {
+        type: (isCardTopmost ? "single" : "multiple") as CardDragInfo["type"],
+        card,
+        sourceStack: stack,
+      });
     }
   );
 
