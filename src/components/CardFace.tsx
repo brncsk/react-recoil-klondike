@@ -1,4 +1,4 @@
-import { getCardRank, getCardSuit } from "../util";
+import { getCardRank, getCardSuit } from "../util/cards";
 import { CardProps } from "./Card";
 
 export function CardFace({ card }: CardProps) {

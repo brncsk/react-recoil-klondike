@@ -2,7 +2,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "re
 import clsx from "clsx";
 
 import { Card as CardType, Stack } from "../types";
-import { getCardColor, getCardStyles } from "../util";
+import { getCardColor, getCardStyles } from "../util/cards";
 import { useCardEventProps } from "../hooks/cards";
 
 import {

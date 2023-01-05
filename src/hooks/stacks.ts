@@ -4,14 +4,11 @@ import clsx from "clsx";
 
 import { CanDrop, Rank, Stack } from "../types";
 import { useStackDropListeners } from "./drag-and-drop";
-import {
-  debounce,
-  getCardColor,
-  getCardRank,
-  getCardRankIndex,
-  getStackType,
-} from "../util";
 import { stackPositionState } from "../state/stacks";
+
+import { getCardColor, getCardRank, getCardRankIndex } from "../util/cards";
+import { debounce } from "../util/debounce";
+import { getStackType } from "../util/stacks";
 
 const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
 

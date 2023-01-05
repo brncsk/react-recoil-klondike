@@ -2,7 +2,6 @@ import { startTransition, useCallback, useState } from "react";
 import { CallbackInterface, useRecoilCallback } from "recoil";
 
 import { CanDrop, Card, CardDragInfo, Stack } from "../types";
-import { generateDeck, emptyImage } from "../util";
 
 import { stackCardsState } from "../state/stacks";
 import {
@@ -16,6 +15,9 @@ import {
   dragOffsetState,
   cardDraggedState,
 } from "../state/drag-and-drop";
+
+import { generateDeck } from "../util/deck";
+import { emptyImage } from "../util/drag-and-drop";
 
 import { useMoveCard } from "./game";
 

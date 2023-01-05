@@ -4,15 +4,6 @@ import { Card, CardDragInfo, Stack } from "../types";
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 
 import {
-  generateDeck,
-  shuffleDeck,
-  getStackType,
-  getStackNumber,
-  tableauStack,
-  foundationStack,
-} from "../util";
-
-import {
   cardStackState,
   tableauNumFaceUpCardsState,
   topmostCardState,
@@ -20,6 +11,13 @@ import {
 import { stackCardsState } from "../state/stacks";
 
 import { canDropOntoFoundation, canDropOntoTableau } from "./stacks";
+import { shuffleDeck, generateDeck } from "../util/deck";
+import {
+  tableauStack,
+  foundationStack,
+  getStackType,
+  getStackNumber,
+} from "../util/stacks";
 
 /** Returns a function that deals a new game. */
 export function useNewGame() {

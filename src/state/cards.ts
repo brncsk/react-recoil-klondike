@@ -1,7 +1,11 @@
 import { atomFamily, selectorFamily } from "recoil";
 
 import { Stack, Card } from "../types";
-import { getStackType, getStackNumber, getTableauFanoutOffset } from "../util";
+import {
+  getStackType,
+  getStackNumber,
+  getTableauFanoutOffset,
+} from "../util/stacks";
 
 import {
   cardDraggedState,

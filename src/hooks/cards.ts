@@ -1,12 +1,12 @@
 import { useRecoilValue } from "recoil";
 
+import { Card } from "../types";
 import {
   cardStackState,
   cardIsFaceUpState,
   cardIsTopmostState,
 } from "../state/cards";
-import { Card } from "../types";
-import { getStackType } from "../util";
+import { getStackType } from "../util/stacks";
 
 import { useAutoMove, useDealFromDeck } from "./game";
 
