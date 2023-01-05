@@ -94,6 +94,11 @@ export const cardStackIndexState = selectorFamily<number, Card>({
     },
 });
 
+export const stackPositionState = atomFamily<{ x: number; y: number }, Stack>({
+  key: "stack-position",
+  default: { x: 0, y: 0 },
+});
+
 /** Returns details about the current drag operation. */
 export const dragInfoState = atom<CardDragInfo | null>({
   key: "drag-info",

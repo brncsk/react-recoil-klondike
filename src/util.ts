@@ -76,3 +76,56 @@ export function tableauStack(num: number): Stack {
 export function foundationStack(num: number): Stack {
   return `foundation-${num}` as Stack;
 }
+
+export function getTableauFanoutOffset(
+  numCards: number,
+  numFaceUpCards: number,
+  index: number
+): number {
+  const numFaceDownCards = numCards - numFaceUpCards;
+  const isFaceUp = index >= numFaceDownCards;
+
+  if (isFaceUp) {
+    return (
+      TABLEAU_FANOUT_OFFSET_FACE_UP * (index - numFaceDownCards) +
+      TABLEAU_FANOUT_OFFSET_FACE_DOWN * numFaceDownCards
+    );
+  } else {
+    return TABLEAU_FANOUT_OFFSET_FACE_DOWN * index;
+  }
+}
+
+export function getCardStyles({
+  position,
+  faceUp,
+  dragged,
+  zIndex,
+}: {
+  position: { x: number; y: number };
+  faceUp: boolean;
+  dragged: boolean;
+  zIndex: number;
+}): React.CSSProperties {
+  return {
+    transform: [
+      `translate(${position.x}px, ${position.y}px)`,
+      `rotateY(${faceUp ? 0 : 180}deg)`,
+      `${dragged ? "scale(1.05)" : ""}`,
+    ].join(" "),
+    zIndex,
+  };
+}
+
+export let emptyImage = new Image();
+emptyImage.src =
+  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+
+export function debounce(fn: () => void, ms: number): () => void {
+  let timeoutId: number;
+  return () => {
+    clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      fn();
+    }, ms);
+  };
+}

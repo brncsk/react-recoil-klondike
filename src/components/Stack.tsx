@@ -1,66 +1,49 @@
+import { useCallback, useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
+import { Stack as StackId } from "../types";
+import { stackPositionState } from "../state";
+import { debounce, getStackGridColumn, getStackType } from "../util";
 import { useDealFromDeck } from "../hooks";
 
-import { Card } from "./Card";
+const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
 
-interface StackProps {
-  stack: StackId;
-  onClick?: () => void;
-}
+export function Stack({ stack }: { stack: StackId }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dealFromDeck = useDealFromDeck();
 
-function getStackStyle({
-  stack,
-  cards,
-  numFaceUp,
-}: {
-  stack: StackId;
-  cards: CardDragInfo["card"][];
-  numFaceUp: number;
-}) {
-  const style: React.CSSProperties = {
-    gridColumn: getStackGridColumn(stack),
-  };
+  const [stackPosition, setStackPosition] = useRecoilState(
+    stackPositionState(stack)
+  );
 
-  // If the stack is a tableau, we need to set the grid template rows so that
-  // the cards are spaced out correctly.
-  //
-  // We use `repeat()` twice, once for the face-down cards and once for the
-  // face-up cards (face-up cards are spaced out more than face-down cards).
-  //
-  // We use the CSS custom properties `--card-fanout-gap-face-down` and
-  // `--card-fanout-gap-face-up` to control the spacing (see `index.css`).
-  if (getStackType(stack) === "tableau") {
-    const numFaceDown = Math.max(cards.length - numFaceUp, 0);
-    const gridTemplateRows = [];
+  const updatePosition = useCallback(() => {
+    // Set the stack position so that we can use it to calculate the
+    // position of the cards in the stack.
 
-    if (numFaceDown > 0) {
-      gridTemplateRows.push(
-        `repeat(${numFaceDown}, var(--card-fanout-gap-face-down))`
-      );
+    if (!ref.current) {
+      return;
     }
 
-    if (numFaceUp > 0) {
-      gridTemplateRows.push(
-        `repeat(${numFaceUp}, var(--card-fanout-gap-face-up))`
-      );
+    const { x, y } = ref.current.getBoundingClientRect();
+
+    if (stackPosition.x === x && stackPosition.y === y) {
+      return;
     }
 
-    style.gridTemplateRows = gridTemplateRows.join(" ");
-  }
+    setStackPosition({ x, y });
+  }, [stackPosition, setStackPosition]);
 
-  return style;
-}
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      updatePosition();
+    });
 
-export function Stack({ stack, onClick }: StackProps) {
-  const cards = useRecoilValue(stackCardsState(stack));
-  const numFaceUp = useRecoilValue(stackNumFaceUpCardsState(stack));
+    resizeObserver.observe(document.body);
+    debounce(updatePosition, STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS);
 
-  const monitor = useDragDropManager().getMonitor();
-
-  const moveCard = useMoveCard();
-  const isValidMove = useIsValidMove();
+    return () => resizeObserver.disconnect();
+  }, [updatePosition]);
 
   const [lastVisibleCardIndex, setLastVisibleCardIndex] = useState<
     number | null
@@ -105,18 +88,11 @@ export function Stack({ stack, onClick }: StackProps) {
 
   return (
     <div
-      ref={drop}
-      className={clsx(
-        "stack",
-        getStackType(stack),
-        stack,
-        isOver && canDrop && "drop-target"
-      )}
-      style={getStackStyle({
-        stack,
-        cards,
-        numFaceUp,
+      ref={ref}
+      className={clsx("stack", getStackType(stack), stack, {
       })}
+      style={{ gridColumn: getStackGridColumn(stack) }}
       onClick={getStackType(stack) === "deck" ? dealFromDeck : undefined}
+    />
   );
 }
