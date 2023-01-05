@@ -3,7 +3,6 @@ import { CallbackInterface, useRecoilCallback } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
 import { generateDeck, emptyImage } from "../util";
-import { useIsValidMove, useMoveCard } from "./game";
 
 import { stackCardsState } from "../state/stacks";
 import { cardStackIndexState } from "../state/cards";
@@ -13,6 +12,8 @@ import {
   dragOffsetState,
   cardDraggedState,
 } from "../state/drag-and-drop";
+
+import { useMoveCard } from "./game";
 
 export function useBoardDragListeners() {
   const [isDragging, setIsDragging] = useState(false);
@@ -97,10 +98,15 @@ export function useBoardDragListeners() {
   ] as const;
 }
 
-export function useStackDropListeners({ stack }: { stack: Stack }) {
+export function useStackDropListeners({
+  stack,
+  canDrop,
+}: {
+  stack: Stack;
+  canDrop: (dragInfo: CardDragInfo) => boolean;
+}) {
   const [isDropTarget, setIsDropTarget] = useState(false);
 
-  const isValidMove = useIsValidMove();
   const moveCard = useMoveCard();
 
   const handleDragEnter = useRecoilCallback(
@@ -112,9 +118,7 @@ export function useStackDropListeners({ stack }: { stack: Stack }) {
         const dragInfo = get(dragInfoState).valueOrThrow();
 
         if (dragInfo) {
-          setIsDropTarget(
-            isValidMove(dragInfo.sourceStack, stack, dragInfo.card)
-          );
+          setIsDropTarget(canDrop(dragInfo));
         }
       }
   );
@@ -127,7 +131,7 @@ export function useStackDropListeners({ stack }: { stack: Stack }) {
     (iface) => () => {
       const dragInfo = iface.snapshot.getLoadable(dragInfoState).valueOrThrow();
 
-      if (dragInfo && isValidMove(dragInfo.sourceStack, stack, dragInfo.card)) {
+      if (dragInfo && canDrop(dragInfo)) {
         handleDragEdge(iface)(null);
         moveCard(dragInfo.sourceStack, stack, dragInfo.card);
       }
