@@ -14,7 +14,7 @@ export function Board() {
       }
     >
       <div className="section foundation">
-        <Stack stack="deck" onClick={() => dealFromDeck()} />
+        <Stack stack="deck" />
         <Stack stack="waste" />
 
         {Array(NUM_FOUNDATION_STACKS)

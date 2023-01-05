@@ -1,10 +1,7 @@
 import { useRecoilState } from "recoil";
 import clsx from "clsx";
 
-import { CardDragInfo, Stack as StackId } from "../types";
-import { stackCardsState, stackNumFaceUpCardsState } from "../state";
-import { getStackGridColumn, getStackType } from "../util";
-import { useIsValidMove, useMoveCard } from "../hooks";
+import { useDealFromDeck } from "../hooks";
 
 import { Card } from "./Card";
 
@@ -120,24 +117,6 @@ export function Stack({ stack, onClick }: StackProps) {
         cards,
         numFaceUp,
       })}
-      onClick={onClick}
-    >
-      {cards.map((card, index) => {
-        const topmost = index === cards.length - 1;
-
-        return (
-          <Card
-            key={index}
-            stack={stack}
-            card={card}
-            faceUp={index >= cards.length - numFaceUp}
-            topmost={topmost}
-            visible={
-              lastVisibleCardIndex === null || index <= lastVisibleCardIndex
-            }
-          />
-        );
-      })}
-    </div>
+      onClick={getStackType(stack) === "deck" ? dealFromDeck : undefined}
   );
 }
