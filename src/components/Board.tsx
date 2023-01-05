@@ -1,6 +1,7 @@
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
-import { useDealFromDeck } from "../hooks";
+import { generateDeck } from "../util";
 
+import { Card } from "./Card";
 import { Stack } from "./Stack";
 
 export function Board() {
@@ -36,6 +37,9 @@ export function Board() {
             />
           ))}
       </div>
+      {generateDeck().map((card) => (
+        <Card key={card} card={card} />
+      ))}
     </div>
   );
 }
