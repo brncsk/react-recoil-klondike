@@ -25,6 +25,33 @@ export const topmostCardState = selectorFamily<Card | null, Stack>({
     },
 });
 
+export const cardIsTopmostState = selectorFamily<boolean, Card>({
+  key: "card-is-topmost",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const topmostCard = get(topmostCardState(stack));
+
+      return topmostCard === card;
+    },
+});
+
+export const cardIsFaceUpState = selectorFamily<boolean, Card>({
+  key: "card-is-face-up",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const stackIndex = get(cardStackIndexState(card));
+
+      const stackNumCards = get(stackCardsState(stack)).length;
+      const numFaceUpCards = get(stackNumFaceUpCardsState(stack));
+
+      return stackIndex >= stackNumCards - numFaceUpCards;
+    },
+});
+
 /** Stores the number of cards that are face-up in a tableau stack. */
 export const tableauNumFaceUpCardsState = atomFamily<number, number>({
   key: "tableau-num-face-up-cards",
