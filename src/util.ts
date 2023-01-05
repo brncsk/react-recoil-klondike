@@ -1,3 +1,7 @@
+import {
+  TABLEAU_FANOUT_OFFSET_FACE_DOWN,
+  TABLEAU_FANOUT_OFFSET_FACE_UP,
+} from "./const";
 import { Card, Suit, Rank, StackType as stack, Stack } from "./types";
 
 const deck: Card[] = [];

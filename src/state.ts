@@ -1,7 +1,7 @@
 import { atom, atomFamily, selectorFamily } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "./types";
-import { getStackNumber, getStackType } from "./util";
+import { getTableauFanoutOffset, getStackNumber, getStackType } from "./util";
 
 /** Stores the cards in a stack. */
 export const stackCardsState = atomFamily<Card[], Stack>({
@@ -121,3 +121,77 @@ export const dragOffsetState = atom<{ x: number; y: number }>({
   default: { x: 0, y: 0 },
 });
 
+export const cardStaticPositionState = selectorFamily<
+  { x: number; y: number },
+  Card
+>({
+  key: "card-static-position",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const stackNumCards = get(stackCardsState(stack)).length;
+      const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
+      const stackPosition = get(stackPositionState(stack));
+      const stackIndex = get(cardStackIndexState(card));
+
+      const fanoutOffset =
+        getStackType(stack) === "tableau"
+          ? getTableauFanoutOffset(
+              stackNumCards,
+              stackNumFaceUpCards,
+              stackIndex
+            )
+          : 0;
+
+      let cardOffset = { x: 0, y: 0 };
+
+      return {
+        x: stackPosition.x + cardOffset.x,
+        y: stackPosition.y + cardOffset.y + fanoutOffset,
+      };
+    },
+});
+
+export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
+  {
+    key: "card-position",
+    get:
+      (card) =>
+      ({ get }) => {
+        const staticPosition = get(cardStaticPositionState(card));
+
+        return staticPosition;
+      },
+  }
+);
+
+export const cardZIndexState = selectorFamily<number, Card>({
+  key: "card-z-index",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const cardIndex = get(cardStackIndexState(card));
+      const dragged = get(cardDraggedState(card));
+
+      let stackZIndex = 0;
+
+      switch (getStackType(stack)) {
+        case "deck":
+          stackZIndex = 10;
+          break;
+        case "waste":
+          stackZIndex = 20;
+          break;
+        case "tableau":
+          stackZIndex = 30 + getStackNumber(stack);
+          break;
+        case "foundation":
+          stackZIndex = 40 + getStackNumber(stack);
+          break;
+      }
+
+      return cardIndex * 100 + stackZIndex + (dragged ? 10000 : 0);
+    },
+});

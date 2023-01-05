@@ -13,7 +13,9 @@
 }
 
 .card {
-  position: relative;
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
 
   width: var(--card-width);
   height: var(--card-height);

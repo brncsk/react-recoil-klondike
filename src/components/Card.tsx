@@ -1,8 +1,15 @@
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "recoil";
 import clsx from "clsx";
 
-import { useAutoMove } from "../hooks";
-import { Card as CardType, CardDragInfo, Stack } from "../types";
+import { Card as CardType, Stack } from "../types";
+import { getCardColor, getCardStyles } from "../util";
+import {
+  cardDraggedState,
+  cardIsFaceUpState,
+  cardPositionState,
+  cardStackState,
+  cardZIndexState,
+} from "../state";
 import { CardFace } from "./CardFace";
 
 export interface CardProps {
@@ -13,42 +20,26 @@ export interface CardProps {
   topmost?: boolean;
 }
 
-export function Card({
-  card,
-  stack,
-  visible = true,
-  faceUp = false,
-  topmost = false,
-}: CardProps) {
-  const [, drag, preview] = useDrag(() => {
-    const type: CardDragInfo["type"] = topmost ? "single" : "multiple";
+export function Card({ card }: CardProps) {
+  const color = getCardColor(card);
+  const stack = useRecoilValue(cardStackState(card));
+  const faceUp = useRecoilValue(cardIsFaceUpState(card));
 
-    return {
-      type,
-      item: { type, card, sourceStack: stack } as CardDragInfo,
-      canDrag: faceUp,
-      collect: (monitor) => ({ isDragging: monitor.isDragging() }),
-    };
-  }, [card, topmost, faceUp]);
-
-  useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true });
-  }, [preview]);
-
-  const autoMove = useAutoMove();
+  const position = useRecoilValue(cardPositionState(card));
+  const zIndex = useRecoilValue(cardZIndexState(card));
 
   return (
     <div
-      // Only set the drag ref if we have a stack (e.g. not in the preview)
-      ref={stack ? drag : undefined}
-      className={clsx("card")}
-      onDoubleClick={
-        topmost && visible && faceUp && stack
-          ? () => autoMove(stack)
+      data-card={card}
+      data-stack={stack}
+      className={clsx("card", color, faceUp ? "face-up" : "face-down", {
+        dragged,
+      })}
+      style={getCardStyles({ position, faceUp, dragged, zIndex })}
           : undefined
       }
     >
-      <CardFace card={card} visible={visible} faceUp={faceUp} />
+      <CardFace card={card} />
     </div>
   );
 }
