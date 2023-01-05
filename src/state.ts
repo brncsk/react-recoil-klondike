@@ -9,6 +9,11 @@ export const stackCardsState = atomFamily<Card[], Stack>({
   default: [],
 });
 
+export const cardStackState = atomFamily<Stack, Card>({
+  key: "card-stack",
+  default: "deck",
+});
+
 /** Returns the topmost card in a stack. */
 export const topmostCardState = selectorFamily<Card | null, Stack>({
   key: "topmost-card",
@@ -49,3 +54,16 @@ export const stackNumFaceUpCardsState = selectorFamily<number, Stack>({
       }
     },
 });
+
+export const cardStackIndexState = selectorFamily<number, Card>({
+  key: "card-stack-index",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const cards = get(stackCardsState(stack));
+
+      return cards.findIndex((c) => c === card);
+    },
+});
+

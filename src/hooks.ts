@@ -10,6 +10,7 @@ import {
 } from "./const";
 
 import {
+  cardStackState,
   stackCardsState,
   tableauNumFaceUpCardsState,
   topmostCardState,
@@ -37,11 +38,22 @@ export function useNewGame() {
 
         // Deal the deck into the tableau
         for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-          set(stackCardsState(tableauStack(i)), deck.splice(0, i));
+          const cards = deck.splice(0, i);
+          set(stackCardsState(tableauStack(i)), cards);
+
+          // Assign stacks to cards
+          for (const card of cards) {
+            set(cardStackState(card), tableauStack(i));
+          }
         }
 
         // Deal the rest into the deck
         set(stackCardsState("deck"), deck);
+
+        // Assign stacks to cards
+        for (const card of deck) {
+          set(cardStackState(card), "deck");
+        }
 
         // Reset the waste
         reset(stackCardsState("waste"));
@@ -193,6 +205,11 @@ export function useMoveCard() {
             (num) => num + movedCards.length
           );
         }
+
+        // Update the stack of the cards we moved
+        for (const card of movedCards) {
+          set(cardStackState(card), targetStack);
+        }
       },
     []
   );
@@ -206,7 +223,7 @@ export function useDealFromDeck() {
   const moveCard = useMoveCard();
 
   return useRecoilCallback(
-    ({ set, snapshot: { getLoadable: get } }) =>
+    ({ set, snapshot: { getLoadable: get }, transact_UNSTABLE: transact }) =>
       () => {
         const deck = get(stackCardsState("deck")).valueOrThrow();
         const waste = get(stackCardsState("waste")).valueOrThrow();
@@ -214,8 +231,15 @@ export function useDealFromDeck() {
         if (deck.length > 0) {
           moveCard("deck", "waste");
         } else {
-          set(stackCardsState("deck"), waste.slice().reverse());
-          set(stackCardsState("waste"), []);
+          transact(() => {
+            set(stackCardsState("deck"), waste.slice().reverse());
+            set(stackCardsState("waste"), []);
+
+            // Update the stack of the cards we moved
+            for (const card of waste) {
+              set(cardStackState(card), "deck");
+            }
+          });
         }
       },
     []
