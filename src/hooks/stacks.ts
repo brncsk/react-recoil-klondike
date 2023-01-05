@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import clsx from "clsx";
 
-import { CardDragInfo, Stack } from "../types";
+import { CanDrop, CardDragInfo, Stack } from "../types";
 import { useStackDropListeners } from "./drag-and-drop";
 import { debounce, getStackType } from "../util";
 import { useRecoilState } from "recoil";
@@ -17,7 +17,7 @@ export function useStack({
 }: {
   stack: Stack;
   gridColumn: React.CSSProperties["gridColumn"];
-  canDrop: (dragInfo: CardDragInfo) => boolean;
+  canDrop: CanDrop;
   onClick?: () => void;
 }) {
   const [{ isDropTarget }, dragProps] = useStackDropListeners({

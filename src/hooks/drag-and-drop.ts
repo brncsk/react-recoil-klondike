@@ -1,11 +1,11 @@
 import { startTransition, useCallback, useState } from "react";
 import { CallbackInterface, useRecoilCallback } from "recoil";
 
-import { Card, CardDragInfo, Stack } from "../types";
+import { CanDrop, Card, CardDragInfo, Stack } from "../types";
 import { generateDeck, emptyImage } from "../util";
 
 import { stackCardsState } from "../state/stacks";
-import { cardStackIndexState } from "../state/cards";
+import { cardStackIndexState, topmostCardState } from "../state/cards";
 import {
   dragInfoState,
   dragInitialOffsetState,
@@ -103,7 +103,7 @@ export function useStackDropListeners({
   canDrop,
 }: {
   stack: Stack;
-  canDrop: (dragInfo: CardDragInfo) => boolean;
+  canDrop: CanDrop;
 }) {
   const [isDropTarget, setIsDropTarget] = useState(false);
 
@@ -116,9 +116,10 @@ export function useStackDropListeners({
         e.dataTransfer.dropEffect = "move";
 
         const dragInfo = get(dragInfoState).valueOrThrow();
+        const topmostCardOnTarget = get(topmostCardState(stack)).valueOrThrow();
 
         if (dragInfo) {
-          setIsDropTarget(canDrop(dragInfo));
+          setIsDropTarget(canDrop(dragInfo, topmostCardOnTarget));
         }
       }
   );
@@ -130,8 +131,11 @@ export function useStackDropListeners({
   const handleDrop = useRecoilCallback(
     (iface) => () => {
       const dragInfo = iface.snapshot.getLoadable(dragInfoState).valueOrThrow();
+      const topmostCardOnTarget = iface.snapshot
+        .getLoadable(topmostCardState(stack))
+        .valueOrThrow();
 
-      if (dragInfo && canDrop(dragInfo)) {
+      if (dragInfo && canDrop(dragInfo, topmostCardOnTarget)) {
         handleDragEdge(iface)(null);
         moveCard(dragInfo.sourceStack, stack, dragInfo.card);
       }

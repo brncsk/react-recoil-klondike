@@ -38,3 +38,8 @@ export interface CardDragInfo {
   /** The stack that the card(s) are being dragged from. */
   sourceStack: Stack;
 }
+
+export type CanDrop = (
+  dragInfo: CardDragInfo,
+  topmostCard: Card | null
+) => boolean;
