@@ -18,11 +18,6 @@
   gap: 0.25rem;
 }
 
-.stack.drag-preview {
-  filter: drop-shadow(0 0 0.5em #00000077);
-  background: transparent;
-}
-
 .stack.drop-target {
   background: #00000011;
 }
