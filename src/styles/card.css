@@ -14,13 +14,40 @@
 
 .card {
   position: absolute;
-  top: var(--top);
-  left: var(--left);
+  transform: translate(var(--left), var(--top));
+  transition: transform 0.2s ease;
 
   width: var(--card-width);
   height: var(--card-height);
 
   cursor: pointer;
+  z-index: var(--z-index);
+}
+
+.card.dragged {
+  pointer-events: none;
+  -webkit-user-drag: none;
+
+  transform: translate(
+    calc(var(--left) + var(--drag-offset-x)),
+    calc(var(--top) + var(--drag-offset-y))
+  );
+  transition: none;
+
+  z-index: calc(var(--z-index) + 10000);
+}
+
+.card.face-down {
+  cursor: pointer;
+}
+
+.card .face {
+  border-radius: var(--card-border-radius);
+  transition: transform 0.2s ease;
+  transform-style: preserve-3d;
+
+  position: absolute;
+  inset: 0;
 
   background: lightgray;
   border: 1px solid black;
@@ -29,37 +56,20 @@
   color: var(--card-color-black);
   font-weight: bold;
   cursor: grab;
-
-  transition: transform 0.2s ease;
-  transform-style: preserve-3d;
 }
 
-.card.dragged {
-  transition: none;
-  pointer-events: none;
-  -webkit-user-drag: none;
-}
-
-.card.red {
+.card.red .face {
   color: var(--card-color-red);
 }
 
-.card.face-down {
+.card.face-down .face {
   transform: rotateY(180deg);
-  cursor: pointer;
-}
-
-.card.face-up * {
-  visibility: visible;
 }
 
 .card .back,
 .card .front {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
 
   background: inherit;
   border-radius: inherit;
