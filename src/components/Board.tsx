@@ -1,4 +1,5 @@
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
+import { useMeasureCardSize } from "../hooks/cards";
 import { useBoardEventListeners } from "../hooks/drag-and-drop";
 import { generateDeck } from "../util/deck";
 
@@ -9,6 +10,8 @@ import { Tableau } from "./stacks/Tableau";
 import { Waste } from "./stacks/Waste";
 
 export function Board() {
+  useMeasureCardSize();
+
   return (
     <div
       className="board"

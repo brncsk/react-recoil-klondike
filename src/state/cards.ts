@@ -1,4 +1,4 @@
-import { atomFamily, selectorFamily } from "recoil";
+import { atom, atomFamily, selectorFamily } from "recoil";
 
 import { Stack, Card } from "../types";
 import {
@@ -12,6 +12,11 @@ import { stackCardsState, stackRectState } from "./stacks";
 export const cardStackState = atomFamily<Stack, Card>({
   key: "card-stack",
   default: "deck",
+});
+
+export const cardSizeState = atom<{ width: number; height: number }>({
+  key: "card-size",
+  default: { width: 0, height: 0 },
 });
 
 /** Returns the topmost card in a stack. */
