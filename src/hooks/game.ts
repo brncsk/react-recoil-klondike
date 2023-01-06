@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { useRecoilCallback } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
@@ -235,4 +235,25 @@ export function useIsGameWon() {
       },
     []
   );
+}
+
+export function useGameShortcutListeners() {
+  const newGame = useNewGame();
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const hasModifier = event.metaKey || event.ctrlKey;
+
+      if ((hasModifier && event.key === "n") || event.key === "F2") {
+        event.preventDefault();
+        newGame();
+      }
+    },
+    [newGame]
+  );
+
+  return useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 }
