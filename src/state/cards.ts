@@ -7,11 +7,6 @@ import {
   getTableauFanoutOffset,
 } from "../util/stacks";
 
-import {
-  cardDraggedState,
-  dragOffsetState,
-  dragInitialOffsetState,
-} from "./drag-and-drop";
 import { stackCardsState, stackPositionState } from "./stacks";
 
 export const cardStackState = atomFamily<Stack, Card>({
@@ -99,88 +94,55 @@ export const cardStackIndexState = selectorFamily<number, Card>({
     },
 });
 
-export const cardStaticPositionState = selectorFamily<
-  { x: number; y: number },
-  Card
->({
-  key: "card-static-position",
-  get:
-    (card) =>
-    ({ get }) => {
-      const stack = get(cardStackState(card));
-      const stackNumCards = get(stackCardsState(stack)).length;
-      const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
-      const stackPosition = get(stackPositionState(stack));
-      const stackIndex = get(cardStackIndexState(card));
-
-      const fanoutOffset =
-        getStackType(stack) === "tableau"
-          ? getTableauFanoutOffset(
-              stackNumCards,
-              stackNumFaceUpCards,
-              stackIndex
-            )
-          : 0;
-
-      let cardOffset = { x: 0, y: 0 };
-
-      return {
-        x: stackPosition.x + cardOffset.x,
-        y: stackPosition.y + cardOffset.y + fanoutOffset,
-      };
-    },
-});
-
 export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
   {
-    key: "card-position",
+    key: "card-static-position",
     get:
       (card) =>
       ({ get }) => {
-        const staticPosition = get(cardStaticPositionState(card));
-        const isDragged = get(cardDraggedState(card));
+        const stack = get(cardStackState(card));
+        const stackNumCards = get(stackCardsState(stack)).length;
+        const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
+        const stackPosition = get(stackPositionState(stack));
+        const stackIndex = get(cardStackIndexState(card));
 
-        if (isDragged) {
-          const dragOffset = get(dragOffsetState);
-          const dragInitialOffset = get(dragInitialOffsetState);
+        const fanoutOffset =
+          getStackType(stack) === "tableau"
+            ? getTableauFanoutOffset(
+                stackNumCards,
+                stackNumFaceUpCards,
+                stackIndex
+              )
+            : 0;
 
-          return {
-            x: staticPosition.x + dragOffset.x - dragInitialOffset.x,
-            y: staticPosition.y + dragOffset.y - dragInitialOffset.y,
-          };
-        }
+        let cardOffset = { x: 0, y: 0 };
 
-        return staticPosition;
+        return {
+          x: stackPosition.x + cardOffset.x,
+          y: stackPosition.y + cardOffset.y + fanoutOffset,
+        };
       },
   }
 );
 
-export const cardZIndexState = selectorFamily<number, Card>({
-  key: "card-z-index",
+export const cardDragListState = selectorFamily<Card[], Card>({
+  key: "card-drag-list",
   get:
     (card) =>
     ({ get }) => {
-      const stack = get(cardStackState(card));
-      const cardIndex = get(cardStackIndexState(card));
-      const dragged = get(cardDraggedState(card));
-
-      let stackZIndex = 0;
-
-      switch (getStackType(stack)) {
-        case "deck":
-          stackZIndex = 10;
-          break;
-        case "waste":
-          stackZIndex = 20;
-          break;
-        case "tableau":
-          stackZIndex = 30 + getStackNumber(stack);
-          break;
-        case "foundation":
-          stackZIndex = 40 + getStackNumber(stack);
-          break;
+      if (!get(cardIsFaceUpState(card))) {
+        return [];
       }
 
-      return cardIndex * 100 + stackZIndex + (dragged ? 10000 : 0);
+      const stack = get(cardStackState(card));
+
+      if (getStackType(stack) !== "tableau") {
+        return [card];
+      }
+
+      const stackIndex = get(cardStackIndexState(card));
+      const cards = get(stackCardsState(stack));
+
+      return cards.slice(stackIndex);
     },
 });
