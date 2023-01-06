@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useReducer, useRef } from "react";
 import {
   useGotoRecoilSnapshot,
   useRecoilTransactionObserver_UNSTABLE,
 } from "recoil";
+import { useHistoryShortcutListeners } from "../hooks/history";
 
 import {
   HistoryAction,
@@ -62,6 +64,8 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
       historyDispatch({ type: "push", snapshot });
     }
   });
+
+  useHistoryShortcutListeners(historyDispatch);
 
   return (
     <HistoryContext.Provider
