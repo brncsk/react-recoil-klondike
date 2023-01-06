@@ -6,7 +6,12 @@ import { CanDrop, Rank, Stack } from "../types";
 import { useStackDropListeners } from "./drag-and-drop";
 import { stackPositionState } from "../state/stacks";
 
-import { getCardColor, getCardRank, getCardRankIndex } from "../util/cards";
+import {
+  getCardColor,
+  getCardRank,
+  getCardRankIndex,
+  getCardSuit,
+} from "../util/cards";
 import { debounce } from "../util/debounce";
 import { getStackType } from "../util/stacks";
 
@@ -91,7 +96,7 @@ export const canDropOntoFoundation: CanDrop = (dragInfo, topmostCard) => {
     // and one rank higher can be dropped
     return (
       getCardRankIndex(dragInfo.card) === getCardRankIndex(topmostCard) + 1 &&
-      getCardColor(dragInfo.card) === getCardColor(topmostCard)
+      getCardSuit(dragInfo.card) === getCardSuit(topmostCard)
     );
   }
 };
