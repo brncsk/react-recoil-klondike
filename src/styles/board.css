@@ -19,14 +19,6 @@
     var(--board-background);
 }
 
-.board.dragging:active * {
-  cursor: grabbing;
-}
-
-.board.dragging .card {
-  pointer-events: none;
-}
-
 @media screen and (max-width: 600px) {
   .board {
     padding: 0;
