@@ -1,195 +1,190 @@
-import { startTransition, useCallback, useState } from "react";
-import { CallbackInterface, useRecoilCallback } from "recoil";
+import { useCallback, useEffect, useRef } from "react";
 
 import { CanDrop, Card, CardDragInfo, Stack } from "../types";
 
-import { stackCardsState } from "../state/stacks";
-import {
-  cardIsTopmostState,
-  cardStackIndexState,
-  topmostCardState,
-} from "../state/cards";
-import {
-  dragInfoState,
-  dragInitialOffsetState,
-  dragOffsetState,
-  cardDraggedState,
-} from "../state/drag-and-drop";
-
-import { generateDeck } from "../util/deck";
-import { emptyImage } from "../util/drag-and-drop";
-
 import { useMoveCard } from "./game";
+import {
+  dispatchStackDragEvent,
+  getDragPropsFromEvent,
+  getStackFromEvent,
+} from "../util/drag-and-drop";
 
-export function useBoardDragListeners() {
-  const [isDragging, setIsDragging] = useState(false);
+export function useBoardEventListeners() {
+  const initialOffset = useRef({ x: 0, y: 0 });
+  const dragInfo = useRef<CardDragInfo | null>(null);
+  const draggedCards = useRef<HTMLDivElement[]>([]);
+  const didMove = useRef(false);
+  const activeStack = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseDown = useRecoilCallback(
-    (iface) => (e: React.MouseEvent<HTMLDivElement>) => {
-      // Get the child element that was clicked on.
-      const cardElement = e.nativeEvent.composedPath().find((el) => {
-        if (!(el instanceof HTMLElement)) {
-          return false;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (e.clientX === 0 && e.clientY === 0) {
+        return;
+      }
+
+      if (!didMove.current) {
+        didMove.current = true;
+
+        for (const card of draggedCards.current) {
+          card.classList.add("dragged");
         }
+      }
 
-        return (
-          el.classList.contains("card") && el.classList.contains("face-up")
+      for (const card of draggedCards.current) {
+        card.style.setProperty(
+          "--drag-offset-x",
+          `${e.clientX - initialOffset.current.x}px`
         );
-      }) as HTMLElement | undefined;
+        card.style.setProperty(
+          "--drag-offset-y",
+          `${e.clientY - initialOffset.current.y}px`
+        );
+      }
 
-      if (!cardElement) {
+      const stack = getStackFromEvent(e);
+
+      if (!stack) {
         return;
       }
 
-      const card = cardElement.dataset.card as Card;
-      const stack = cardElement.dataset.stack as Stack;
+      if (dragInfo.current) {
+        if (activeStack.current) {
+          if (activeStack.current.dataset.stack === stack.stack) {
+            return;
+          }
 
-      const isCardTopmost = iface.snapshot
-        .getLoadable(cardIsTopmostState(card))
-        .valueOrThrow();
-
-      iface.set(dragInfoState, {
-        type: (isCardTopmost ? "single" : "multiple") as CardDragInfo["type"],
-        card,
-        sourceStack: stack,
-      });
-    }
-  );
-
-  const handleDragStart = useRecoilCallback(
-    (iface) => (e: React.DragEvent<HTMLDivElement>) => {
-      const dragInfo = iface.snapshot.getLoadable(dragInfoState).valueOrThrow();
-
-      if (!dragInfo) {
-        e.preventDefault();
-        return;
-      }
-
-      // This is a hack to prevent the browser from trying to drag the card
-      // image. We don't want to do that because we're using CSS transforms
-      // to move the card around.
-      e.dataTransfer.setDragImage(emptyImage, 0, 0);
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.dropEffect = "move";
-
-      handleDragEdge(iface)(dragInfo);
-      iface.set(dragInitialOffsetState, { x: e.clientX, y: e.clientY });
-      iface.set(dragOffsetState, { x: e.clientX, y: e.clientY });
-      setIsDragging(true);
-    }
-  );
-
-  const handleDrag = useRecoilCallback(
-    ({ set }) =>
-      (e: React.DragEvent<HTMLDivElement>) => {
-        if (e.clientX === 0 && e.clientY === 0) {
-          return;
+          dispatchStackDragEvent(
+            "stack-drag-leave",
+            dragInfo.current,
+            activeStack.current
+          );
         }
 
-        set(dragOffsetState, { x: e.clientX, y: e.clientY });
+        activeStack.current = stack.element;
+
+        dispatchStackDragEvent(
+          "stack-drag-enter",
+          dragInfo.current,
+          activeStack.current
+        );
       }
+    },
+    [initialOffset, draggedCards]
   );
 
-  const handleDragEnd = useRecoilCallback((iface) => () => {
-    iface.reset(dragInfoState);
-    handleDragEdge(iface)(null);
-    setIsDragging(false);
-  });
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const dragProps = getDragPropsFromEvent(e);
 
-  return [
-    { isDragging },
-    {
-      onMouseDown: handleMouseDown,
-      onDragStartCapture: handleDragStart,
-      onDrag: handleDrag,
-      onDragEnd: handleDragEnd,
-      draggable: true,
+      if (!dragProps) {
+        return;
+      }
 
-      // This is to immediately end the drag operation when the mouse is
-      // released.
-      onDragOver: (e) => e.preventDefault(),
-    } as React.HTMLAttributes<HTMLDivElement>,
-  ] as const;
+      draggedCards.current = dragProps.draggedCards;
+      dragInfo.current = dragProps.dragInfo;
+      initialOffset.current = { x: e.clientX, y: e.clientY };
+
+      document.addEventListener("mousemove", handleMouseMove);
+    },
+    [draggedCards, dragInfo, initialOffset, handleMouseMove]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    document.removeEventListener("mousemove", handleMouseMove);
+
+    if (activeStack.current && didMove.current && dragInfo.current) {
+      dispatchStackDragEvent(
+        "stack-drop",
+        dragInfo.current,
+        activeStack.current
+      );
+    }
+
+    for (const card of draggedCards.current) {
+      card.style.removeProperty("--drag-offset-x");
+      card.style.removeProperty("--drag-offset-y");
+      card.classList.remove("dragged");
+    }
+
+    draggedCards.current = [];
+    dragInfo.current = null;
+    initialOffset.current = { x: 0, y: 0 };
+    didMove.current = false;
+  }, [draggedCards, handleMouseMove]);
+
+  return {
+    onMouseDown: handleMouseDown,
+    onMouseUp: handleMouseUp,
+  } as React.HTMLAttributes<HTMLDivElement>;
 }
 
 export function useStackDropListeners({
   stack,
+  stackElement,
+  topmostCard,
   canDrop,
 }: {
   stack: Stack;
+  stackElement: HTMLDivElement | null;
+  topmostCard: Card | null;
   canDrop: CanDrop;
 }) {
-  const [isDropTarget, setIsDropTarget] = useState(false);
-
   const moveCard = useMoveCard();
 
-  const handleDragEnter = useRecoilCallback(
-    ({ snapshot: { getLoadable: get } }) =>
-      (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-
-        const dragInfo = get(dragInfoState).valueOrThrow();
-        const topmostCardOnTarget = get(topmostCardState(stack)).valueOrThrow();
-
-        if (dragInfo) {
-          setIsDropTarget(canDrop(dragInfo, topmostCardOnTarget));
-        }
+  const handleStackDragEnter = useCallback(
+    (e: CustomEvent<CardDragInfo>) => {
+      if (stackElement && canDrop(e.detail, topmostCard)) {
+        stackElement.classList.add("drop-target");
       }
-  );
-
-  const handleDragLeave = useCallback(() => {
-    setIsDropTarget(false);
-  }, []);
-
-  const handleDrop = useRecoilCallback(
-    (iface) => () => {
-      const dragInfo = iface.snapshot.getLoadable(dragInfoState).valueOrThrow();
-      const topmostCardOnTarget = iface.snapshot
-        .getLoadable(topmostCardState(stack))
-        .valueOrThrow();
-
-      if (dragInfo && canDrop(dragInfo, topmostCardOnTarget)) {
-        handleDragEdge(iface)(null);
-        moveCard(dragInfo.sourceStack, stack, dragInfo.card);
-      }
-
-      setIsDropTarget(false);
     },
-    []
+    [canDrop, topmostCard, stackElement]
   );
 
-  return [
-    { isDropTarget },
-    {
-      onDragEnter: (e) => startTransition(() => handleDragEnter(e)),
-      onDragOver: (e) => startTransition(() => handleDragEnter(e)),
-      onDragLeave: () => startTransition(() => handleDragLeave()),
-      onDrop: handleDrop,
-    } as React.HTMLAttributes<HTMLDivElement>,
-  ] as const;
-}
+  const handleStackDragLeave = useCallback(() => {
+    if (stackElement) {
+      stackElement.classList.remove("drop-target");
+    }
+  }, [stackElement]);
 
-/**
- * Handles the start and end of a drag operation.
- * @param dragInfo The drag info, or null if the drag operation has ended.
- *
- */
-function handleDragEdge({
-  set,
-  snapshot: { getLoadable: get },
-}: CallbackInterface) {
-  return function (dragInfo: CardDragInfo | null) {
-    if (!dragInfo) {
-      generateDeck().forEach((card) => set(cardDraggedState(card), false));
+  const handleDrop = useCallback(
+    (e: CustomEvent<CardDragInfo>) => {
+      if (canDrop(e.detail, topmostCard) && e.detail.sourceStack !== stack) {
+        moveCard(e.detail.sourceStack, stack, e.detail.card);
+      }
+    },
+    [canDrop, moveCard, stack, topmostCard]
+  );
+
+  return useEffect(() => {
+    if (!stackElement) {
       return;
     }
 
-    const cards = get(stackCardsState(dragInfo.sourceStack)).valueOrThrow();
-    const startIndex = get(cardStackIndexState(dragInfo.card)).valueOrThrow();
+    stackElement.addEventListener(
+      "stack-drag-enter" as any,
+      handleStackDragEnter
+    );
+    stackElement.addEventListener(
+      "stack-drag-leave" as any,
+      handleStackDragLeave
+    );
+    stackElement.addEventListener("stack-drop" as any, handleDrop);
+    stackElement.addEventListener("stack-drop" as any, handleStackDragLeave);
 
-    cards.slice(startIndex).forEach((card) => {
-      set(cardDraggedState(card), true);
-    });
-  };
+    return () => {
+      stackElement.removeEventListener(
+        "drag-enter-stack" as any,
+        handleStackDragEnter
+      );
+      stackElement.removeEventListener(
+        "drag-leave-stack" as any,
+        handleStackDragLeave
+      );
+      stackElement.removeEventListener("stack-drop" as any, handleDrop);
+      stackElement.removeEventListener(
+        "stack-drop" as any,
+        handleStackDragLeave
+      );
+    };
+  }, [handleStackDragEnter, handleStackDragLeave, handleDrop, stackElement]);
 }

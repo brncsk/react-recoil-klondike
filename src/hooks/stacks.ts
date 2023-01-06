@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { useRecoilState } from "recoil";
-import clsx from "clsx";
+import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { CanDrop, Rank, Stack } from "../types";
-import { useStackDropListeners } from "./drag-and-drop";
 import { stackPositionState } from "../state/stacks";
+import { topmostCardState } from "../state/cards";
 
 import {
   getCardColor,
@@ -13,7 +12,7 @@ import {
   getCardSuit,
 } from "../util/cards";
 import { debounce } from "../util/debounce";
-import { getStackType } from "../util/stacks";
+import { useStackDropListeners } from "./drag-and-drop";
 
 const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
 
@@ -28,25 +27,32 @@ export function useStack({
   canDrop: CanDrop;
   onClick?: () => void;
 }) {
-  const [{ isDropTarget }, dragProps] = useStackDropListeners({
-    stack,
-    canDrop,
-  });
+  const [stackElement, setStackElement] = useState<HTMLDivElement | null>(null);
+  const topmostCard = useRecoilValue(topmostCardState(stack));
+
+  useStackDropListeners({ stack, stackElement, topmostCard, canDrop });
+  useStackPositionObserver({ stack, stackElement });
 
   return {
-    ref: useDeckPositionObserver({ stack }),
-    ...dragProps,
+    ref: setStackElement,
+    id: `stack-${stack}`,
+    className: "stack",
+
+    "data-stack": stack,
+    "data-topmost-card": topmostCard,
+
     onClick,
     style: { gridColumn },
-    className: clsx("stack", getStackType(stack), stack, {
-      "drop-target": isDropTarget,
-    }),
   } as React.RefAttributes<HTMLDivElement>;
 }
 
-function useDeckPositionObserver({ stack }: { stack: Stack }) {
-  const ref = useRef<HTMLDivElement>(null);
-
+function useStackPositionObserver({
+  stack,
+  stackElement,
+}: {
+  stack: Stack;
+  stackElement: HTMLDivElement | null;
+}) {
   const [stackPosition, setStackPosition] = useRecoilState(
     stackPositionState(stack)
   );
@@ -55,20 +61,24 @@ function useDeckPositionObserver({ stack }: { stack: Stack }) {
     // Set the stack position so that we can use it to calculate the
     // position of the cards in the stack.
 
-    if (!ref.current) {
+    if (!stackElement) {
       return;
     }
 
-    const { x, y } = ref.current.getBoundingClientRect();
+    const { x, y } = stackElement.getBoundingClientRect();
 
     if (stackPosition.x === x && stackPosition.y === y) {
       return;
     }
 
     setStackPosition({ x, y });
-  }, [stackPosition, setStackPosition]);
+  }, [stackPosition, setStackPosition, stackElement]);
 
-  useEffect(() => {
+  return useEffect(() => {
+    if (!stackElement) {
+      return;
+    }
+
     const resizeObserver = new ResizeObserver(() => {
       updatePosition();
     });
@@ -77,9 +87,7 @@ function useDeckPositionObserver({ stack }: { stack: Stack }) {
     debounce(updatePosition, STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS);
 
     return () => resizeObserver.disconnect();
-  }, [updatePosition]);
-
-  return ref;
+  }, [updatePosition, stackElement]);
 }
 
 export const canDropOntoFoundation: CanDrop = (dragInfo, topmostCard) => {

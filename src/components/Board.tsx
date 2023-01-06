@@ -1,7 +1,5 @@
-import clsx from "clsx";
-
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
-import { useBoardDragListeners } from "../hooks/drag-and-drop";
+import { useBoardEventListeners } from "../hooks/drag-and-drop";
 import { generateDeck } from "../util/deck";
 
 import { Card } from "./Card";
@@ -11,14 +9,13 @@ import { Tableau } from "./stacks/Tableau";
 import { Waste } from "./stacks/Waste";
 
 export function Board() {
-  const [{ isDragging }, handlers] = useBoardDragListeners();
   return (
     <div
-      className={clsx("board", { dragging: isDragging })}
+      className="board"
       style={
         { "--num-tableau-stacks": NUM_TABLEAU_STACKS } as React.CSSProperties
       }
-      {...handlers}
+      {...useBoardEventListeners()}
     >
       <div className="section foundation">
         <Deck />
