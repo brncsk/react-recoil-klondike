@@ -46,3 +46,10 @@ export type CanDrop = (
   dragInfo: CardDragInfo,
   topmostCard: Card | null
 ) => boolean;
+
+export type Rect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};

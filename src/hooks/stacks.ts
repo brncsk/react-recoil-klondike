@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { CanDrop, Rank, Stack } from "../types";
@@ -11,10 +11,8 @@ import {
   getCardRankIndex,
   getCardSuit,
 } from "../util/cards";
-import { debounce } from "../util/debounce";
 import { useStackDropListeners } from "./drag-and-drop";
-
-const STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS = 500;
+import { useViewportSizeObserver } from "./viewport";
 
 export function useStack({
   stack,
@@ -53,41 +51,30 @@ function useStackPositionObserver({
   stack: Stack;
   stackElement: HTMLDivElement | null;
 }) {
-  const [stackPosition, setStackPosition] = useRecoilState(
-    stackRectState(stack)
+  const [stackRect, setStackRect] = useRecoilState(stackRectState(stack));
+
+  useViewportSizeObserver(
+    useCallback(() => {
+      // Set the stack position so that we can use it to calculate the
+      // position of the cards in the stack.
+
+      console.log("useStackPositionObserver", stack, stackElement);
+
+      if (!stackElement) {
+        return;
+      }
+
+      const { x, y, width, height } = stackElement.getBoundingClientRect();
+
+      console.log("x", x, "y", y, "width", width, "height", height);
+
+      if (stackRect.x === x && stackRect.y === y) {
+        return;
+      }
+
+      setStackRect({ x, y, width, height });
+    }, [stackRect, setStackRect, stackElement])
   );
-
-  const updatePosition = useCallback(() => {
-    // Set the stack position so that we can use it to calculate the
-    // position of the cards in the stack.
-
-    if (!stackElement) {
-      return;
-    }
-
-    const { x, y, width, height } = stackElement.getBoundingClientRect();
-
-    if (stackPosition.x === x && stackPosition.y === y) {
-      return;
-    }
-
-    setStackPosition({ x, y, width, height });
-  }, [stackPosition, setStackPosition, stackElement]);
-
-  return useEffect(() => {
-    if (!stackElement) {
-      return;
-    }
-
-    const resizeObserver = new ResizeObserver(() => {
-      updatePosition();
-    });
-
-    resizeObserver.observe(document.body);
-    debounce(updatePosition, STACK_REPOSITION_DEBOUNCE_TIMEOUT_MS);
-
-    return () => resizeObserver.disconnect();
-  }, [updatePosition, stackElement]);
 }
 
 export const canDropOntoFoundation: CanDrop = (dragInfo, topmostCard) => {
