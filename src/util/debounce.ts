@@ -1,9 +1,14 @@
+const debounceMap = new Map<Function, number>();
+
 export function debounce(fn: () => void, ms: number): () => void {
-  let timeoutId: number;
   return () => {
-    clearTimeout(timeoutId);
-    timeoutId = window.setTimeout(() => {
+    if (debounceMap.has(fn)) {
+      window.clearTimeout(debounceMap.get(fn));
+    }
+
+    debounceMap.set(() => {
       fn();
-    }, ms);
+      debounceMap.delete(fn);
+    }, window.setTimeout(fn, ms));
   };
 }
