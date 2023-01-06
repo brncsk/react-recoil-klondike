@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 import { CanDrop, Rank, Stack } from "../types";
-import { stackPositionState } from "../state/stacks";
+import { stackRectState } from "../state/stacks";
 import { topmostCardState } from "../state/cards";
 
 import {
@@ -54,7 +54,7 @@ function useStackPositionObserver({
   stackElement: HTMLDivElement | null;
 }) {
   const [stackPosition, setStackPosition] = useRecoilState(
-    stackPositionState(stack)
+    stackRectState(stack)
   );
 
   const updatePosition = useCallback(() => {
@@ -65,13 +65,13 @@ function useStackPositionObserver({
       return;
     }
 
-    const { x, y } = stackElement.getBoundingClientRect();
+    const { x, y, width, height } = stackElement.getBoundingClientRect();
 
     if (stackPosition.x === x && stackPosition.y === y) {
       return;
     }
 
-    setStackPosition({ x, y });
+    setStackPosition({ x, y, width, height });
   }, [stackPosition, setStackPosition, stackElement]);
 
   return useEffect(() => {

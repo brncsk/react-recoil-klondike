@@ -7,7 +7,7 @@ import {
   getTableauFanoutOffset,
 } from "../util/stacks";
 
-import { stackCardsState, stackPositionState } from "./stacks";
+import { stackCardsState, stackRectState } from "./stacks";
 
 export const cardStackState = atomFamily<Stack, Card>({
   key: "card-stack",
@@ -103,7 +103,7 @@ export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
         const stack = get(cardStackState(card));
         const stackNumCards = get(stackCardsState(stack)).length;
         const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
-        const stackPosition = get(stackPositionState(stack));
+        const stackPosition = get(stackRectState(stack));
         const stackIndex = get(cardStackIndexState(card));
 
         const fanoutOffset =

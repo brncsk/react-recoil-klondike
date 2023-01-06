@@ -8,7 +8,10 @@ export const stackCardsState = atomFamily<Card[], Stack>({
 });
 
 /** Stores the position of a stack. */
-export const stackPositionState = atomFamily<{ x: number; y: number }, Stack>({
+export const stackRectState = atomFamily<
+  { x: number; y: number; width: number; height: number },
+  Stack
+>({
   key: "stack-position",
-  default: { x: 0, y: 0 },
+  default: { x: 0, y: 0, width: 0, height: 0 },
 });
