@@ -24,6 +24,11 @@
   z-index: var(--z-index);
 }
 
+.card * {
+  user-select: none;
+  pointer-events: none;
+}
+
 .card.dragged {
   pointer-events: none;
   -webkit-user-drag: none;
