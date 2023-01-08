@@ -11,7 +11,7 @@ import {
   getCardRankIndex,
   getCardSuit,
 } from "../util/cards";
-import { useStackDropListeners } from "./drag-and-drop";
+import { useStackDragAndDropListeners } from "./drag-and-drop";
 import { useViewportSizeObserver } from "./viewport";
 
 export function useStack({
@@ -28,7 +28,7 @@ export function useStack({
   const [stackElement, setStackElement] = useState<HTMLDivElement | null>(null);
   const topmostCard = useRecoilValue(topmostCardState(stack));
 
-  useStackDropListeners({ stack, stackElement, topmostCard, canDrop });
+  useStackDragAndDropListeners({ stack, stackElement, topmostCard, canDrop });
   useStackPositionObserver({ stack, stackElement });
 
   return {

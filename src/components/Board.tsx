@@ -1,6 +1,6 @@
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 import { useMeasureCardSize } from "../hooks/cards";
-import { useBoardEventListeners } from "../hooks/drag-and-drop";
+import { useBoardDragAndDropListeners } from "../hooks/drag-and-drop";
 import { generateDeck } from "../util/deck";
 
 import { Card } from "./Card";
@@ -18,7 +18,7 @@ export function Board() {
       style={
         { "--num-tableau-stacks": NUM_TABLEAU_STACKS } as React.CSSProperties
       }
-      {...useBoardEventListeners()}
+      {...useBoardDragAndDropListeners()}
     >
       <div className="section foundation">
         <Deck />

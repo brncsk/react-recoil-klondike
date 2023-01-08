@@ -15,7 +15,7 @@ import { getDragPropsFromEvent, getDragRect } from "../util/drag-and-drop";
 import { StackDragEvent } from "../util/stack-drag-event";
 import { cardSizeState } from "../state/cards";
 
-export function useBoardEventListeners() {
+export function useBoardDragAndDropListeners() {
   const initialOffset = useRef({ x: 0, y: 0 });
   const cardOffset = useRef({ x: 0, y: 0 });
   const dragInfo = useRef<CardDragInfo | null>(null);
@@ -146,7 +146,7 @@ export function useBoardEventListeners() {
   } as React.HTMLAttributes<HTMLDivElement>;
 }
 
-export function useStackDropListeners({
+export function useStackDragAndDropListeners({
   stack,
   stackElement,
   topmostCard,
