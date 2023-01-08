@@ -25,6 +25,7 @@ export function useBoardDragAndDropListeners() {
   const cardSize = useRecoilValue(cardSizeState);
 
   const getLargestOverlappingStack = useGetLargestOverlappingStack();
+  const boardElement = document.querySelector(".board")! as HTMLDivElement;
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -38,6 +39,10 @@ export function useBoardDragAndDropListeners() {
         for (const card of draggedCards.current) {
           card.classList.add("dragged");
         }
+
+        boardElement.dispatchEvent(
+          new StackDragEvent("stack-drag-start", dragInfo.current!)
+        );
       }
 
       const currentOffset = {
@@ -86,6 +91,7 @@ export function useBoardDragAndDropListeners() {
       }
     },
     [
+      boardElement,
       initialOffset,
       draggedCards,
       didMove,
@@ -124,6 +130,10 @@ export function useBoardDragAndDropListeners() {
       activeStack.current.dispatchEvent(
         new StackDragEvent("stack-drop", dragInfo.current)
       );
+
+      boardElement.dispatchEvent(
+        new StackDragEvent("stack-drag-end", dragInfo.current)
+      );
     }
 
     for (const card of draggedCards.current) {
@@ -138,7 +148,7 @@ export function useBoardDragAndDropListeners() {
 
     initialOffset.current = { x: 0, y: 0 };
     cardOffset.current = { x: 0, y: 0 };
-  }, [draggedCards, handleMouseMove]);
+  }, [draggedCards, handleMouseMove, boardElement]);
 
   return {
     onMouseDown: handleMouseDown,
@@ -158,20 +168,28 @@ export function useStackDragAndDropListeners({
   canDrop: CanDrop;
 }) {
   const moveCard = useMoveCard();
+  const boardElement = document.querySelector(".board")! as HTMLDivElement;
 
-  const handleStackDragEnter = useCallback(
+  const handleStackDragStart = useCallback(
     (e: StackDragEvent) => {
-      if (stackElement && canDrop(e.detail, topmostCard)) {
-        stackElement.classList.add("drop-target");
+      if (canDrop(e.detail, topmostCard)) {
+        stackElement?.classList.add("drop-target");
       }
     },
     [canDrop, topmostCard, stackElement]
   );
 
+  const handleStackDragEnd = useCallback(() => {
+    stackElement?.classList.remove("drop-target");
+  }, [stackElement]);
+
+  const handleStackDragEnter = useCallback(
+    () => stackElement?.classList.add("drag-over"),
+    [stackElement]
+  );
+
   const handleStackDragLeave = useCallback(() => {
-    if (stackElement) {
-      stackElement.classList.remove("drop-target");
-    }
+    stackElement?.classList.remove("drag-over");
   }, [stackElement]);
 
   const handleDrop = useCallback(
@@ -188,6 +206,8 @@ export function useStackDragAndDropListeners({
       return;
     }
 
+    boardElement.addEventListener("stack-drag-start", handleStackDragStart);
+    boardElement.addEventListener("stack-drag-end", handleStackDragEnd);
     stackElement.addEventListener<StackDragEventType>(
       "stack-drag-enter",
       handleStackDragEnter
@@ -197,6 +217,12 @@ export function useStackDragAndDropListeners({
     stackElement.addEventListener("stack-drop", handleStackDragLeave);
 
     return () => {
+      boardElement.removeEventListener(
+        "stack-drag-start",
+        handleStackDragStart
+      );
+      boardElement.removeEventListener("stack-drag-end", handleStackDragEnd);
+
       stackElement.removeEventListener(
         "stack-drag-enter",
         handleStackDragEnter
@@ -205,10 +231,19 @@ export function useStackDragAndDropListeners({
         "stack-drag-leave",
         handleStackDragLeave
       );
+
       stackElement.removeEventListener("stack-drop", handleDrop);
       stackElement.removeEventListener("stack-drop", handleStackDragLeave);
     };
-  }, [handleStackDragEnter, handleStackDragLeave, handleDrop, stackElement]);
+  }, [
+    boardElement,
+    stackElement,
+    handleStackDragStart,
+    handleStackDragEnd,
+    handleStackDragEnter,
+    handleStackDragLeave,
+    handleDrop,
+  ]);
 }
 
 /** Returns the stack that the given rect overlaps the most. */
