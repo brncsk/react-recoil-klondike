@@ -2,10 +2,7 @@ import { TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO } from "../const";
 import { Card, CardDragInfo, Rect, Stack, StackDragEventType } from "../types";
 import { StackDragEvent } from "./stack-drag-event";
 
-export let emptyImage = new Image();
-emptyImage.src =
-  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-
+/** Dispatches a custom stack drag event. */
 export function dispatchStackDragEvent(
   type: StackDragEventType,
   dragInfo: CardDragInfo,
@@ -15,6 +12,7 @@ export function dispatchStackDragEvent(
   element.dispatchEvent(event);
 }
 
+/** Returns the drag info and the dragged cards from a mouse event. */
 export function getDragPropsFromEvent(
   e: React.MouseEvent<HTMLElement>
 ): { dragInfo: CardDragInfo; draggedCards: HTMLDivElement[] } | null {
@@ -39,26 +37,6 @@ export function getDragPropsFromEvent(
       card: card.dataset.card as Card,
       sourceStack: card.dataset.stack as Stack,
     },
-  };
-}
-
-export function getStackFromEvent(e: MouseEvent): {
-  element: HTMLDivElement;
-  stack: Stack;
-  topmostCard: Card | null;
-} | null {
-  const element = document
-    .elementsFromPoint(e.clientX, e.clientY)
-    .find((element) => element.classList.contains("stack")) as HTMLDivElement;
-
-  if (!element) {
-    return null;
-  }
-
-  return {
-    element,
-    stack: element.dataset.stack as Stack,
-    topmostCard: element.dataset.topmostCard as Card | null,
   };
 }
 
