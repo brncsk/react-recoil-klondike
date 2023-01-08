@@ -1,20 +1,26 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { RecoilValueReadOnly, useRecoilSnapshot, useRecoilValue } from "recoil";
 
-import { CanDrop, Card, CardDragInfo, Stack } from "../types";
+import { CanDrop, Card, CardDragInfo, Rect, Stack } from "../types";
 
 import { useMoveCard } from "./game";
 import {
   dispatchStackDragEvent,
   getDragPropsFromEvent,
-  getStackFromEvent,
+  getDragRect,
 } from "../util/drag-and-drop";
+import { cardSizeState } from "../state/cards";
 
 export function useBoardEventListeners() {
   const initialOffset = useRef({ x: 0, y: 0 });
+  const cardOffset = useRef({ x: 0, y: 0 });
   const dragInfo = useRef<CardDragInfo | null>(null);
   const draggedCards = useRef<HTMLDivElement[]>([]);
   const didMove = useRef(false);
   const activeStack = useRef<HTMLDivElement | null>(null);
+  const cardSize = useRecoilValue(cardSizeState);
+
+  const getLargestOverlappingStack = useGetLargestOverlappingStack();
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -30,18 +36,29 @@ export function useBoardEventListeners() {
         }
       }
 
+      const currentOffset = {
+        x: e.clientX - initialOffset.current.x,
+        y: e.clientY - initialOffset.current.y,
+      };
+
       for (const card of draggedCards.current) {
-        card.style.setProperty(
-          "--drag-offset-x",
-          `${e.clientX - initialOffset.current.x}px`
-        );
-        card.style.setProperty(
-          "--drag-offset-y",
-          `${e.clientY - initialOffset.current.y}px`
-        );
+        card.style.setProperty("--drag-offset-x", `${currentOffset.x}px`);
+        card.style.setProperty("--drag-offset-y", `${currentOffset.y}px`);
       }
 
-      const stack = getStackFromEvent(e);
+      const stack = getLargestOverlappingStack(
+        getDragRect({
+          cardSize,
+          currentOffset,
+          initialOffset: initialOffset.current,
+          cardOffset: cardOffset.current,
+          numCards: draggedCards.current.length,
+        })
+      );
+
+      const stackElement = document.getElementById(
+        `stack-${stack}`
+      )! as HTMLDivElement;
 
       if (!stack) {
         return;
@@ -49,7 +66,7 @@ export function useBoardEventListeners() {
 
       if (dragInfo.current) {
         if (activeStack.current) {
-          if (activeStack.current.dataset.stack === stack.stack) {
+          if (activeStack.current.dataset.stack === stack) {
             return;
           }
 
@@ -60,7 +77,7 @@ export function useBoardEventListeners() {
           );
         }
 
-        activeStack.current = stack.element;
+        activeStack.current = stackElement;
 
         dispatchStackDragEvent(
           "stack-drag-enter",
@@ -69,7 +86,15 @@ export function useBoardEventListeners() {
         );
       }
     },
-    [initialOffset, draggedCards]
+    [
+      initialOffset,
+      draggedCards,
+      didMove,
+      activeStack,
+      dragInfo,
+      getLargestOverlappingStack,
+      cardSize,
+    ]
   );
 
   const handleMouseDown = useCallback(
@@ -83,6 +108,10 @@ export function useBoardEventListeners() {
       draggedCards.current = dragProps.draggedCards;
       dragInfo.current = dragProps.dragInfo;
       initialOffset.current = { x: e.clientX, y: e.clientY };
+      cardOffset.current = {
+        x: e.nativeEvent.offsetX,
+        y: e.nativeEvent.offsetY,
+      };
 
       document.addEventListener("mousemove", handleMouseMove);
     },
@@ -108,8 +137,10 @@ export function useBoardEventListeners() {
 
     draggedCards.current = [];
     dragInfo.current = null;
-    initialOffset.current = { x: 0, y: 0 };
     didMove.current = false;
+
+    initialOffset.current = { x: 0, y: 0 };
+    cardOffset.current = { x: 0, y: 0 };
   }, [draggedCards, handleMouseMove]);
 
   return {
@@ -187,4 +218,66 @@ export function useStackDropListeners({
       );
     };
   }, [handleStackDragEnter, handleStackDragLeave, handleDrop, stackElement]);
+}
+
+/** Returns the stack that the given rect overlaps the most. */
+function useGetLargestOverlappingStack() {
+  const snapshot = useRecoilSnapshot();
+
+  const stackRects = useMemo<Record<Stack, Rect>>(() => {
+    let stackRects: Partial<Record<Stack, Rect>> = {};
+
+    for (const node of snapshot.getNodes_UNSTABLE()) {
+      if (node.key.startsWith("stack-rect__")) {
+        const stack = JSON.parse(node.key.replace("stack-rect__", "")) as Stack;
+        const rect = snapshot
+          .getLoadable(node as RecoilValueReadOnly<Rect>)
+          .valueOrThrow();
+
+        stackRects[stack] = rect;
+      }
+    }
+
+    return stackRects as Record<Stack, Rect>;
+  }, [snapshot]);
+
+  return useCallback(
+    (rect: Rect) => {
+      let largestStack: Stack | null = null;
+      let largestArea = 0;
+
+      for (const [stack, stackRect] of Object.entries(stackRects)) {
+        // Bail early if the rects don't overlap
+        if (
+          stackRect.x > rect.x + rect.width ||
+          stackRect.y > rect.y + rect.height ||
+          stackRect.x + stackRect.width < rect.x ||
+          stackRect.y + stackRect.height < rect.y
+        ) {
+          continue;
+        }
+
+        const xOverlap = Math.max(
+          0,
+          Math.min(rect.x + rect.width, stackRect.x + stackRect.width) -
+            Math.max(rect.x, stackRect.x)
+        );
+        const yOverlap = Math.max(
+          0,
+          Math.min(rect.y + rect.height, stackRect.y + stackRect.height) -
+            Math.max(rect.y, stackRect.y)
+        );
+
+        const area = xOverlap * yOverlap;
+
+        if (area > largestArea) {
+          largestStack = stack as Stack;
+          largestArea = area;
+        }
+      }
+
+      return largestStack;
+    },
+    [stackRects]
+  );
 }

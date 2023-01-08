@@ -1,4 +1,5 @@
-import { Card, CardDragInfo, Stack } from "../types";
+import { TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO } from "../const";
+import { Card, CardDragInfo, Rect, Stack } from "../types";
 
 export let emptyImage = new Image();
 emptyImage.src =
@@ -57,5 +58,29 @@ export function getStackFromEvent(e: MouseEvent): {
     element,
     stack: element.dataset.stack as Stack,
     topmostCard: element.dataset.topmostCard as Card | null,
+  };
+}
+
+/** Returns the viewport-relative rectangle of the currently dragged card(s). */
+export function getDragRect({
+  cardSize,
+  initialOffset,
+  currentOffset,
+  cardOffset,
+  numCards,
+}: {
+  cardSize: { width: number; height: number };
+  initialOffset: { x: number; y: number };
+  currentOffset: { x: number; y: number };
+  cardOffset: { x: number; y: number };
+  numCards: number;
+}): Rect {
+  return {
+    x: initialOffset.x + currentOffset.x - cardOffset.x,
+    y: initialOffset.y + currentOffset.y - cardOffset.y,
+    width: cardSize.width,
+    height:
+      cardSize.height +
+      (numCards - 1) * (cardSize.height / TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO),
   };
 }
