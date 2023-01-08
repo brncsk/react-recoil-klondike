@@ -114,6 +114,7 @@ export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
         const fanoutOffset =
           getStackType(stack) === "tableau"
             ? getTableauFanoutOffset(
+                get(cardSizeState).height,
                 stackNumCards,
                 stackNumFaceUpCards,
                 stackIndex

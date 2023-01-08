@@ -1,6 +1,6 @@
 import {
-  TABLEAU_FANOUT_OFFSET_FACE_UP,
-  TABLEAU_FANOUT_OFFSET_FACE_DOWN,
+  TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO,
+  TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO,
 } from "../const";
 import { Stack, StackType } from "../types";
 
@@ -35,6 +35,7 @@ export function foundationStack(num: number): Stack {
 }
 
 export function getTableauFanoutOffset(
+  cardHeight: number,
   numCards: number,
   numFaceUpCards: number,
   index: number
@@ -44,10 +45,11 @@ export function getTableauFanoutOffset(
 
   if (isFaceUp) {
     return (
-      TABLEAU_FANOUT_OFFSET_FACE_UP * (index - numFaceDownCards) +
-      TABLEAU_FANOUT_OFFSET_FACE_DOWN * numFaceDownCards
+      (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO) *
+        (index - numFaceDownCards) +
+      (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) * numFaceDownCards
     );
   } else {
-    return TABLEAU_FANOUT_OFFSET_FACE_DOWN * index;
+    return (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) * index;
   }
 }
