@@ -1,16 +1,17 @@
 import { TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO } from "../const";
-import { Card, CardDragInfo, Rect, Stack } from "../types";
+import { Card, CardDragInfo, Rect, Stack, StackDragEventType } from "../types";
+import { StackDragEvent } from "./stack-drag-event";
 
 export let emptyImage = new Image();
 emptyImage.src =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
 export function dispatchStackDragEvent(
-  type: "stack-drag-enter" | "stack-drag-leave" | "stack-drop",
+  type: StackDragEventType,
   dragInfo: CardDragInfo,
   element: HTMLElement
 ) {
-  const event = new CustomEvent(type, { detail: dragInfo });
+  const event = new StackDragEvent(type, dragInfo);
   element.dispatchEvent(event);
 }
 

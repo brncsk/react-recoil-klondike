@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { RecoilValueReadOnly, useRecoilSnapshot, useRecoilValue } from "recoil";
 
-import { CanDrop, Card, CardDragInfo, Rect, Stack } from "../types";
+import {
+  CanDrop,
+  Card,
+  CardDragInfo,
+  Rect,
+  Stack,
+  StackDragEventType,
+} from "../types";
 
 import { useMoveCard } from "./game";
 import {
@@ -10,6 +17,7 @@ import {
   getDragRect,
 } from "../util/drag-and-drop";
 import { cardSizeState } from "../state/cards";
+import { StackDragEvent } from "../util/stack-drag-event";
 
 export function useBoardEventListeners() {
   const initialOffset = useRef({ x: 0, y: 0 });
@@ -163,7 +171,7 @@ export function useStackDropListeners({
   const moveCard = useMoveCard();
 
   const handleStackDragEnter = useCallback(
-    (e: CustomEvent<CardDragInfo>) => {
+    (e: StackDragEvent) => {
       if (stackElement && canDrop(e.detail, topmostCard)) {
         stackElement.classList.add("drop-target");
       }
@@ -178,7 +186,7 @@ export function useStackDropListeners({
   }, [stackElement]);
 
   const handleDrop = useCallback(
-    (e: CustomEvent<CardDragInfo>) => {
+    (e: StackDragEvent) => {
       if (canDrop(e.detail, topmostCard) && e.detail.sourceStack !== stack) {
         moveCard(e.detail.sourceStack, stack, e.detail.card);
       }
@@ -191,31 +199,25 @@ export function useStackDropListeners({
       return;
     }
 
-    stackElement.addEventListener(
-      "stack-drag-enter" as any,
+    stackElement.addEventListener<StackDragEventType>(
+      "stack-drag-enter",
       handleStackDragEnter
     );
-    stackElement.addEventListener(
-      "stack-drag-leave" as any,
-      handleStackDragLeave
-    );
-    stackElement.addEventListener("stack-drop" as any, handleDrop);
-    stackElement.addEventListener("stack-drop" as any, handleStackDragLeave);
+    stackElement.addEventListener("stack-drag-leave", handleStackDragLeave);
+    stackElement.addEventListener("stack-drop", handleDrop);
+    stackElement.addEventListener("stack-drop", handleStackDragLeave);
 
     return () => {
       stackElement.removeEventListener(
-        "drag-enter-stack" as any,
+        "stack-drag-enter",
         handleStackDragEnter
       );
       stackElement.removeEventListener(
-        "drag-leave-stack" as any,
+        "stack-drag-leave",
         handleStackDragLeave
       );
-      stackElement.removeEventListener("stack-drop" as any, handleDrop);
-      stackElement.removeEventListener(
-        "stack-drop" as any,
-        handleStackDragLeave
-      );
+      stackElement.removeEventListener("stack-drop", handleDrop);
+      stackElement.removeEventListener("stack-drop", handleStackDragLeave);
     };
   }, [handleStackDragEnter, handleStackDragLeave, handleDrop, stackElement]);
 }

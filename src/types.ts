@@ -53,3 +53,8 @@ export type Rect = {
   width: number;
   height: number;
 };
+
+export type StackDragEventType =
+  | "stack-drag-enter"
+  | "stack-drag-leave"
+  | "stack-drop";
