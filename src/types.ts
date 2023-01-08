@@ -57,6 +57,8 @@ export type Rect = {
 };
 
 export type StackDragEventType =
+  | "stack-drag-start"
+  | "stack-drag-end"
   | "stack-drag-enter"
   | "stack-drag-leave"
   | "stack-drop";

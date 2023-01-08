@@ -9,6 +9,8 @@ export class StackDragEvent extends CustomEvent<CardDragInfo> {
 declare global {
   // NOTE: The keys below must match the keys in StackDragEventType
   interface HTMLElementEventMap {
+    "stack-drag-start": StackDragEvent;
+    "stack-drag-end": StackDragEvent;
     "stack-drag-enter": StackDragEvent;
     "stack-drag-leave": StackDragEvent;
     "stack-drop": StackDragEvent;
