@@ -1,16 +1,5 @@
 import { TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO } from "../const";
-import { Card, CardDragInfo, Rect, Stack, StackDragEventType } from "../types";
-import { StackDragEvent } from "./stack-drag-event";
-
-/** Dispatches a custom stack drag event. */
-export function dispatchStackDragEvent(
-  type: StackDragEventType,
-  dragInfo: CardDragInfo,
-  element: HTMLElement
-) {
-  const event = new StackDragEvent(type, dragInfo);
-  element.dispatchEvent(event);
-}
+import { Card, CardDragInfo, Rect, Stack } from "../types";
 
 /** Returns the drag info and the dragged cards from a mouse event. */
 export function getDragPropsFromEvent(

@@ -11,13 +11,9 @@ import {
 } from "../types";
 
 import { useMoveCard } from "./game";
-import {
-  dispatchStackDragEvent,
-  getDragPropsFromEvent,
-  getDragRect,
-} from "../util/drag-and-drop";
-import { cardSizeState } from "../state/cards";
+import { getDragPropsFromEvent, getDragRect } from "../util/drag-and-drop";
 import { StackDragEvent } from "../util/stack-drag-event";
+import { cardSizeState } from "../state/cards";
 
 export function useBoardEventListeners() {
   const initialOffset = useRef({ x: 0, y: 0 });
@@ -78,19 +74,14 @@ export function useBoardEventListeners() {
             return;
           }
 
-          dispatchStackDragEvent(
-            "stack-drag-leave",
-            dragInfo.current,
-            activeStack.current
+          activeStack.current.dispatchEvent(
+            new StackDragEvent("stack-drag-leave", dragInfo.current)
           );
         }
 
         activeStack.current = stackElement;
-
-        dispatchStackDragEvent(
-          "stack-drag-enter",
-          dragInfo.current,
-          activeStack.current
+        activeStack.current.dispatchEvent(
+          new StackDragEvent("stack-drag-enter", dragInfo.current)
         );
       }
     },
@@ -130,10 +121,8 @@ export function useBoardEventListeners() {
     document.removeEventListener("mousemove", handleMouseMove);
 
     if (activeStack.current && didMove.current && dragInfo.current) {
-      dispatchStackDragEvent(
-        "stack-drop",
-        dragInfo.current,
-        activeStack.current
+      activeStack.current.dispatchEvent(
+        new StackDragEvent("stack-drop", dragInfo.current)
       );
     }
 
