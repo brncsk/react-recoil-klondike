@@ -3,11 +3,10 @@ import {
   useGotoRecoilSnapshot,
   useRecoilTransactionObserver_UNSTABLE,
 } from "recoil";
-import { useHistoryShortcutListeners } from "../hooks/history";
 
+import { useHistoryShortcutListeners } from "../hooks/history";
+import { HistoryState, HistoryAction } from "../types";
 import {
-  HistoryAction,
-  HistoryState,
   HistoryContext,
   isSnapshotToBeRetained,
   pushHistoryFrame,

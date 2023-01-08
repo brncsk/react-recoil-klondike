@@ -1,5 +1,5 @@
 import { Dispatch, useCallback, useEffect } from "react";
-import { HistoryAction } from "../util/history";
+import { HistoryAction } from "../types";
 
 export function useHistoryShortcutListeners(
   historyDispatch: Dispatch<HistoryAction>

@@ -1,3 +1,5 @@
+import type { Snapshot } from "recoil";
+
 export enum Suit {
   Clubs = "♣",
   Diamonds = "♦",
@@ -58,3 +60,22 @@ export type StackDragEventType =
   | "stack-drag-enter"
   | "stack-drag-leave"
   | "stack-drop";
+
+export type HistoryStack = Array<{ snapshot: Snapshot; release: () => void }>;
+export type HistoryState = { stack: HistoryStack; pointer: number };
+export type HistoryAction =
+  | {
+      type: "undo" | "redo" | "reset";
+    }
+  | {
+      type: "push";
+      snapshot: Snapshot;
+    };
+
+export interface HistoryContextType {
+  undo: () => void;
+  redo: () => void;
+  reset: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+}

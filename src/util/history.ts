@@ -1,24 +1,7 @@
 import { createContext } from "react";
 import { Snapshot } from "recoil";
 
-export type HistoryStack = Array<{ snapshot: Snapshot; release: () => void }>;
-export type HistoryState = { stack: HistoryStack; pointer: number };
-export type HistoryAction =
-  | {
-      type: "undo" | "redo" | "reset";
-    }
-  | {
-      type: "push";
-      snapshot: Snapshot;
-    };
-
-export interface HistoryContextType {
-  undo: () => void;
-  redo: () => void;
-  reset: () => void;
-  canUndo: boolean;
-  canRedo: boolean;
-}
+import { HistoryContextType, HistoryState } from "../types";
 
 export const HistoryContext = createContext<HistoryContextType>({
   undo: () => {},
