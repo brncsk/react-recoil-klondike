@@ -10,10 +10,11 @@ import {
   StackDragEventType,
 } from "../types";
 
-import { useMoveCard } from "./game";
 import { getDragPropsFromEvent, getDragRect } from "../util/drag-and-drop";
 import { StackDragEvent } from "../util/stack-drag-event";
 import { cardSizeState } from "../state/cards";
+
+import { useMoveCard } from "./game";
 
 export function useBoardDragAndDropListeners() {
   const initialOffset = useRef({ x: 0, y: 0 });
@@ -70,6 +71,13 @@ export function useBoardDragAndDropListeners() {
       )! as HTMLDivElement;
 
       if (!stack) {
+        if (activeStack.current && dragInfo.current) {
+          activeStack.current.dispatchEvent(
+            new StackDragEvent("stack-drag-leave", dragInfo.current)
+          );
+        }
+
+        activeStack.current = null;
         return;
       }
 
@@ -273,6 +281,11 @@ function useGetLargestOverlappingStack() {
       let largestArea = 0;
 
       for (const [stack, stackRect] of Object.entries(stackRects)) {
+        // Bail early if the stack is not a valid drop target
+        if (!document.querySelector(`#stack-${stack}.drop-target`)) {
+          continue;
+        }
+
         // Bail early if the rects don't overlap
         if (
           stackRect.x > rect.x + rect.width ||
