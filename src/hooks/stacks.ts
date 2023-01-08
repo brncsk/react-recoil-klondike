@@ -58,15 +58,11 @@ function useStackPositionObserver({
       // Set the stack position so that we can use it to calculate the
       // position of the cards in the stack.
 
-      console.log("useStackPositionObserver", stack, stackElement);
-
       if (!stackElement) {
         return;
       }
 
       const { x, y, width, height } = stackElement.getBoundingClientRect();
-
-      console.log("x", x, "y", y, "width", width, "height", height);
 
       if (stackRect.x === x && stackRect.y === y) {
         return;
