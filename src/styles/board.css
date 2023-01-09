@@ -20,7 +20,7 @@
 }
 
 .board > * {
-  width: calc(var(--card-width) * 10);
+  width: min(calc(var(--card-width) * 10), 100%);
   margin: 0 auto;
 }
 
