@@ -2,9 +2,11 @@ import { useReducer, useRef } from "react";
 import {
   useGotoRecoilSnapshot,
   useRecoilTransactionObserver_UNSTABLE,
+  useSetRecoilState,
 } from "recoil";
 
 import { useHistoryShortcutListeners } from "../hooks/history";
+import { gameStartedState } from "../state/game";
 import { HistoryState, HistoryAction } from "../types";
 import {
   HistoryContext,
@@ -13,6 +15,7 @@ import {
 } from "../util/history";
 
 export function HistoryRoot({ children }: { children: React.ReactNode }) {
+  const setGameStarted = useSetRecoilState(gameStartedState);
   const isUndoInProgress = useRef(false);
   const gotoRecoilSnapshot = useGotoRecoilSnapshot();
 
@@ -40,6 +43,7 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
           return { stack, pointer: pointer - 1 };
 
         case "push":
+          setGameStarted(true);
           return pushHistoryFrame({ stack, pointer }, action.snapshot);
 
         case "reset":
