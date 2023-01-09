@@ -37,15 +37,37 @@
 }
 
 .hud button {
-  padding: 0.5em;
+  padding: 1em 1.5em;
   border: none;
-  font-size: 1.5em;
-  font-weight: bold;
   cursor: pointer;
   background: transparent;
+  border-radius: var(--hud-border-radius);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.hud button .icon {
+  font-size: 3em;
+  font-weight: bold;
+}
+
+.hud button .caption {
+  display: block;
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  text-transform: uppercase;
 }
 
 .hud button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.hud button:not(:disabled):is(:hover, :focus, :active) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.hud .debug {
+  margin-inline-start: auto;
+  text-align: end;
 }
