@@ -70,4 +70,7 @@
 .hud .debug {
   margin-inline-start: auto;
   text-align: end;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useGameShortcutListeners, useNewGame } from "../hooks/game";
 
 import { Board } from "../components/Board";
-import { Hud } from "../components/Hud";
+import { Hud } from "../components/hud/Hud";
 import { YouWonOverlay } from "../components/YouWonOverlay";
 
 import { HistoryRoot } from "./HistoryRoot";
