@@ -1,11 +1,13 @@
 import { useReducer, useRef } from "react";
 import {
-  useGotoRecoilSnapshot,
   useRecoilTransactionObserver_UNSTABLE,
   useSetRecoilState,
 } from "recoil";
 
-import { useHistoryShortcutListeners } from "../hooks/history";
+import {
+  useHistoryShortcutListeners,
+  useMapHistoryFrameOntoCurrentSnapshot,
+} from "../hooks/history";
 import { gameStartedState } from "../state/game";
 import { HistoryState, HistoryAction } from "../types";
 import {
@@ -17,7 +19,8 @@ import {
 export function HistoryRoot({ children }: { children: React.ReactNode }) {
   const setGameStarted = useSetRecoilState(gameStartedState);
   const isUndoInProgress = useRef(false);
-  const gotoRecoilSnapshot = useGotoRecoilSnapshot();
+
+  const mapHistoryFrame = useMapHistoryFrameOntoCurrentSnapshot();
 
   const [{ stack, pointer }, historyDispatch] = useReducer(
     ({ stack, pointer }: HistoryState, action: HistoryAction) => {
@@ -28,9 +31,7 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
           }
 
           isUndoInProgress.current = true;
-
-          gotoRecoilSnapshot(stack[pointer + 1].snapshot);
-          return { stack, pointer: pointer + 1 };
+          return mapHistoryFrame({ stack, pointer: pointer + 1 });
 
         case "redo":
           if (pointer === 0) {
@@ -38,9 +39,7 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
           }
 
           isUndoInProgress.current = true;
-
-          gotoRecoilSnapshot(stack[pointer - 1].snapshot);
-          return { stack, pointer: pointer - 1 };
+          return mapHistoryFrame({ stack, pointer: pointer - 1 });
 
         case "push":
           setGameStarted(true);

@@ -18,7 +18,7 @@ export const HistoryContext = createContext<HistoryContextType>({
 });
 
 /** Atoms that are tracked throughout the game. */
-const TRACKED_ATOMS: RecoilState<any>[] = [
+export const TRACKED_ATOMS: RecoilState<any>[] = [
   ...STACKS.map(stackCardsState),
   ...generateDeck().map(cardStackState),
 ];
