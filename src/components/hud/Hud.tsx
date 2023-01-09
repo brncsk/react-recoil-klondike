@@ -9,8 +9,7 @@ import { HistoryContext } from "../../util/history";
 
 import { HudButton } from "./HudButton";
 import { HudDebugPane } from "./HudDebugPane";
-
-const isDev = process.env.NODE_ENV === "development";
+import { isDevelopment } from "../../util/env";
 
 function HudSeparator() {
   return <div className="separator" />;
@@ -40,7 +39,7 @@ export function Hud() {
         onClick={redo}
         disabled={!canRedo}
       />
-      {isDev && (
+      {isDevelopment && (
         <>
           <HudSeparator />
           <HudDebugPane />
