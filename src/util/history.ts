@@ -1,7 +1,12 @@
 import { createContext } from "react";
-import { Snapshot } from "recoil";
+import { RecoilState, RecoilValue, Snapshot } from "recoil";
+
+import { STACKS } from "../const";
+import { cardStackState } from "../state/cards";
+import { stackCardsState } from "../state/stacks";
 
 import { HistoryContextType, HistoryState } from "../types";
+import { generateDeck } from "./deck";
 import { isDevelopment } from "./env";
 
 export const HistoryContext = createContext<HistoryContextType>({
@@ -12,18 +17,26 @@ export const HistoryContext = createContext<HistoryContextType>({
   canRedo: false,
 });
 
-const RETAINABLE_NODE_PREFIXES = ["card-stack"];
+/** Atoms that are tracked throughout the game. */
+const TRACKED_ATOMS: RecoilState<any>[] = [
+  ...STACKS.map(stackCardsState),
+  ...generateDeck().map(cardStackState),
+];
 
-/** Returns true if the snapshot contains any nodes that should be retained. */
+/** Keys of tracked atoms for fast lookup. */
+const TRACKED_NODE_KEYS = new Set(TRACKED_ATOMS.map((atom) => atom.key));
+
+/** Returns true if the node is tracked. */
+export function isNodeTracked(node: RecoilValue<unknown>) {
+  return TRACKED_NODE_KEYS.has(node.key);
+}
+
+/** Returns true if the snapshot contains any nodes that should be tracked. */
 export function isSnapshotToBeRetained(snapshot: Snapshot) {
   isDevelopment && dumpSnapshotToConsole(snapshot);
 
   for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
-    const retainable = RETAINABLE_NODE_PREFIXES.some((prefix) =>
-      node.key.startsWith(prefix)
-    );
-
-    if (retainable) {
+    if (isNodeTracked(node)) {
       return true;
     }
   }
