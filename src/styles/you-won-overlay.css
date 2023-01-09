@@ -1,0 +1,43 @@
+.you-won-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 10000;
+
+  color: white;
+  font-size: 20em;
+  font-weight: 900;
+
+  mix-blend-mode: multiply;
+  background-color: transparent;
+  backdrop-filter: blur(10px) saturate(200%);
+  text-shadow: 0 0 5px black, 0 0 1em black, 0 0 10em black;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.5s ease, background-color 0.5s ease;
+}
+
+.you-won-overlay .message {
+  transform: scale(0.8) translateY(1em);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transition-delay: 0.35s;
+}
+
+.you-won-overlay.visible {
+  transform: scale(1);
+  pointer-events: auto;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.you-won-overlay.visible .message {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
