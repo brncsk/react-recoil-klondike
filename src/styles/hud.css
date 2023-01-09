@@ -45,9 +45,10 @@
   transition: background 0.2s, transform 0.2s;
 }
 
-.hud button .icon {
-  font-size: 3em;
-  font-weight: bold;
+.hud button .icon svg {
+  fill: currentColor;
+  width: 3em;
+  height: 3em;
 }
 
 .hud button .caption {

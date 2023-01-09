@@ -1,4 +1,6 @@
 import { useRecoilValue } from "recoil";
+import { ReactComponent as WinIcon } from "@material-design-icons/svg/filled/auto_fix_high.svg";
+
 import { useWinAnimation } from "../../hooks/game";
 import { gameIsTriviallyWinnableState, gameIsWonState } from "../../state/game";
 import { HudButton } from "./HudButton";
@@ -11,7 +13,7 @@ export function HudDebugPane() {
   return (
     <div className="debug">
       <HudButton
-        icon="🎉"
+        icon={<WinIcon />}
         caption="Win"
         onClick={performWinAnimation}
         disabled={false}

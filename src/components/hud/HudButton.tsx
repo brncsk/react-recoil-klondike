@@ -1,10 +1,12 @@
+import React from "react";
+
 export function HudButton({
   icon,
   caption,
   onClick,
   disabled,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   caption: string;
   onClick: () => void;
   disabled: boolean;
