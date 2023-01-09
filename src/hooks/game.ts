@@ -14,7 +14,7 @@ import {
   topmostCardState,
 } from "../state/cards";
 import { stackCardsState } from "../state/stacks";
-import { gameIsWonState } from "../state/game";
+import { gameIsWonState, gameStartedState } from "../state/game";
 
 import { shuffleDeck, generateDeck } from "../util/deck";
 import {
@@ -35,6 +35,8 @@ export function useNewGame() {
     ({ set, reset }) =>
       () => {
         set(gameIsWonState, false);
+        set(gameStartedState, false);
+
         const deck = shuffleDeck(generateDeck());
 
         // Deal the deck into the tableau

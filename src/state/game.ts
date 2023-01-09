@@ -1,8 +1,14 @@
 import { atom, selector } from "recoil";
+
 import { NUM_TABLEAU_STACKS } from "../const";
 import { tableauStack } from "../util/stacks";
 import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
+
+export const gameStartedState = atom({
+  key: "game-started",
+  default: false,
+});
 
 export const gameIsWonState = atom({
   key: "game-is-won",
