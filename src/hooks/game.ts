@@ -14,8 +14,8 @@ import {
   topmostCardState,
 } from "../state/cards";
 import { stackCardsState } from "../state/stacks";
+import { gameIsWonState } from "../state/game";
 
-import { canDropOntoFoundation, canDropOntoTableau } from "./stacks";
 import { shuffleDeck, generateDeck } from "../util/deck";
 import {
   tableauStack,
@@ -25,6 +25,8 @@ import {
 } from "../util/stacks";
 import { HistoryContext } from "../util/history";
 
+import { canDropOntoFoundation, canDropOntoTableau } from "./stacks";
+
 /** Returns a function that deals a new game. */
 export function useNewGame() {
   const { reset: resetHistory } = useContext(HistoryContext);
@@ -32,6 +34,7 @@ export function useNewGame() {
   return useRecoilCallback(
     ({ set, reset }) =>
       () => {
+        set(gameIsWonState, false);
         const deck = shuffleDeck(generateDeck());
 
         // Deal the deck into the tableau
@@ -256,4 +259,41 @@ export function useGameShortcutListeners() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+}
+
+export function useWinAnimation() {
+  return useRecoilCallback(({ set }) => () => {
+    generateDeck().forEach((card) => {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const cardElement = document.querySelector(
+        `[data-card="${card}"]`
+      )! as HTMLElement;
+      // cardElement.style.setProperty("--animation-delay", `${Math.random() * 1000}ms`);
+      cardElement.style.setProperty(
+        "--won-spread-x",
+        `${Math.random() * viewportWidth}px`
+      );
+      cardElement.style.setProperty(
+        "--won-spread-y",
+        `${Math.random() * viewportHeight}px`
+      );
+      cardElement.style.setProperty(
+        "--won-rotation",
+        `${Math.random() * 360 - 180}deg`
+      );
+      cardElement.style.setProperty(
+        "--won-scale",
+        `${Math.random() * 2.5 + 0.5}`
+      );
+
+      cardElement.style.setProperty(
+        "--won-transition-delay",
+        `${Math.random() * 500}ms`
+      );
+    });
+
+    set(gameIsWonState, true);
+  });
 }

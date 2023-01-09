@@ -42,6 +42,14 @@
   z-index: calc(var(--z-index) + 10000);
 }
 
+.board.won .card {
+  pointer-events: none;
+  transition-timing-function: ease-in;
+  transition-delay: var(--won-transition-delay);
+  transform: translate(var(--won-spread-x), var(--won-spread-y))
+    rotate(var(--won-rotation)) scale(var(--won-scale));
+}
+
 .card.face-down {
   cursor: pointer;
 }
@@ -63,8 +71,16 @@
   cursor: grab;
 }
 
+.board.won .card .face {
+  transition: none;
+}
+
 .card.red .face {
   color: var(--card-color-red);
+}
+
+.board.won .card.face-down .face {
+  transform: rotateY(0);
 }
 
 .card.face-down .face {

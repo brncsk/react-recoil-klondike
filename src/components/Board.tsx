@@ -1,6 +1,10 @@
+import clsx from "clsx";
+import { useRecoilValue } from "recoil";
+
 import { NUM_FOUNDATION_STACKS, NUM_TABLEAU_STACKS } from "../const";
 import { useMeasureCardSize } from "../hooks/cards";
 import { useBoardDragAndDropListeners } from "../hooks/drag-and-drop";
+import { gameIsWonState } from "../state/game";
 import { generateDeck } from "../util/deck";
 
 import { Card } from "./Card";
@@ -11,10 +15,11 @@ import { Waste } from "./stacks/Waste";
 
 export function Board() {
   useMeasureCardSize();
+  const gameIsWon = useRecoilValue(gameIsWonState);
 
   return (
     <div
-      className="board"
+      className={clsx("board", { won: gameIsWon })}
       style={
         { "--num-tableau-stacks": NUM_TABLEAU_STACKS } as React.CSSProperties
       }
