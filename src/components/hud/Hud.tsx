@@ -12,6 +12,10 @@ import { HudDebugPane } from "./HudDebugPane";
 
 const isDev = process.env.NODE_ENV === "development";
 
+function HudSeparator() {
+  return <div className="separator" />;
+}
+
 export function Hud() {
   const newGame = useNewGame();
   const { canUndo, canRedo, undo, redo } = useContext(HistoryContext);
@@ -36,7 +40,12 @@ export function Hud() {
         onClick={redo}
         disabled={!canRedo}
       />
-      {isDev && <HudDebugPane />}
+      {isDev && (
+        <>
+          <HudSeparator />
+          <HudDebugPane />
+        </>
+      )}
     </div>
   );
 }
