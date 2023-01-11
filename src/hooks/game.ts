@@ -3,7 +3,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
 import {
-  AUTOMOVE_INTERVAL_MS,
+  TRIVIAL_AUTOMOVE_INTERVAL_MS,
   NUM_CARDS_PER_SUIT,
   NUM_FOUNDATION_STACKS,
   NUM_TABLEAU_STACKS,
@@ -335,7 +335,8 @@ export function useUpdateElapsedTime() {
   }, [gameStarted, gamePaused, setElapsedSeconds]);
 }
 
-/** Returns a function that finishes a trivially-winnable game by
+/**
+ * Returns a function that finishes a trivially-winnable game by
  * automatically moving cards to the foundations.
  */
 export function useFinishTriviallyWinnableGame() {
@@ -364,7 +365,7 @@ export function useFinishTriviallyWinnableGame() {
         };
 
         while (await moveNextCard()) {
-          await sleep(AUTOMOVE_INTERVAL_MS);
+          await sleep(TRIVIAL_AUTOMOVE_INTERVAL_MS);
         }
 
         set(gameIsWonState, true);

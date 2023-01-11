@@ -10,7 +10,7 @@ export const TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO = 5;
 export const DECK_WASTE_FANOUT_OFFSET_RATIO = 1000;
 
 /** The number of milliseconds to wait between each move when finishing a game. */
-export const AUTOMOVE_INTERVAL_MS = 250;
+export const TRIVIAL_AUTOMOVE_INTERVAL_MS = 250;
 
 export const STACKS: Stack[] = [
   "deck",

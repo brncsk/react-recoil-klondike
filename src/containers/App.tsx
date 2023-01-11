@@ -25,7 +25,6 @@ function App() {
   const finishTrivially = useFinishTriviallyWinnableGame();
 
   useEffect(() => {
-    Object.assign(window, { finishTrivially });
     if (isTriviallyWinnable) {
       finishTrivially();
     }
