@@ -1,6 +1,7 @@
 import { atom, selector } from "recoil";
 
 import { NUM_TABLEAU_STACKS } from "../const";
+import { getCardRankIndex } from "../util/cards";
 import { tableauStack } from "../util/stacks";
 import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
@@ -42,8 +43,8 @@ export const gameIsWonState = atom({
 
 /**
  * Returns whether the game is trivially winnable.
- * A game is trivially winnable if the deck is empty and all tableau stacks are
- * fully face-up.
+ * A game is trivially winnable if the deck is empty, all tableau stacks are
+ * fully face-up and cards in the waste stack are in descending order.
  */
 export const gameIsTriviallyWinnableState = selector({
   key: "game-is-trivially-winnable",
@@ -52,6 +53,17 @@ export const gameIsTriviallyWinnableState = selector({
 
     if (deckCardCount.length !== 0) {
       return false;
+    }
+
+    // Check if cards in the waste stack are in descending order.
+    const wasteCards = get(stackCardsState("waste"));
+
+    for (let i = 0; i < wasteCards.length - 1; i++) {
+      if (
+        getCardRankIndex(wasteCards[i]) <= getCardRankIndex(wasteCards[i + 1])
+      ) {
+        return false;
+      }
     }
 
     for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
