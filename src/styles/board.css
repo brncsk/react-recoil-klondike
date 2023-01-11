@@ -37,6 +37,14 @@
   }
 }
 
+@media screen and (max-height: 600px) {
+  .board {
+    padding: 1em;
+    gap: 1em;
+    padding-inline-end: calc(10vw + 1em);
+  }
+}
+
 .section {
   display: grid;
   grid-template-columns: repeat(var(--num-tableau-stacks), var(--card-width));

@@ -172,7 +172,6 @@
 
 @media screen and (max-width: 600px) {
   .card .front {
-    flex-direction: column;
   }
 }
 
@@ -186,7 +185,6 @@
 @media screen and (max-width: 600px) {
   .card .corner {
     font-size: calc(var(--card-font-size) / 3);
-    flex-direction: row;
   }
 }
 

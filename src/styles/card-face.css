@@ -89,3 +89,29 @@
 .card .face[data-rank="A"] .center .rank {
   font-size: var(--card-font-size) !important;
 }
+
+@media screen and (max-width: 600px) {
+  .card .face .front * {
+    display: none;
+  }
+
+  .card .face .front::before,
+  .card .face .front::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    box-sizing: border-box;
+  }
+
+  .card .face .front::before {
+    padding: 0.25em;
+    content: var(--rank) " " var(--suit);
+    font-size: calc(var(--card-font-size) / 2);
+  }
+
+  .card .face .front::after {
+    content: var(--suit);
+    place-content: center;
+    font-size: calc(var(--card-font-size));
+  }
+}

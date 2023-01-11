@@ -27,6 +27,26 @@
     bottom: 0;
     border-radius: var(--hud-border-radius) var(--hud-border-radius) 0 0;
   }
+
+  .hud :is(.separator, .debug) {
+    display: none !important;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .hud {
+    width: 10vw;
+    inset: auto;
+    height: 100vh;
+    right: 0;
+    bottom: auto;
+    transform: none;
+    flex-direction: column;
+  }
+
+  .hud :is(button .caption, .separator, .debug) {
+    display: none !important;
+  }
 }
 
 .hud * {

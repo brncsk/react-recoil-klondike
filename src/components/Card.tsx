@@ -2,7 +2,12 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE as useRecoilValue } from "re
 import clsx from "clsx";
 
 import { Card as CardType, Stack } from "../types";
-import { getCardColor, getCardZIndex } from "../util/cards";
+import {
+  getCardColor,
+  getCardRank,
+  getCardSuit,
+  getCardZIndex,
+} from "../util/cards";
 import { useCardEventProps } from "../hooks/cards";
 
 import {
@@ -43,6 +48,8 @@ export function Card({ card }: CardProps) {
           "--left": `${position.x}px`,
           "--top": `${position.y}px`,
           "--z-index": getCardZIndex(stack, index),
+          "--rank": `"${getCardRank(card)}"`,
+          "--suit": `"${getCardSuit(card)}"`,
         } as any
       }
       {...useCardEventProps(card)}
