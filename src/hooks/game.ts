@@ -17,6 +17,7 @@ import { stackCardsState } from "../state/stacks";
 import {
   gameElapsedSecondsState,
   gameIsWonState,
+  gameMovesState,
   gamePausedState,
   gameStartedState,
 } from "../state/game";
@@ -141,6 +142,9 @@ export function useMoveCard() {
         for (const card of movedCards) {
           set(cardStackState(card), targetStack);
         }
+
+        // Update the number of moves
+        set(gameMovesState, (moves) => moves + 1);
       },
     []
   );

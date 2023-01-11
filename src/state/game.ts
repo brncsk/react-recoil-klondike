@@ -30,6 +30,11 @@ export const gameElapsedSecondsState = atom({
   default: 0,
 });
 
+export const gameMovesState = atom({
+  key: "game-moves",
+  default: 0,
+});
+
 export const gameIsWonState = atom({
   key: "game-is-won",
   default: false,
