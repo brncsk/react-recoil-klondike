@@ -15,14 +15,16 @@
 .card {
   position: absolute;
   transform: translate(var(--left), var(--top));
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   width: var(--card-width);
   height: var(--card-height);
 
   cursor: pointer;
   z-index: var(--z-index);
+}
 
+.card[data-stack*="tableau"] {
   box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.15);
 }
 
@@ -42,6 +44,7 @@
   transition: none;
 
   z-index: calc(var(--z-index) + 10000);
+  box-shadow: 0 0 1em rgba(0, 0, 0, 0.25);
 }
 
 .board.won .card {
@@ -99,7 +102,6 @@
 
   backface-visibility: hidden;
 
-  /* Inset shadow */
   box-shadow: inset -0.5em -0.5em 1.5em rgba(0, 0, 0, 0.2);
 }
 
