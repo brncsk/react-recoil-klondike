@@ -4,6 +4,7 @@ import { ReactComponent as NewGameIcon } from "@material-design-icons/svg/filled
 import { ReactComponent as UndoIcon } from "@material-design-icons/svg/filled/undo.svg";
 import { ReactComponent as RedoIcon } from "@material-design-icons/svg/filled/redo.svg";
 import { ReactComponent as PauseIcon } from "@material-design-icons/svg/filled/pause.svg";
+import { ReactComponent as RestartIcon } from "@material-design-icons/svg/filled/replay.svg";
 
 import { useNewGame } from "../../hooks/game";
 import { HistoryContext } from "../../util/history";
@@ -24,7 +25,8 @@ function HudSeparator() {
 }
 
 export function Hud() {
-  const { canUndo, canRedo, undo, redo } = useContext(HistoryContext);
+  const { canUndo, canRedo, canRestart, undo, redo, restart } =
+    useContext(HistoryContext);
 
   const elapsedSeconds = useRecoilValue(gameElapsedSecondsState);
   const moves = useRecoilValue(gameMovesState);
@@ -40,6 +42,13 @@ export function Hud() {
         onClick={newGame}
         disabled={false}
       />
+      <HudButton
+        icon={<RestartIcon />}
+        caption="Restart"
+        onClick={restart}
+        disabled={!canRestart}
+      />
+      <HudSeparator />
       <HudButton
         icon={<UndoIcon />}
         caption="Undo"

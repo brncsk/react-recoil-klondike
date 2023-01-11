@@ -13,8 +13,10 @@ export const HistoryContext = createContext<HistoryContextType>({
   undo: () => {},
   redo: () => {},
   reset: () => {},
+  restart: () => {},
   canUndo: false,
   canRedo: false,
+  canRestart: false,
 });
 
 /** Atoms that are tracked throughout the game. */

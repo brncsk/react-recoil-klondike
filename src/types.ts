@@ -65,7 +65,7 @@ export type HistoryStack = Array<{ snapshot: Snapshot; release: () => void }>;
 export type HistoryState = { stack: HistoryStack; pointer: number };
 export type HistoryAction =
   | {
-      type: "undo" | "redo" | "reset";
+      type: "undo" | "redo" | "reset" | "restart";
     }
   | {
       type: "push";
@@ -76,6 +76,8 @@ export interface HistoryContextType {
   undo: () => void;
   redo: () => void;
   reset: () => void;
+  restart: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  canRestart: boolean;
 }

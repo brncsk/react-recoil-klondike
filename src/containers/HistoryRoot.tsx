@@ -49,6 +49,13 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
         case "reset":
           return { stack: [], pointer: 0 };
 
+        case "restart":
+          isUndoInProgress.current = true;
+          return mapHistoryFrame({
+            stack: [stack[stack.length - 1]],
+            pointer: 0,
+          });
+
         default:
           return { stack, pointer };
       }
@@ -75,8 +82,10 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
         undo: () => historyDispatch({ type: "undo" }),
         redo: () => historyDispatch({ type: "redo" }),
         reset: () => historyDispatch({ type: "reset" }),
+        restart: () => historyDispatch({ type: "restart" }),
         canUndo: pointer < stack.length - 1,
         canRedo: pointer > 0,
+        canRestart: stack.length > 1,
       }}
     >
       {children}
