@@ -13,6 +13,16 @@ export const gameStartedState = atom({
 export const gamePausedState = atom({
   key: "game-paused",
   default: false,
+  effects: [
+    ({ setSelf }) => {
+      document.addEventListener("visibilitychange", () =>
+        setSelf(document.hidden)
+      );
+
+      window.addEventListener("blur", () => setSelf(true));
+      window.addEventListener("focus", () => setSelf(false));
+    },
+  ],
 });
 
 export const gameElapsedSecondsState = atom({
