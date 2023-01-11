@@ -36,5 +36,5 @@ export function getCardZIndex(stack: Stack, cardIndex: number): number {
       break;
   }
 
-  return cardIndex * 100 + stackZIndex;
+  return cardIndex + stackZIndex * 100;
 }
