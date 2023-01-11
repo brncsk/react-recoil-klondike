@@ -1,0 +1,84 @@
+.card .face:is([data-rank="4"]) .center {
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+.card .face:is([data-rank="8"], [data-rank="9"], [data-rank="10"]) .center {
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+
+.card .face[data-rank="5"] .center {
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+
+.card .face:is([data-rank="6"], [data-rank="7"]) .center {
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+
+.card
+  .face:is([data-rank="5"], [data-rank="7"], [data-rank="9"])
+  .center
+  span:is(:nth-child(5)),
+.card .face[data-rank="10"] .center span:is(:nth-child(5), :nth-child(10)) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card .face[data-rank="7"] .center span:nth-child(5) {
+  top: 33%;
+}
+.card .face[data-rank="10"] .center span:nth-child(5) {
+  top: 25%;
+}
+
+.card .face[data-rank="10"] .center span:nth-child(10) {
+  top: 75%;
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.card
+  .face:is([data-rank="J"], [data-rank="Q"], [data-rank="K"])
+  .front
+  .center {
+  margin: 0.75em 0.25em;
+  border: 1px solid currentColor;
+}
+
+.card
+  .face:is([data-rank="J"], [data-rank="Q"], [data-rank="K"])
+  .front
+  .center::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 50%, currentColor 50%);
+  opacity: 0.1;
+}
+
+.card .face[data-rank="A"] .center {
+  font-size: var(--card-font-size);
+}
+
+.card .center .rank {
+  align-self: flex-start;
+}
+
+.card .center .rank.upside-down {
+  align-self: flex-end;
+}
+
+.card
+  .face.face:is(
+    [data-rank="A"],
+    [data-rank="J"],
+    [data-rank="Q"],
+    [data-rank="K"]
+  )
+  .center
+  .rank {
+  align-self: center;
+}

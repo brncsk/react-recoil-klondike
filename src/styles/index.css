@@ -18,6 +18,7 @@ body {
 
 @import url("./board.css");
 @import url("./card.css");
+@import url("./card-face.css");
 @import url("./stack.css");
 @import url("./hud.css");
 @import url("./you-won-overlay.css");

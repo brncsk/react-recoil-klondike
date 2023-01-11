@@ -23,6 +23,8 @@
 
   cursor: pointer;
   z-index: var(--z-index);
+
+  overflow: hidden;
 }
 
 .card[data-stack*="tableau"] {
@@ -194,9 +196,16 @@
 
 .card .center {
   flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-block: 0.25em;
+  box-sizing: border-box;
 
-  font-size: var(--card-font-size);
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  font-size: calc(var(--card-font-size) / 2);
+}
+
+.card .center .rank.upside-down {
+  transform: rotate(180deg);
 }
