@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 
-import { useGameShortcutListeners, useNewGame } from "../hooks/game";
+import {
+  useGameShortcutListeners,
+  useNewGame,
+  useUpdateElapsedTime,
+} from "../hooks/game";
 
 import { Board } from "../components/Board";
 import { Hud } from "../components/hud/Hud";
@@ -12,6 +16,7 @@ function App() {
   const newGame = useNewGame();
   useEffect(() => void newGame(), [newGame]);
   useGameShortcutListeners();
+  useUpdateElapsedTime();
 
   return (
     <HistoryRoot>

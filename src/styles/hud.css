@@ -70,6 +70,12 @@
   height: 3em;
 }
 
+.hud button .text {
+  display: block;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
 .hud button .caption {
   display: block;
   margin-top: 0.5em;

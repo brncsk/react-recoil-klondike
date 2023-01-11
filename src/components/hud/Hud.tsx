@@ -10,12 +10,16 @@ import { HistoryContext } from "../../util/history";
 import { HudButton } from "./HudButton";
 import { HudDebugPane } from "./HudDebugPane";
 import { isDevelopment } from "../../util/env";
+import { useRecoilValue } from "recoil";
+import { gameElapsedSecondsState } from "../../state/game";
+import { formatTime } from "../../util/time";
 
 function HudSeparator() {
   return <div className="separator" />;
 }
 
 export function Hud() {
+  const elapsedSeconds = useRecoilValue(gameElapsedSecondsState);
   const newGame = useNewGame();
   const { canUndo, canRedo, undo, redo } = useContext(HistoryContext);
 
@@ -39,6 +43,14 @@ export function Hud() {
         onClick={redo}
         disabled={!canRedo}
       />
+      <HudSeparator />
+      <HudButton
+        icon={<span className="text">{formatTime(elapsedSeconds)}</span>}
+        caption="Time"
+        onClick={() => {}}
+        disabled={true}
+      />
+
       {isDevelopment && (
         <>
           <HudSeparator />

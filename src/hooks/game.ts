@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect } from "react";
-import { useRecoilCallback } from "recoil";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
 import {
@@ -14,7 +14,11 @@ import {
   topmostCardState,
 } from "../state/cards";
 import { stackCardsState } from "../state/stacks";
-import { gameIsWonState, gameStartedState } from "../state/game";
+import {
+  gameElapsedSecondsState,
+  gameIsWonState,
+  gameStartedState,
+} from "../state/game";
 
 import { shuffleDeck, generateDeck } from "../util/deck";
 import {
@@ -36,6 +40,7 @@ export function useNewGame() {
       () => {
         set(gameIsWonState, false);
         set(gameStartedState, false);
+        set(gameElapsedSecondsState, 0);
 
         const deck = shuffleDeck(generateDeck());
 
@@ -298,4 +303,21 @@ export function useWinAnimation() {
 
     set(gameIsWonState, true);
   });
+}
+
+export function useUpdateElapsedTime() {
+  const gameStarted = useRecoilValue(gameStartedState);
+  const setElapsedSeconds = useSetRecoilState(gameElapsedSecondsState);
+
+  useEffect(() => {
+    if (!gameStarted) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setElapsedSeconds((seconds) => seconds + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameStarted, setElapsedSeconds]);
 }
