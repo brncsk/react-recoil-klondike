@@ -343,6 +343,8 @@ export function useFinishTriviallyWinnableGame() {
   const autoMove = useAutoMove();
   const isGameWon = useIsGameWon();
 
+  const performWinAnimation = useWinAnimation();
+
   return useRecoilCallback(
     ({ set }) =>
       async () => {
@@ -361,19 +363,13 @@ export function useFinishTriviallyWinnableGame() {
           return false;
         };
 
-        while (true) {
-          const moved = await moveNextCard();
-
-          if (isGameWon()) {
-            break;
-          }
-
-          if (moved) {
-            await sleep(AUTOMOVE_INTERVAL_MS);
-          }
+        while (await moveNextCard()) {
+          await sleep(AUTOMOVE_INTERVAL_MS);
         }
 
         set(gameIsWonState, true);
+        set(gameStartedState, false);
+        performWinAnimation();
       },
     [autoMove, isGameWon, moveCard]
   );
