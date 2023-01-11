@@ -7,9 +7,8 @@ export function CardFace({ card }: CardProps) {
 
   const indices = (
     <>
-      {rank}
-      <br />
-      {suit}
+      <span>{rank}</span>
+      <span>{suit}</span>
     </>
   );
 

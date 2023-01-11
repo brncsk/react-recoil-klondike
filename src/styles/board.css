@@ -26,8 +26,10 @@
 
 @media screen and (max-width: 600px) {
   .board {
-    padding: 0;
+    padding-inline: 0;
     gap: 1em;
+    --card-border-radius: 0.15em;
+    --card-backface-padding: 0.25em;
   }
 
   .section {
