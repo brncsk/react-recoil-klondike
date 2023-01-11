@@ -56,6 +56,10 @@ drag-and-drop operations. Details of the in-flight drag are communicated via
 [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
 and React [refs](https://reactjs.org/docs/hooks-reference.html#useref).
 
+Our custom DnD logic allows us to implement some nice features, such as
+the ability to drop a card onto a stack even if the pointer is not over the
+stack's bounding box. This allows for a more natural drag-and-drop experience.
+
 ### Explicit positioning
 
 While the game relies on the browser's layout engine to position the stacks using
