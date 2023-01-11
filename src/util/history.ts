@@ -36,15 +36,17 @@ export function isNodeTracked(node: RecoilValue<unknown>) {
 
 /** Returns true if the snapshot contains any nodes that should be tracked. */
 export function isSnapshotToBeRetained(snapshot: Snapshot) {
-  isDevelopment && dumpSnapshotToConsole(snapshot);
+  let hasTrackedNodes = false;
 
   for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
     if (isNodeTracked(node)) {
-      return true;
+      hasTrackedNodes = true;
+      break;
     }
   }
 
-  return false;
+  isDevelopment && hasTrackedNodes && dumpSnapshotToConsole(snapshot);
+  return hasTrackedNodes;
 }
 
 /** Pushes a snapshot onto the history stack. */
