@@ -17,6 +17,7 @@ import { stackCardsState } from "../state/stacks";
 import {
   gameElapsedSecondsState,
   gameIsWonState,
+  gamePausedState,
   gameStartedState,
 } from "../state/game";
 
@@ -38,9 +39,10 @@ export function useNewGame() {
   return useRecoilCallback(
     ({ set, reset }) =>
       () => {
-        set(gameIsWonState, false);
-        set(gameStartedState, false);
-        set(gameElapsedSecondsState, 0);
+        reset(gameIsWonState);
+        reset(gameStartedState);
+        reset(gameElapsedSecondsState);
+        reset(gamePausedState);
 
         const deck = shuffleDeck(generateDeck());
 
@@ -307,10 +309,11 @@ export function useWinAnimation() {
 
 export function useUpdateElapsedTime() {
   const gameStarted = useRecoilValue(gameStartedState);
+  const gamePaused = useRecoilValue(gamePausedState);
   const setElapsedSeconds = useSetRecoilState(gameElapsedSecondsState);
 
   useEffect(() => {
-    if (!gameStarted) {
+    if (!gameStarted || gamePaused) {
       return;
     }
 
@@ -319,5 +322,5 @@ export function useUpdateElapsedTime() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [gameStarted, setElapsedSeconds]);
+  }, [gameStarted, gamePaused, setElapsedSeconds]);
 }

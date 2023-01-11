@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { ReactComponent as NewGameIcon } from "@material-design-icons/svg/filled/auto_awesome.svg";
 import { ReactComponent as UndoIcon } from "@material-design-icons/svg/filled/undo.svg";
 import { ReactComponent as RedoIcon } from "@material-design-icons/svg/filled/redo.svg";
+import { ReactComponent as PauseIcon } from "@material-design-icons/svg/filled/pause.svg";
 
 import { useNewGame } from "../../hooks/game";
 import { HistoryContext } from "../../util/history";
@@ -10,8 +11,8 @@ import { HistoryContext } from "../../util/history";
 import { HudButton } from "./HudButton";
 import { HudDebugPane } from "./HudDebugPane";
 import { isDevelopment } from "../../util/env";
-import { useRecoilValue } from "recoil";
-import { gameElapsedSecondsState } from "../../state/game";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { gameElapsedSecondsState, gamePausedState } from "../../state/game";
 import { formatTime } from "../../util/time";
 
 function HudSeparator() {
@@ -19,9 +20,11 @@ function HudSeparator() {
 }
 
 export function Hud() {
-  const elapsedSeconds = useRecoilValue(gameElapsedSecondsState);
-  const newGame = useNewGame();
   const { canUndo, canRedo, undo, redo } = useContext(HistoryContext);
+
+  const elapsedSeconds = useRecoilValue(gameElapsedSecondsState);
+  const [gamePaused, setGamePaused] = useRecoilState(gamePausedState);
+  const newGame = useNewGame();
 
   return (
     <div className="hud">
@@ -45,10 +48,16 @@ export function Hud() {
       />
       <HudSeparator />
       <HudButton
-        icon={<span className="text">{formatTime(elapsedSeconds)}</span>}
-        caption="Time"
-        onClick={() => {}}
-        disabled={true}
+        icon={
+          gamePaused ? (
+            <PauseIcon />
+          ) : (
+            <span className="text">{formatTime(elapsedSeconds)}</span>
+          )
+        }
+        caption={`Time (${gamePaused ? "Continue" : "Pause"})`}
+        onClick={() => setGamePaused((paused) => !paused)}
+        disabled={false}
       />
 
       {isDevelopment && (
