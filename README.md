@@ -76,3 +76,7 @@ and cards, which would lead to janky animations.
 The game supports undo/redo operations via Recoil's
 [`useRecoilTransactionObserver`](https://recoiljs.org/docs/api-reference/core/useRecoilTransactionObserver) hook.
 See [`src/hooks/history.ts`](src/hooks/history.ts) and [`src/util/history.ts`](src/util/history.ts) for more details.
+
+# License
+
+MIT
