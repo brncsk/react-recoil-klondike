@@ -3,7 +3,7 @@ import { Card, CardDragInfo, Rect, Stack } from "../types";
 
 /** Returns the drag info and the dragged cards from a mouse event. */
 export function getDragPropsFromEvent(
-  e: React.MouseEvent<HTMLElement>
+  e: React.PointerEvent<HTMLElement>
 ): { dragInfo: CardDragInfo; draggedCards: HTMLDivElement[] } | null {
   const card = document
     .elementFromPoint(e.clientX, e.clientY)!

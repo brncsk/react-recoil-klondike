@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { RecoilValueReadOnly, useRecoilSnapshot, useRecoilValue } from "recoil";
 
 import {
@@ -28,8 +28,8 @@ export function useBoardDragAndDropListeners() {
   const getLargestOverlappingStack = useGetLargestOverlappingStack();
   const boardElement = document.querySelector(".board")! as HTMLDivElement;
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
+  const handlePointerMove = useCallback(
+    (e: PointerEvent) => {
       if (e.clientX === 0 && e.clientY === 0) {
         return;
       }
@@ -110,8 +110,8 @@ export function useBoardDragAndDropListeners() {
     ]
   );
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
       const dragProps = getDragPropsFromEvent(e);
 
       if (!dragProps) {
@@ -126,13 +126,13 @@ export function useBoardDragAndDropListeners() {
         y: e.nativeEvent.offsetY,
       };
 
-      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("pointermove", handlePointerMove);
     },
-    [draggedCards, dragInfo, initialOffset, handleMouseMove]
+    [draggedCards, dragInfo, initialOffset, handlePointerMove]
   );
 
-  const handleMouseUp = useCallback(() => {
-    document.removeEventListener("mousemove", handleMouseMove);
+  const handlePointerUp = useCallback(() => {
+    document.removeEventListener("pointermove", handlePointerMove);
 
     if (activeStack.current && didMove.current && dragInfo.current) {
       activeStack.current.dispatchEvent(
@@ -156,11 +156,11 @@ export function useBoardDragAndDropListeners() {
 
     initialOffset.current = { x: 0, y: 0 };
     cardOffset.current = { x: 0, y: 0 };
-  }, [draggedCards, handleMouseMove, boardElement]);
+  }, [draggedCards, handlePointerMove, boardElement]);
 
   return {
-    onMouseDown: handleMouseDown,
-    onMouseUp: handleMouseUp,
+    onPointerDown: handlePointerDown,
+    onPointerUp: handlePointerUp,
   } as React.HTMLAttributes<HTMLDivElement>;
 }
 
