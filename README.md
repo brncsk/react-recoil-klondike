@@ -10,6 +10,8 @@
 
 It's a sufficiently complex but still self-contained example of a React application that uses Recoil for state management. See [Architectural decisions](#architectural-decisions) for more details.
 
+The game is available at https://react-recoil-klondike.netlify.app/.
+
 ## Usage
 
 In the project directory, you can run:
