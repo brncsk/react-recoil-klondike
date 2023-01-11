@@ -1,4 +1,4 @@
-.you-won-overlay {
+.game-overlay {
   position: fixed;
   inset: 0;
 
@@ -22,7 +22,7 @@
   transition: opacity 0.5s ease, background-color 0.5s ease;
 }
 
-.you-won-overlay .message {
+.game-overlay .message {
   transform: scale(0.8) translateY(1em);
   opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease;
@@ -33,14 +33,14 @@
   padding: env(safe-area-inset);
 }
 
-.you-won-overlay.visible {
+.game-overlay.visible {
   transform: scale(1);
   pointer-events: auto;
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.you-won-overlay.visible .message {
+.game-overlay.visible .message {
   transform: scale(1) translateY(0);
   opacity: 1;
 }

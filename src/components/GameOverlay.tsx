@@ -1,9 +1,10 @@
-import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import clsx from "clsx";
+
 import { gameIsWonState } from "../state/game";
 
-export function YouWonOverlay() {
+export function GameOverlay() {
   const isGameWon = useRecoilValue(gameIsWonState);
   const [delayedIsGameWon, setDelayedIsGameWon] = useState(false);
 
@@ -17,7 +18,7 @@ export function YouWonOverlay() {
   }, [isGameWon]);
 
   return isGameWon ? (
-    <div className={clsx("you-won-overlay", delayedIsGameWon && "visible")}>
+    <div className={clsx("game-overlay", delayedIsGameWon && "visible")}>
       <span className="message">You Won!</span>
     </div>
   ) : null;

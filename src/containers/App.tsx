@@ -8,7 +8,7 @@ import {
 
 import { Board } from "../components/Board";
 import { Hud } from "../components/hud/Hud";
-import { YouWonOverlay } from "../components/YouWonOverlay";
+import { GameOverlay } from "../components/GameOverlay";
 
 import { HistoryRoot } from "./HistoryRoot";
 
@@ -22,7 +22,7 @@ function App() {
     <HistoryRoot>
       <Board />
       <Hud />
-      <YouWonOverlay />
+      <GameOverlay />
     </HistoryRoot>
   );
 }
