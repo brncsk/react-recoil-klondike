@@ -30,7 +30,7 @@ export function useBoardDragAndDropListeners() {
 
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
-      if (e.clientX === 0 && e.clientY === 0) {
+      if ((e.clientX === 0 && e.clientY === 0) || !dragInfo.current) {
         return;
       }
 
