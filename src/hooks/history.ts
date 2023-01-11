@@ -61,9 +61,6 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
         // Retain the new snapshot so it doesn't get garbage collected.
         const release = newSnapshot.retain();
 
-        // Release the old snapshot so it can be garbage collected.
-        releaseOldSnapshot();
-
         isDevelopment &&
           console.log(
             `Replacing snapshot ${oldSnapshot.getID()} with ${newSnapshot.getID()} at index ${pointer} (length: ${
@@ -73,11 +70,16 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
 
         // Replace the current snapshot with the new one.
         stack = [
-          ...stack.splice(pointer, 1, { snapshot: newSnapshot, release }),
+          ...stack.slice(0, pointer),
+          { snapshot: newSnapshot, release },
+          ...stack.slice(pointer + 1),
         ];
 
         // Jump to the new snapshot.
         gotoSnapshot(newSnapshot);
+
+        // Release the old snapshot so it can be garbage collected.
+        releaseOldSnapshot();
 
         isDevelopment && dumpHistoryStateToConsole({ stack, pointer });
 
