@@ -1,6 +1,7 @@
 import {
   TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO,
   TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO,
+  DECK_WASTE_FANOUT_OFFSET_RATIO,
 } from "../const";
 import { Stack, StackType } from "../types";
 
@@ -34,22 +35,38 @@ export function foundationStack(num: number): Stack {
   return `foundation-${num}` as Stack;
 }
 
-export function getTableauFanoutOffset(
+export function getStackFanoutOffset(
+  stackType: StackType,
   cardHeight: number,
   numCards: number,
   numFaceUpCards: number,
   index: number
-): number {
-  const numFaceDownCards = numCards - numFaceUpCards;
-  const isFaceUp = index >= numFaceDownCards;
+): { x: number; y: number } {
+  switch (stackType) {
+    case "tableau":
+      const numFaceDownCards = numCards - numFaceUpCards;
+      const isFaceUp = index >= numFaceDownCards;
 
-  if (isFaceUp) {
-    return (
-      (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO) *
-        (index - numFaceDownCards) +
-      (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) * numFaceDownCards
-    );
-  } else {
-    return (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) * index;
+      if (isFaceUp) {
+        return {
+          x: 0,
+          y:
+            (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO) *
+              (index - numFaceDownCards) +
+            (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) *
+              numFaceDownCards,
+        };
+      } else {
+        return {
+          x: 0,
+          y: (cardHeight / TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO) * index,
+        };
+      }
+
+    default:
+      return {
+        x: (index * -cardHeight) / DECK_WASTE_FANOUT_OFFSET_RATIO,
+        y: (index * -cardHeight) / DECK_WASTE_FANOUT_OFFSET_RATIO,
+      };
   }
 }

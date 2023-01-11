@@ -4,7 +4,7 @@ import { Stack, Card } from "../types";
 import {
   getStackType,
   getStackNumber,
-  getTableauFanoutOffset,
+  getStackFanoutOffset,
 } from "../util/stacks";
 
 import { stackCardsState, stackRectState } from "./stacks";
@@ -111,21 +111,19 @@ export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
         const stackPosition = get(stackRectState(stack));
         const stackIndex = get(cardStackIndexState(card));
 
-        const fanoutOffset =
-          getStackType(stack) === "tableau"
-            ? getTableauFanoutOffset(
-                get(cardSizeState).height,
-                stackNumCards,
-                stackNumFaceUpCards,
-                stackIndex
-              )
-            : 0;
+        const fanoutOffset = getStackFanoutOffset(
+          getStackType(stack),
+          get(cardSizeState).height,
+          stackNumCards,
+          stackNumFaceUpCards,
+          stackIndex
+        );
 
         let cardOffset = { x: 0, y: 0 };
 
         return {
-          x: stackPosition.x + cardOffset.x,
-          y: stackPosition.y + cardOffset.y + fanoutOffset,
+          x: stackPosition.x + cardOffset.x + fanoutOffset.x,
+          y: stackPosition.y + cardOffset.y + fanoutOffset.y,
         };
       },
   }

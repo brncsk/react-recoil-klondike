@@ -7,6 +7,7 @@ export const NUM_CARDS_PER_SUIT = Object.keys(Rank).length;
 
 export const TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO = 10;
 export const TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO = 5;
+export const DECK_WASTE_FANOUT_OFFSET_RATIO = 1000;
 
 export const STACKS: Stack[] = [
   "deck",
