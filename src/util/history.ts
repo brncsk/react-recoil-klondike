@@ -1,8 +1,8 @@
 import { createContext } from "react";
 import { RecoilState, RecoilValue, Snapshot } from "recoil";
 
-import { STACKS } from "../const";
-import { cardStackState } from "../state/cards";
+import { NUM_TABLEAU_STACKS, STACKS } from "../const";
+import { cardStackState, tableauNumFaceUpCardsState } from "../state/cards";
 import { stackCardsState } from "../state/stacks";
 
 import { HistoryContextType, HistoryState } from "../types";
@@ -20,6 +20,9 @@ export const HistoryContext = createContext<HistoryContextType>({
 /** Atoms that are tracked throughout the game. */
 export const TRACKED_ATOMS: RecoilState<any>[] = [
   ...STACKS.map(stackCardsState),
+  ...Array(NUM_TABLEAU_STACKS)
+    .fill(undefined)
+    .map((_, i) => tableauNumFaceUpCardsState(i)),
   ...generateDeck().map(cardStackState),
 ];
 
