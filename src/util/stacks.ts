@@ -3,7 +3,7 @@ import {
   TABLEAU_FANOUT_OFFSET_FACE_DOWN_RATIO,
   DECK_WASTE_FANOUT_OFFSET_RATIO,
 } from "../const";
-import { Stack, StackType } from "../types";
+import { Position, Stack, StackType } from "../types";
 
 export function getStackType(stack: Stack): StackType {
   if (stack === "deck") {
@@ -41,7 +41,7 @@ export function getStackFanoutOffset(
   numCards: number,
   numFaceUpCards: number,
   index: number
-): { x: number; y: number } {
+): Position {
   switch (stackType) {
     case "tableau":
       const numFaceDownCards = numCards - numFaceUpCards;

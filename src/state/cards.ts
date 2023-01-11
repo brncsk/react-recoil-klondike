@@ -1,6 +1,6 @@
 import { atom, atomFamily, selectorFamily } from "recoil";
 
-import { Stack, Card } from "../types";
+import { Stack, Card, Position } from "../types";
 import {
   getStackType,
   getStackNumber,
@@ -111,35 +111,33 @@ export const cardStackIndexState = selectorFamily<number, Card>({
  * Returns the position of a card in CSS pixels relative to the top-left corner
  * of the viewport.
  */
-export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
-  {
-    key: "card-static-position",
-    get:
-      (card) =>
-      ({ get }) => {
-        const stack = get(cardStackState(card));
-        const stackNumCards = get(stackCardsState(stack)).length;
-        const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
-        const stackPosition = get(stackRectState(stack));
-        const stackIndex = get(cardStackIndexState(card));
+export const cardPositionState = selectorFamily<Position, Card>({
+  key: "card-static-position",
+  get:
+    (card) =>
+    ({ get }) => {
+      const stack = get(cardStackState(card));
+      const stackNumCards = get(stackCardsState(stack)).length;
+      const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));
+      const stackPosition = get(stackRectState(stack));
+      const stackIndex = get(cardStackIndexState(card));
 
-        const fanoutOffset = getStackFanoutOffset(
-          getStackType(stack),
-          get(cardSizeState).height,
-          stackNumCards,
-          stackNumFaceUpCards,
-          stackIndex
-        );
+      const fanoutOffset = getStackFanoutOffset(
+        getStackType(stack),
+        get(cardSizeState).height,
+        stackNumCards,
+        stackNumFaceUpCards,
+        stackIndex
+      );
 
-        let cardOffset = { x: 0, y: 0 };
+      let cardOffset = { x: 0, y: 0 };
 
-        return {
-          x: stackPosition.x + cardOffset.x + fanoutOffset.x,
-          y: stackPosition.y + cardOffset.y + fanoutOffset.y,
-        };
-      },
-  }
-);
+      return {
+        x: stackPosition.x + cardOffset.x + fanoutOffset.x,
+        y: stackPosition.y + cardOffset.y + fanoutOffset.y,
+      };
+    },
+});
 
 /**
  * Returns the list of cards that would be moved if the user was to initiate

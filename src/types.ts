@@ -49,6 +49,8 @@ export type CanDrop = (
   topmostCard: Card | null
 ) => boolean;
 
+export type Position = { x: number; y: number };
+
 export type Rect = {
   x: number;
   y: number;
