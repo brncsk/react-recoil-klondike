@@ -6,11 +6,9 @@
   position: relative;
   width: var(--card-width);
   display: grid;
-  filter: drop-shadow(0 0 0.5em #00000077);
   grid-auto-rows: calc(var(--card-height) / 500);
-  transition: filter 0.2s ease-in-out;
   cursor: pointer;
-  will-change: transform, filter;
+  will-change: transform;
 }
 
 .stack.tableau {
@@ -20,10 +18,6 @@
 
 .stack.drop-target.drag-over {
   background: #00000011;
-}
-
-.stack:hover {
-  filter: drop-shadow(0 0 0.5em #000000);
 }
 
 .stack:before {

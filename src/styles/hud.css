@@ -18,7 +18,6 @@
 
   background: rgba(0, 0, 0, 0.5);
   border-radius: var(--hud-border-radius);
-  backdrop-filter: blur(0.5em) saturate(180%) contrast(120%) brightness(120%);
   filter: drop-shadow(0 0 0.5em rgba(0, 0, 0, 0.5));
 }
 
