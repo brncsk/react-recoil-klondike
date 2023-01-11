@@ -3,6 +3,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Card, CardDragInfo, Stack } from "../types";
 import {
+  AUTOMOVE_INTERVAL_MS,
   NUM_CARDS_PER_SUIT,
   NUM_FOUNDATION_STACKS,
   NUM_TABLEAU_STACKS,
@@ -30,6 +31,7 @@ import {
   getStackNumber,
 } from "../util/stacks";
 import { HistoryContext } from "../util/history";
+import { sleep } from "../util/async";
 
 import { canDropOntoFoundation, canDropOntoTableau } from "./stacks";
 
@@ -43,6 +45,7 @@ export function useNewGame() {
         reset(gameIsWonState);
         reset(gameStartedState);
         reset(gameElapsedSecondsState);
+        reset(gameMovesState);
         reset(gamePausedState);
 
         const deck = shuffleDeck(generateDeck());
@@ -187,17 +190,18 @@ export function useDealFromDeck() {
  *
  * @param stack The stack to move the topmost card from
  * @param foundationOnly If true, only move to foundations, not tableaus.
+ * @returns true if a card was moved, false otherwise
  */
 export function useAutoMove() {
   const moveCard = useMoveCard();
 
   return useRecoilCallback(
     ({ snapshot: { getLoadable: get } }) =>
-      (stack: Stack, foundationOnly = false) => {
+      (stack: Stack, foundationOnly = false): boolean => {
         const card = get(topmostCardState(stack)).valueOrThrow();
 
         if (!card) {
-          return;
+          return false;
         }
 
         const dragInfo: CardDragInfo = {
@@ -213,7 +217,7 @@ export function useAutoMove() {
 
           if (canDropOntoFoundation(dragInfo, topmostCardOnTarget)) {
             moveCard(stack, foundationStack(i));
-            return;
+            return true;
           }
         }
 
@@ -225,10 +229,12 @@ export function useAutoMove() {
 
             if (canDropOntoTableau(dragInfo, topmostCardOnTarget)) {
               moveCard(stack, tableauStack(i));
-              return;
+              return true;
             }
           }
         }
+
+        return false;
       },
     [moveCard]
   );
@@ -327,4 +333,48 @@ export function useUpdateElapsedTime() {
 
     return () => clearInterval(interval);
   }, [gameStarted, gamePaused, setElapsedSeconds]);
+}
+
+/** Returns a function that finishes a trivially-winnable game by
+ * automatically moving cards to the foundations.
+ */
+export function useFinishTriviallyWinnableGame() {
+  const moveCard = useMoveCard();
+  const autoMove = useAutoMove();
+  const isGameWon = useIsGameWon();
+
+  return useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        /** Moves the next card in the game to the foundations. */
+        const moveNextCard = async () => {
+          if (autoMove("waste", true)) {
+            return true;
+          }
+
+          for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
+            if (autoMove(tableauStack(i), true)) {
+              return true;
+            }
+          }
+
+          return false;
+        };
+
+        while (true) {
+          const moved = await moveNextCard();
+
+          if (isGameWon()) {
+            break;
+          }
+
+          if (moved) {
+            await sleep(AUTOMOVE_INTERVAL_MS);
+          }
+        }
+
+        set(gameIsWonState, true);
+      },
+    [autoMove, isGameWon, moveCard]
+  );
 }
