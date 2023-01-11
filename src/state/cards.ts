@@ -9,11 +9,16 @@ import {
 
 import { stackCardsState, stackRectState } from "./stacks";
 
+/** The stack that a card is currently in. */
 export const cardStackState = atomFamily<Stack, Card>({
   key: "card-stack",
   default: "deck",
 });
 
+/**
+ * The size of a card in CSS pixels.
+ * @see `useMeasureCardSize()` in `hooks/cards.ts`.
+ */
 export const cardSizeState = atom<{ width: number; height: number }>({
   key: "card-size",
   default: { width: 0, height: 0 },
@@ -30,6 +35,7 @@ export const topmostCardState = selectorFamily<Card | null, Stack>({
     },
 });
 
+/** Returns whether a card is the topmost card in its stack. */
 export const cardIsTopmostState = selectorFamily<boolean, Card>({
   key: "card-is-topmost",
   get:
@@ -42,6 +48,7 @@ export const cardIsTopmostState = selectorFamily<boolean, Card>({
     },
 });
 
+/** Returns whether a card is face-up (i.e. visible and interactable). */
 export const cardIsFaceUpState = selectorFamily<boolean, Card>({
   key: "card-is-face-up",
   get:
@@ -87,6 +94,7 @@ export const stackNumFaceUpCardsState = selectorFamily<number, Stack>({
     },
 });
 
+/** Returns the index of a card in its stack. */
 export const cardStackIndexState = selectorFamily<number, Card>({
   key: "card-stack-index",
   get:
@@ -99,6 +107,10 @@ export const cardStackIndexState = selectorFamily<number, Card>({
     },
 });
 
+/**
+ * Returns the position of a card in CSS pixels relative to the top-left corner
+ * of the viewport.
+ */
 export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
   {
     key: "card-static-position",
@@ -129,21 +141,32 @@ export const cardPositionState = selectorFamily<{ x: number; y: number }, Card>(
   }
 );
 
+/**
+ * Returns the list of cards that would be moved if the user was to initiate
+ * a drag on the given card.
+ * Used for pre-emptively determining the list of cards for a drag, so
+ * initiating a drag is more performant (no state updates during the drag).
+ */
 export const cardDragListState = selectorFamily<Card[], Card>({
   key: "card-drag-list",
   get:
     (card) =>
     ({ get }) => {
+      // If the card is face-down, no cards (including the card itself) can be
+      // moved via drag.
       if (!get(cardIsFaceUpState(card))) {
         return [];
       }
 
       const stack = get(cardStackState(card));
 
+      // Only a single card can be moved from non-tableau stacks.
       if (getStackType(stack) !== "tableau") {
         return [card];
       }
 
+      // Return all cards above the card in the stack, including the card
+      // itself.
       const stackIndex = get(cardStackIndexState(card));
       const cards = get(stackCardsState(stack));
 
