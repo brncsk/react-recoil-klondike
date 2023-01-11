@@ -41,7 +41,8 @@
   .board {
     padding: 1em;
     gap: 1em;
-    padding-inline-end: calc(10vw + 1em);
+    padding-inline-start: env(safe-area-inset-left);
+    padding-inline-end: calc(10vw + calc(1em + env(safe-area-inset-right)));
   }
 }
 

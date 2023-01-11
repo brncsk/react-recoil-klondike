@@ -35,13 +35,14 @@
 
 @media screen and (max-height: 600px) {
   .hud {
-    width: 10vw;
+    width: calc(10vw + env(safe-area-inset-right));
     inset: auto;
     height: 100vh;
     right: 0;
     bottom: auto;
     transform: none;
     flex-direction: column;
+    padding-inline-end: env(safe-area-inset-right);
   }
 
   .hud :is(button .caption, .separator, .debug) {
