@@ -59,10 +59,14 @@ export function pushHistoryFrame(
     .splice(0, Math.min(state.pointer, state.stack.length - 1))
     .forEach(({ release }) => release());
 
-  return {
+  const newState = {
     stack: [{ snapshot, release }, ...state.stack],
     pointer: 0,
   };
+
+  isDevelopment && dumpHistoryStateToConsole(newState);
+
+  return newState;
 }
 
 /** Dumps the modified contents of a snapshot to the console. */
@@ -72,6 +76,26 @@ export function dumpSnapshotToConsole(snapshot: Snapshot) {
   for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
     const loadable = snapshot.getLoadable(node);
     if (loadable.state === "hasValue") console.log(node.key, loadable.contents);
+  }
+
+  console.groupEnd();
+}
+
+export function dumpHistoryStateToConsole(state: HistoryState) {
+  console.groupCollapsed(`History state at ${Date()}`);
+  console.log(
+    `${state.stack.length} snapshots in stack, pointer at ${state.pointer}`
+  );
+
+  for (const [index, { snapshot }] of state.stack.entries()) {
+    console.log(
+      [
+        index === state.pointer ? ">" : " ",
+        `[${index.toString().padStart(3, " ")}]`,
+        snapshot.getID(),
+        `(retained: ${snapshot.isRetained() ? "yes" : "no"})`,
+      ].join(" ")
+    );
   }
 
   console.groupEnd();

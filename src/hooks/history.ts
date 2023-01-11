@@ -2,7 +2,8 @@ import { Dispatch, useCallback, useEffect } from "react";
 import { useRecoilCallback } from "recoil";
 
 import { HistoryAction, HistoryState } from "../types";
-import { TRACKED_ATOMS } from "../util/history";
+import { isDevelopment } from "../util/env";
+import { dumpHistoryStateToConsole, TRACKED_ATOMS } from "../util/history";
 
 export function useHistoryShortcutListeners(
   historyDispatch: Dispatch<HistoryAction>
@@ -64,6 +65,12 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
         // Release the old snapshot so it can be garbage collected.
         releaseOldSnapshot();
 
+        console.log(
+          `Replacing snapshot ${oldSnapshot.getID()} with ${newSnapshot.getID()} at index ${pointer} (length: ${
+            stack.length
+          })`
+        );
+
         // Replace the current snapshot with the new one.
         stack = [
           ...stack.splice(pointer, 1, { snapshot: newSnapshot, release }),
@@ -71,6 +78,8 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
 
         // Jump to the new snapshot.
         gotoSnapshot(newSnapshot);
+
+        isDevelopment && dumpHistoryStateToConsole({ stack, pointer });
 
         // Return the new world for the reducer to update the state.
         return { stack, pointer };
