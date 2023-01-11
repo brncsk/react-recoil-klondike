@@ -9,7 +9,6 @@
   z-index: 10000;
 
   color: white;
-  font-size: 20em;
   font-weight: 900;
 
   mix-blend-mode: multiply;
@@ -28,6 +27,10 @@
   opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease;
   transition-delay: 0.35s;
+
+  font-size: clamp(16px, 15vw, 200px);
+  white-space: nowrap;
+  padding: env(safe-area-inset);
 }
 
 .you-won-overlay.visible {

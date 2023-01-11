@@ -170,11 +170,6 @@
   background: linear-gradient(135deg, #ffffff, #eeeeee);
 }
 
-@media screen and (max-width: 600px) {
-  .card .front {
-  }
-}
-
 .card .corner {
   display: flex;
   flex-direction: column;
