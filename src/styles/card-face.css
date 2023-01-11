@@ -45,9 +45,18 @@
   .front
   .center {
   margin: 0.75em 0.25em;
-  border: 1px solid currentColor;
 }
 
+.card
+  .face:is([data-rank="J"], [data-rank="Q"], [data-rank="K"])
+  .front
+  .center::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  opacity: 0.75;
+}
 .card
   .face:is([data-rank="J"], [data-rank="Q"], [data-rank="K"])
   .front
@@ -59,10 +68,6 @@
   opacity: 0.1;
 }
 
-.card .face[data-rank="A"] .center {
-  font-size: var(--card-font-size);
-}
-
 .card .center .rank {
   align-self: flex-start;
 }
@@ -72,13 +77,15 @@
 }
 
 .card
-  .face.face:is(
-    [data-rank="A"],
-    [data-rank="J"],
-    [data-rank="Q"],
-    [data-rank="K"]
-  )
+  .face:is([data-rank="A"], [data-rank="J"], [data-rank="Q"], [data-rank="K"])
   .center
   .rank {
+  font-family: Rye, cursive;
+  font-weight: 400;
   align-self: center;
+  font-size: calc(var(--card-font-size) * 1.1);
+}
+
+.card .face[data-rank="A"] .center .rank {
+  font-size: var(--card-font-size) !important;
 }

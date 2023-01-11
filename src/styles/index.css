@@ -16,6 +16,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@import url("./fonts.css");
 @import url("./board.css");
 @import url("./card.css");
 @import url("./card-face.css");
