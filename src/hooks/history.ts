@@ -39,7 +39,6 @@ export function useHistoryShortcutListeners(
  *
  * The function also replaces the current snapshot with the new one in the
  * history state, so that history is always in sync with the current state.
- *
  */
 export function useMapHistoryFrameOntoCurrentSnapshot() {
   return useRecoilCallback(
@@ -65,11 +64,12 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
         // Release the old snapshot so it can be garbage collected.
         releaseOldSnapshot();
 
-        console.log(
-          `Replacing snapshot ${oldSnapshot.getID()} with ${newSnapshot.getID()} at index ${pointer} (length: ${
-            stack.length
-          })`
-        );
+        isDevelopment &&
+          console.log(
+            `Replacing snapshot ${oldSnapshot.getID()} with ${newSnapshot.getID()} at index ${pointer} (length: ${
+              stack.length
+            })`
+          );
 
         // Replace the current snapshot with the new one.
         stack = [

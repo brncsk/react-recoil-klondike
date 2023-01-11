@@ -4,17 +4,18 @@ import {
   useSetRecoilState,
 } from "recoil";
 
-import {
-  useHistoryShortcutListeners,
-  useMapHistoryFrameOntoCurrentSnapshot,
-} from "../hooks/history";
-import { gameStartedState } from "../state/game";
 import { HistoryState, HistoryAction } from "../types";
+import { gameStartedState } from "../state/game";
+
 import {
   HistoryContext,
   isSnapshotToBeRetained,
   pushHistoryFrame,
 } from "../util/history";
+import {
+  useHistoryShortcutListeners,
+  useMapHistoryFrameOntoCurrentSnapshot,
+} from "../hooks/history";
 
 export function HistoryRoot({ children }: { children: React.ReactNode }) {
   const setGameStarted = useSetRecoilState(gameStartedState);
