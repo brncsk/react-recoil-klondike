@@ -66,3 +66,10 @@ positioned explicitly using a custom algorithm. See
 This is done to avoid detaching and re-attaching the cards to the DOM during
 drag-and-drop operations. This would cause the browser to re-render both stacks
 and cards, which would lead to janky animations.
+
+### Undo/redo
+
+The game supports undo/redo operations via Recoil's
+[`useRecoilTransactionObserver_UNSTABLE`](https://recoiljs.org/docs/api-reference/core/useRecoilTransactionObserver_UNSTABLE/).
+
+See [`src/hooks/history.ts`](src/hooks/history.ts) and [`src/util/history.ts`](src/util/history.ts) for more details.
