@@ -5,6 +5,7 @@ import { Card, CardDragInfo, Position, Rect, Size, Stack } from "../types";
 export function getDragPropsFromEvent(
   e: React.PointerEvent<HTMLElement>
 ): { dragInfo: CardDragInfo; draggedCards: HTMLDivElement[] } | null {
+  // Find the card the event was initiated on.
   const card = document
     .elementFromPoint(e.clientX, e.clientY)!
     .closest(".card") as HTMLElement;
@@ -13,6 +14,7 @@ export function getDragPropsFromEvent(
     return null;
   }
 
+  // Fetch the dragged cards from the data attribute.
   const draggedCards = (card.dataset.dragList?.split(",") as Card[])
     .map(
       (cardId) => document.getElementById(`card-${cardId}`)! as HTMLDivElement

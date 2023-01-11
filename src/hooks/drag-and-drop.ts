@@ -16,46 +16,70 @@ import { cardSizeState } from "../state/cards";
 
 import { useMoveCard } from "./game";
 
+/** Returns drag and drop listeners that can be attached to the board. */
 export function useBoardDragAndDropListeners() {
+  /** A drag's initial offset relative to the viewport. */
   const initialOffset = useRef({ x: 0, y: 0 });
+
+  /** A drag's initial offset relative to the card. */
   const cardOffset = useRef({ x: 0, y: 0 });
+
+  /** A `CardDragInfo` object representing the details of the current drag. */
   const dragInfo = useRef<CardDragInfo | null>(null);
+
+  /** An array of the HTML elements of the cards being dragged. */
   const draggedCards = useRef<HTMLDivElement[]>([]);
+
+  /** Whether the user has moved the mouse since the pointer down event. */
   const didMove = useRef(false);
+
+  /** The HTML element of the stack that the user is currently dragging over. */
   const activeStack = useRef<HTMLDivElement | null>(null);
+
+  /** The size of a card. */
   const cardSize = useRecoilValue(cardSizeState);
 
   const getLargestOverlappingStack = useGetLargestOverlappingStack();
   const boardElement = document.querySelector(".board")! as HTMLDivElement;
 
+  /** Handles pointer move events. */
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
+      // Bail early if it's the last pointer event before a pointer up event
+      // or if there's no drag info.
       if ((e.clientX === 0 && e.clientY === 0) || !dragInfo.current) {
         return;
       }
 
+      // 1. Handle a drag start.
       if (!didMove.current) {
         didMove.current = true;
 
+        // Add the dragged class to the cards being dragged.
         for (const card of draggedCards.current) {
           card.classList.add("dragged");
         }
 
+        // Dispatch a stack drag start event.
         boardElement.dispatchEvent(
           new StackDragEvent("stack-drag-start", dragInfo.current!)
         );
       }
 
+      // 2. Handle a drag move.
       const currentOffset = {
         x: e.clientX - initialOffset.current.x,
         y: e.clientY - initialOffset.current.y,
       };
 
+      // Update the position of the cards being dragged.
       for (const card of draggedCards.current) {
         card.style.setProperty("--drag-offset-x", `${currentOffset.x}px`);
         card.style.setProperty("--drag-offset-y", `${currentOffset.y}px`);
       }
 
+      // 3. Fetch the largest overlapping stack and dispatch the appropriate
+      // events.
       const stack = getLargestOverlappingStack(
         getDragRect({
           cardSize,
@@ -70,7 +94,9 @@ export function useBoardDragAndDropListeners() {
         `stack-${stack}`
       )! as HTMLDivElement;
 
+      // Handle the case where the user is not dragging over a stack.
       if (!stack) {
+        // If there was an active stack, dispatch a stack drag leave event.
         if (activeStack.current && dragInfo.current) {
           activeStack.current.dispatchEvent(
             new StackDragEvent("stack-drag-leave", dragInfo.current)
@@ -81,7 +107,9 @@ export function useBoardDragAndDropListeners() {
         return;
       }
 
+      // Handle the case where the user is dragging over a stack.
       if (dragInfo.current) {
+        // If there's a new active stack, dispatch a stack drag enter event.
         if (activeStack.current) {
           if (activeStack.current.dataset.stack === stack) {
             return;
@@ -110,14 +138,17 @@ export function useBoardDragAndDropListeners() {
     ]
   );
 
+  /** Handles pointer down events. */
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       const dragProps = getDragPropsFromEvent(e);
 
+      // Bail early if the pointer down was not initiated on a card.
       if (!dragProps) {
         return;
       }
 
+      // Initialize state variables.
       draggedCards.current = dragProps.draggedCards;
       dragInfo.current = dragProps.dragInfo;
       initialOffset.current = { x: e.clientX, y: e.clientY };
@@ -126,14 +157,18 @@ export function useBoardDragAndDropListeners() {
         y: e.nativeEvent.offsetY,
       };
 
+      // Attach a pointer move event listener (removed on pointer up).
       document.addEventListener("pointermove", handlePointerMove);
     },
     [draggedCards, dragInfo, initialOffset, handlePointerMove]
   );
 
+  /** Handles pointer up events. */
   const handlePointerUp = useCallback(() => {
+    // Remove the pointer move event listener.
     document.removeEventListener("pointermove", handlePointerMove);
 
+    // Dispatch drop & drag end events on the active stack (if there is one).
     if (activeStack.current && didMove.current && dragInfo.current) {
       activeStack.current.dispatchEvent(
         new StackDragEvent("stack-drop", dragInfo.current)
@@ -144,12 +179,14 @@ export function useBoardDragAndDropListeners() {
       );
     }
 
+    // Remove drag-related styles from the cards being dragged.
     for (const card of draggedCards.current) {
       card.style.removeProperty("--drag-offset-x");
       card.style.removeProperty("--drag-offset-y");
       card.classList.remove("dragged");
     }
 
+    // Reset state variables.
     draggedCards.current = [];
     dragInfo.current = null;
     didMove.current = false;
@@ -164,6 +201,16 @@ export function useBoardDragAndDropListeners() {
   } as React.HTMLAttributes<HTMLDivElement>;
 }
 
+/**
+ * Returns drag and drop listeners for a stack.
+ * Handlers handle adding/removing the `drop-target` and `drag-over` classes
+ * by handling our custom `stack-drag-start` and `stack-drag-end` events,
+ * and initiating a card move when a `stack-drop` event is dispatched.
+ *
+ * NOTE: Listeners are attached using `addEventListener` instead of React
+ * event handlers both because we're dealing with custom events and because
+ * some of the handlers need to be attached to the board's element.
+ */
 export function useStackDragAndDropListeners({
   stack,
   stackElement,
@@ -258,6 +305,7 @@ export function useStackDragAndDropListeners({
 function useGetLargestOverlappingStack() {
   const snapshot = useRecoilSnapshot();
 
+  /** Memoize stacks' rects. */
   const stackRects = useMemo<Record<Stack, Rect>>(() => {
     let stackRects: Partial<Record<Stack, Rect>> = {};
 
@@ -296,6 +344,7 @@ function useGetLargestOverlappingStack() {
           continue;
         }
 
+        // Compute x and y overlap respectively
         const xOverlap = Math.max(
           0,
           Math.min(rect.x + rect.width, stackRect.x + stackRect.width) -
