@@ -1,6 +1,6 @@
 import { atom, atomFamily, selectorFamily } from "recoil";
 
-import { Stack, Card, Position } from "../types";
+import { Stack, Card, Position, Size } from "../types";
 import {
   getStackType,
   getStackNumber,
@@ -19,7 +19,7 @@ export const cardStackState = atomFamily<Stack, Card>({
  * The size of a card in CSS pixels.
  * @see `useMeasureCardSize()` in `hooks/cards.ts`.
  */
-export const cardSizeState = atom<{ width: number; height: number }>({
+export const cardSizeState = atom<Size>({
   key: "card-size",
   default: { width: 0, height: 0 },
 });
