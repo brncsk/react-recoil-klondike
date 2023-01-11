@@ -33,6 +33,11 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 Some of the goals/conclusions I've had while working on this project:
 
+### Minimal dependencies
+
+Other than React and Recoil, the game uses only `clsx` for juggling CSS class
+names, and `@material-design-icons/svg` for the HUD's icons.
+
 ### No images (well, almost)
 
 Other than the icons on the HUD's buttons, the game is implemented using only CSS and HTML. No images are used. See [`src/styles`](src/styles) for more details.
