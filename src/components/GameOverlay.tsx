@@ -4,25 +4,31 @@ import clsx from "clsx";
 
 import { gameIsWonState, gamePausedState } from "../state/game";
 
+const OVERLAY_DELAY_MS = 500;
+
 export function GameOverlay() {
-  const isGameWon = useRecoilValue(gameIsWonState);
   const isGamePaused = useRecoilValue(gamePausedState);
-  const [delayedIsGameWon, setDelayedIsGameWon] = useState(false);
+  const isGameWon = useRecoilValue(gameIsWonState);
+
+  const overlayVisible = isGamePaused || isGameWon;
+  const [overlayVisibleDelayed, setOverlayVisibleDelayed] = useState(false);
 
   useEffect(() => {
-    if (isGameWon) {
-      const timeout = setTimeout(() => setDelayedIsGameWon(true), 1000);
+    if (overlayVisible) {
+      const timeout = setTimeout(
+        () => setOverlayVisibleDelayed(true),
+        OVERLAY_DELAY_MS
+      );
       return () => clearTimeout(timeout);
     } else {
-      setDelayedIsGameWon(false);
+      setOverlayVisibleDelayed(false);
     }
-  }, [isGameWon]);
+  }, [overlayVisible]);
 
-  const overlayVisible = delayedIsGameWon || isGamePaused;
-  const overlayMessage = isGamePaused ? "Paused" : "You Won!";
+  const overlayMessage = isGameWon ? "You Won!" : "Paused";
 
   return overlayVisible ? (
-    <div className={clsx("game-overlay", overlayVisible && "visible")}>
+    <div className={clsx("game-overlay", overlayVisibleDelayed && "visible")}>
       <span className="message">{overlayMessage}</span>
     </div>
   ) : null;
