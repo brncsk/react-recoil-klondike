@@ -15,6 +15,7 @@ import { isDevelopment } from "../../util/env";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   gameElapsedSecondsState,
+  gameIsWonState,
   gameMovesState,
   gamePausedState,
 } from "../../state/game";
@@ -31,7 +32,9 @@ export function Hud() {
   const elapsedSeconds = useRecoilValue(gameElapsedSecondsState);
   const moves = useRecoilValue(gameMovesState);
 
-  const [gamePaused, setGamePaused] = useRecoilState(gamePausedState);
+  const [isGamePaused, setGamePaused] = useRecoilState(gamePausedState);
+  const isGameWon = useRecoilValue(gameIsWonState);
+
   const newGame = useNewGame();
 
   return (
@@ -46,31 +49,31 @@ export function Hud() {
         icon={<RestartIcon />}
         caption="Restart"
         onClick={restart}
-        disabled={!canRestart}
+        disabled={!canRestart || isGamePaused || isGameWon}
       />
       <HudSeparator />
       <HudButton
         icon={<UndoIcon />}
         caption="Undo"
         onClick={undo}
-        disabled={!canUndo}
+        disabled={!canUndo || isGamePaused || isGameWon}
       />
       <HudButton
         icon={<RedoIcon />}
         caption="Redo"
         onClick={redo}
-        disabled={!canRedo}
+        disabled={!canRedo || isGamePaused || isGameWon}
       />
       <HudSeparator />
       <HudButton
         icon={
-          gamePaused ? (
+          isGamePaused ? (
             <PauseIcon />
           ) : (
             <span className="text">{formatTime(elapsedSeconds)}</span>
           )
         }
-        caption={`Time (${gamePaused ? "Continue" : "Pause"})`}
+        caption={`Time (${isGamePaused ? "Continue" : "Pause"})`}
         onClick={() => setGamePaused((paused) => !paused)}
         disabled={false}
       />
