@@ -29,12 +29,24 @@
 @media screen and (max-width: 600px) {
   .hud {
     width: 100vw;
+    gap: 0.25em;
+    padding: 0;
+
     bottom: 0;
     border-radius: var(--hud-border-radius) var(--hud-border-radius) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .hud :is(.separator, .debug) {
+  .hud :is(.separator) {
     display: none !important;
+  }
+
+  .hud svg {
+    max-width: 2em;
+  }
+
+  .hud .item {
+    padding: 0.5em 0.25em !important;
   }
 }
 
@@ -53,7 +65,7 @@
     border-radius: var(--hud-border-radius) 0 0 var(--hud-border-radius);
   }
 
-  .hud :is(.item .caption, .separator, .debug) {
+  .hud :is(.item .caption, .separator) {
     display: none !important;
   }
 }
