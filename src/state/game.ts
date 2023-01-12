@@ -2,6 +2,7 @@ import { atom, selector } from "recoil";
 
 import { NUM_TABLEAU_STACKS } from "../const";
 import { getCardRankIndex } from "../util/cards";
+import { isDevelopment } from "../util/env";
 import { tableauStack } from "../util/stacks";
 import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
@@ -20,12 +21,14 @@ export const gamePausedState = atom({
     // Pause the game when the browser tab is hidden or the window is not
     // in focus.
     ({ setSelf }) => {
-      document.addEventListener("visibilitychange", () =>
-        setSelf(document.hidden)
-      );
+      if (!isDevelopment) {
+        document.addEventListener("visibilitychange", () =>
+          setSelf(document.hidden)
+        );
 
-      window.addEventListener("blur", () => setSelf(true));
-      window.addEventListener("focus", () => setSelf(false));
+        window.addEventListener("blur", () => setSelf(true));
+        window.addEventListener("focus", () => setSelf(false));
+      }
     },
   ],
 });
