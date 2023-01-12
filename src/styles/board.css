@@ -10,6 +10,10 @@
   grid-template-rows: var(--card-height) auto;
 
   padding: 4em;
+  padding-block-end: calc(
+    env(safe-area-inset-bottom) + calc(2 * var(--hud-bottom)) +
+      var(--hud-height)
+  );
   gap: 4em;
 
   background-image: radial-gradient(
@@ -26,7 +30,12 @@
 
 @media screen and (max-width: 600px) {
   .board {
-    padding-inline: 0;
+    padding-inline-start: env(safe-area-inset-left);
+    padding-inline-end: env(safe-area-inset-right);
+    padding-block-start: calc(env(safe-area-inset-top) + 1em);
+    padding-block-end: calc(
+      env(safe-area-inset-bottom) + var(--hud-height) + 1em
+    );
     gap: 1em;
     --card-border-radius: 0.15em;
     --card-backface-padding: 0.25em;
