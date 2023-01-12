@@ -48,6 +48,7 @@
     transform: none;
     flex-direction: column;
     padding-inline-end: env(safe-area-inset-right);
+    border-radius: var(--hud-border-radius) 0 0 var(--hud-border-radius);
   }
 
   .hud :is(.item .caption, .separator, .debug) {
