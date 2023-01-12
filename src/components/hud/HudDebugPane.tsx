@@ -10,9 +10,17 @@ import {
 
 import { HudButton } from "./HudButton";
 
-function HudDebugStat({ label, value }: { label: string; value: boolean }) {
+function HudDebugStat({
+  label,
+  value,
+  tooltip,
+}: {
+  label: string;
+  value: boolean;
+  tooltip?: string;
+}) {
   return (
-    <div>
+    <div className="stat" title={tooltip}>
       {label}: {value ? "✅" : "❌"}
     </div>
   );
@@ -33,9 +41,13 @@ export function HudDebugPane() {
         disabled={false}
       />
       <div className="stats">
-        <HudDebugStat label="Game started" value={gameStarted} />
-        <HudDebugStat label="Trivially winnable" value={isTriviallyWinnable} />
-        <HudDebugStat label="Won" value={isGameWon} />
+        <HudDebugStat label="S" tooltip="Game Started" value={gameStarted} />
+        <HudDebugStat
+          label="T"
+          tooltip="Trivially Winnable"
+          value={isTriviallyWinnable}
+        />
+        <HudDebugStat label="W" tooltip="Game Won" value={isGameWon} />
       </div>
     </div>
   );
