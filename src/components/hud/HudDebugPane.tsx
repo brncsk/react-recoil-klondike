@@ -33,14 +33,14 @@ export function HudDebugPane() {
   const gameStarted = useRecoilValue(gameStartedState);
 
   return (
-    <div className="debug">
+    <>
       <HudButton
         icon={<WinIcon />}
         caption="Win"
         onClick={performWinAnimation}
         disabled={false}
       />
-      <div className="stats">
+      <div className="stats item">
         <HudDebugStat label="S" tooltip="Game Started" value={gameStarted} />
         <HudDebugStat
           label="T"
@@ -49,6 +49,6 @@ export function HudDebugPane() {
         />
         <HudDebugStat label="W" tooltip="Game Won" value={isGameWon} />
       </div>
-    </div>
+    </>
   );
 }

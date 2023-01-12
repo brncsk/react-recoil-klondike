@@ -12,9 +12,8 @@ export function HudButton({
   disabled: boolean;
 }) {
   return (
-    <button onClick={onClick} disabled={disabled}>
-      <span className="icon">{icon}</span>
-      <br />
+    <button onClick={onClick} disabled={disabled} className="item">
+      <span className="primary">{icon}</span>
       <span className="caption">{caption}</span>
     </button>
   );
