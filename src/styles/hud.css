@@ -40,14 +40,16 @@
 
 @media screen and (max-height: 600px) {
   .hud {
+    inset: auto 0 auto auto;
+
     width: calc(10vw + env(safe-area-inset-right));
-    inset: auto;
     height: 100vh;
-    right: 0;
-    bottom: auto;
     transform: none;
+
     flex-direction: column;
-    padding-inline-end: env(safe-area-inset-right);
+    gap: 0.25em;
+
+    padding-inline: 0 env(safe-area-inset-right);
     border-radius: var(--hud-border-radius) 0 0 var(--hud-border-radius);
   }
 
