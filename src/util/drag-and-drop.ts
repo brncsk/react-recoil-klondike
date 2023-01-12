@@ -1,4 +1,4 @@
-import { TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO } from "../const";
+import { TABLEAU_FANOUT_OFFSET_FACE_UP_FRACTION } from "../const";
 import { Card, CardDragInfo, Position, Rect, Size, Stack } from "../types";
 
 /** Returns the drag info and the dragged cards from a mouse event. */
@@ -51,6 +51,7 @@ export function getDragRect({
     width: cardSize.width,
     height:
       cardSize.height +
-      (numCards - 1) * (cardSize.height / TABLEAU_FANOUT_OFFSET_FACE_UP_RATIO),
+      (numCards - 1) *
+        (cardSize.height / TABLEAU_FANOUT_OFFSET_FACE_UP_FRACTION),
   };
 }

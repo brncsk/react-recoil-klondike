@@ -122,13 +122,14 @@ export const cardPositionState = selectorFamily<Position, Card>({
       const stackPosition = get(stackRectState(stack));
       const stackIndex = get(cardStackIndexState(card));
 
-      const fanoutOffset = getStackFanoutOffset(
-        getStackType(stack),
-        get(cardSizeState).height,
-        stackNumCards,
-        stackNumFaceUpCards,
-        stackIndex
-      );
+      const fanoutOffset = getStackFanoutOffset({
+        stackType: getStackType(stack),
+        stackSize: get(stackRectState(stack)),
+        cardHeight: get(cardSizeState).height,
+        numCards: stackNumCards,
+        numFaceUpCards: stackNumFaceUpCards,
+        index: stackIndex,
+      });
 
       let cardOffset = { x: 0, y: 0 };
 
