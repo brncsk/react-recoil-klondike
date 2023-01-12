@@ -95,3 +95,11 @@ export const gameIsTriviallyWinnableState = selector({
     return true;
   },
 });
+
+/** Returns whether the game overlay should be shown. */
+export const gameOverlayVisibleState = selector({
+  key: "game-overlay-visible",
+  get: ({ get }) => {
+    return get(gamePausedState) ? "PAUSED" : get(gameIsWonState) ? "WON" : null;
+  },
+});

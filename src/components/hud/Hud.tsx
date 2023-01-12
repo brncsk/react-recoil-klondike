@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { ReactComponent as NewGameIcon } from "@material-design-icons/svg/filled/auto_awesome.svg";
 import { ReactComponent as UndoIcon } from "@material-design-icons/svg/filled/undo.svg";
@@ -8,18 +9,18 @@ import { ReactComponent as RestartIcon } from "@material-design-icons/svg/filled
 
 import { useNewGame } from "../../hooks/game";
 import { HistoryContext } from "../../util/history";
+import { isDevelopment } from "../../util/env";
+import { formatTime } from "../../util/time";
+
+import {
+  gameElapsedSecondsState,
+  gameMovesState,
+  gameOverlayVisibleState,
+  gamePausedState,
+} from "../../state/game";
 
 import { HudButton } from "./HudButton";
 import { HudDebugPane } from "./HudDebugPane";
-import { isDevelopment } from "../../util/env";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  gameElapsedSecondsState,
-  gameIsWonState,
-  gameMovesState,
-  gamePausedState,
-} from "../../state/game";
-import { formatTime } from "../../util/time";
 
 function HudSeparator() {
   return <div className="separator" />;
@@ -33,7 +34,7 @@ export function Hud() {
   const moves = useRecoilValue(gameMovesState);
 
   const [isGamePaused, setGamePaused] = useRecoilState(gamePausedState);
-  const isGameWon = useRecoilValue(gameIsWonState);
+  const overlayVisible = useRecoilValue(gameOverlayVisibleState);
 
   const newGame = useNewGame();
 
@@ -49,20 +50,20 @@ export function Hud() {
         icon={<RestartIcon />}
         caption="Restart"
         onClick={restart}
-        disabled={!canRestart || isGamePaused || isGameWon}
+        disabled={!canRestart || !!overlayVisible}
       />
       <HudSeparator />
       <HudButton
         icon={<UndoIcon />}
         caption="Undo"
         onClick={undo}
-        disabled={!canUndo || isGamePaused || isGameWon}
+        disabled={!canUndo || !!overlayVisible}
       />
       <HudButton
         icon={<RedoIcon />}
         caption="Redo"
         onClick={redo}
-        disabled={!canRedo || isGamePaused || isGameWon}
+        disabled={!canRedo || !!overlayVisible}
       />
       <HudSeparator />
       <HudButton
@@ -75,7 +76,7 @@ export function Hud() {
         }
         caption={`Time (${isGamePaused ? "Continue" : "Pause"})`}
         onClick={() => setGamePaused((paused) => !paused)}
-        disabled={false}
+        disabled={overlayVisible === "WON"}
       />
       <HudButton
         icon={<span className="text">{moves}</span>}
