@@ -24,10 +24,13 @@ export function useCardEventProps(
   const faceUp = useRecoilValue(cardIsFaceUpState(card));
   const topmost = useRecoilValue(cardIsTopmostState(card));
 
-  return {
+  const eventProps: React.HTMLAttributes<HTMLDivElement> = {
     onClick: topmost && stackType === "deck" ? () => dealFromDeck() : undefined,
     onDoubleClick: topmost && faceUp ? () => autoMove(stack) : undefined,
+    onTouchEnd: topmost && faceUp ? () => autoMove(stack) : undefined,
   };
+
+  return eventProps;
 }
 
 export function useMeasureCardSize() {
