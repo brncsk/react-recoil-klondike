@@ -7,7 +7,11 @@ import {
   getStackFanoutOffset,
 } from "../util/stacks";
 
-import { stackCardsState, stackRectState } from "./stacks";
+import {
+  stackCardsState,
+  stackPositionsHaveBeenInitializedState,
+  stackRectState,
+} from "./stacks";
 
 /** The stack that a card is currently in. */
 export const cardStackState = atomFamily<Stack, Card>({
@@ -111,11 +115,13 @@ export const cardStackIndexState = selectorFamily<number, Card>({
  * Returns the position of a card in CSS pixels relative to the top-left corner
  * of the viewport.
  */
-export const cardPositionState = selectorFamily<Position, Card>({
-  key: "card-static-position",
+export const cardPositionState = selectorFamily<Position | null, Card>({
+  key: "card-position",
   get:
     (card) =>
     ({ get }) => {
+      if (!get(stackPositionsHaveBeenInitializedState)) return null;
+
       const stack = get(cardStackState(card));
       const stackNumCards = get(stackCardsState(stack)).length;
       const stackNumFaceUpCards = get(stackNumFaceUpCardsState(stack));

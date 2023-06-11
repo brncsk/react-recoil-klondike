@@ -35,6 +35,8 @@ export function Card({ card }: CardProps) {
   const topmost = useRecoilValue(cardIsTopmostState(card));
   const dragList = useRecoilValue(cardDragListState(card));
 
+  const hasUninitializedPosition = position == null;
+
   return (
     <div
       id={`card-${card}`}
@@ -45,11 +47,13 @@ export function Card({ card }: CardProps) {
       className={clsx("card", color, faceUp ? "face-up" : "face-down")}
       style={
         {
-          "--left": `${position.x}px`,
-          "--top": `${position.y}px`,
+          "--left": `${position?.x ?? 0}px`,
+          "--top": `${position?.y ?? 0}px`,
           "--z-index": getCardZIndex(stack, index),
           "--rank": `"${getCardRank(card)}"`,
           "--suit": `"${getCardSuit(card)}"`,
+
+          opacity: hasUninitializedPosition ? 0 : 1,
         } as any
       }
       {...useCardEventProps(card)}

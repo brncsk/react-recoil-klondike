@@ -17,6 +17,15 @@ import { GameOverlay } from "../components/GameOverlay";
 
 import { HistoryRoot } from "./HistoryRoot";
 
+/**
+ * The delay between when the stack positions are initialized and when a new
+ * game is initialized.
+ *
+ * This should be the same as the transition delay for the cards' `opacity`
+ * property in `src/styles/card.css`.
+ */
+const NEW_GAME_DELAY_MS = 200;
+
 function App() {
   const newGame = useNewGame();
   const stackPositionsHaveBeenInitialized = useRecoilValue(
@@ -26,7 +35,9 @@ function App() {
   // Initialize a new game only after the stack positions have been initialized.
   useEffect(() => {
     if (stackPositionsHaveBeenInitialized) {
-      newGame();
+      setTimeout(() => {
+        newGame();
+      }, NEW_GAME_DELAY_MS);
     }
   }, [newGame, stackPositionsHaveBeenInitialized]);
 
