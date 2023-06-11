@@ -131,11 +131,9 @@ export const cardPositionState = selectorFamily<Position, Card>({
         index: stackIndex,
       });
 
-      let cardOffset = { x: 0, y: 0 };
-
       return {
-        x: stackPosition.x + cardOffset.x + fanoutOffset.x,
-        y: stackPosition.y + cardOffset.y + fanoutOffset.y,
+        x: stackPosition.x + fanoutOffset.x,
+        y: stackPosition.y + fanoutOffset.y,
       };
     },
 });
