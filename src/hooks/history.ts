@@ -3,7 +3,11 @@ import { useRecoilCallback } from "recoil";
 
 import { HistoryAction, HistoryState } from "../types";
 import { isDevelopment } from "../util/env";
-import { dumpHistoryStateToConsole, TRACKED_ATOMS } from "../util/history";
+import {
+  assertSnapshotIsRetained,
+  dumpHistoryStateToConsole,
+  TRACKED_ATOMS,
+} from "../util/history";
 
 export function useHistoryShortcutListeners(
   historyDispatch: Dispatch<HistoryAction>
@@ -44,16 +48,25 @@ export function useMapHistoryFrameOntoCurrentSnapshot() {
   return useRecoilCallback(
     ({ snapshot: current, gotoSnapshot }) =>
       ({ stack, pointer }: HistoryState) => {
+        assertSnapshotIsRetained(current);
+
         const { snapshot: oldSnapshot, release: releaseOldSnapshot } =
           stack[pointer];
 
+        dumpHistoryStateToConsole({ stack, pointer });
+        assertSnapshotIsRetained(oldSnapshot);
+
         // eslint-disable-next-line array-callback-return
-        const newSnapshot = current.map(({ set }) => {
+        const newSnapshot = current.map((snapshot) => {
           for (const atom of TRACKED_ATOMS) {
             const value = oldSnapshot.getLoadable(atom);
 
             if (value.state === "hasValue") {
-              set(atom, value.contents);
+              snapshot.set(atom, value.contents);
+            } else {
+              throw new Error(
+                `Cannot map history frame onto current snapshot because the value of ${atom.key} was not available at that point in time.`
+              );
             }
           }
         });

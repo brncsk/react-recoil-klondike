@@ -7,8 +7,10 @@ import {
 import { HistoryState, HistoryAction } from "../types";
 import { gameStartedState } from "../state/game";
 
+import { isDevelopment } from "../util/env";
 import {
   HistoryContext,
+  dumpHistoryStateToConsole,
   isSnapshotToBeRetained,
   pushHistoryFrame,
 } from "../util/history";
@@ -25,40 +27,47 @@ export function HistoryRoot({ children }: { children: React.ReactNode }) {
 
   const [{ stack, pointer }, historyDispatch] = useReducer(
     ({ stack, pointer }: HistoryState, action: HistoryAction) => {
+      let newState = { stack, pointer };
+
       switch (action.type) {
         case "undo":
-          if (pointer === stack.length - 1) {
-            return { stack, pointer };
+          if (pointer < stack.length - 1) {
+            isUndoInProgress.current = true;
+            newState = mapHistoryFrame({ stack, pointer: pointer + 1 });
           }
-
-          isUndoInProgress.current = true;
-          return mapHistoryFrame({ stack, pointer: pointer + 1 });
+          break;
 
         case "redo":
-          if (pointer === 0) {
-            return { stack, pointer };
+          if (pointer > 0) {
+            isUndoInProgress.current = true;
+            newState = mapHistoryFrame({ stack, pointer: pointer - 1 });
           }
-
-          isUndoInProgress.current = true;
-          return mapHistoryFrame({ stack, pointer: pointer - 1 });
+          break;
 
         case "push":
           setGameStarted(true);
-          return pushHistoryFrame({ stack, pointer }, action.snapshot);
+          newState = pushHistoryFrame(newState, action.snapshot);
+          break;
 
         case "reset":
-          return { stack: [], pointer: 0 };
+          newState = { stack: [], pointer: 0 };
+          break;
 
         case "restart":
           isUndoInProgress.current = true;
-          return mapHistoryFrame({
+          newState = mapHistoryFrame({
             stack: [stack[stack.length - 1]],
             pointer: 0,
           });
-
-        default:
-          return { stack, pointer };
+          break;
       }
+
+      if (isDevelopment) {
+        console.log("historyDispatch", action);
+        dumpHistoryStateToConsole({ stack, pointer });
+      }
+
+      return newState;
     },
     { stack: [], pointer: 0 }
   );

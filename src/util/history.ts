@@ -2,12 +2,17 @@ import { createContext } from "react";
 import { RecoilState, RecoilValue, Snapshot } from "recoil";
 
 import { NUM_TABLEAU_STACKS, STACKS } from "../const";
-import { cardStackState, tableauNumFaceUpCardsState } from "../state/cards";
+import {
+  cardIsFaceUpState,
+  cardStackIndexState,
+  cardStackState,
+  stackNumFaceUpCardsState,
+  tableauNumFaceUpCardsState,
+} from "../state/cards";
 import { stackCardsState } from "../state/stacks";
 
 import { HistoryContextType, HistoryState } from "../types";
 import { generateDeck } from "./deck";
-import { isDevelopment } from "./env";
 
 export const HistoryContext = createContext<HistoryContextType>({
   undo: () => {},
@@ -47,7 +52,6 @@ export function isSnapshotToBeRetained(snapshot: Snapshot) {
     }
   }
 
-  isDevelopment && hasTrackedNodes && dumpSnapshotToConsole(snapshot);
   return hasTrackedNodes;
 }
 
@@ -68,19 +72,50 @@ export function pushHistoryFrame(
     pointer: 0,
   };
 
-  isDevelopment && dumpHistoryStateToConsole(newState);
-
   return newState;
 }
 
 /** Dumps the modified contents of a snapshot to the console. */
 export function dumpSnapshotToConsole(snapshot: Snapshot) {
-  console.groupCollapsed(`Snapshot ${snapshot.getID()} at ${Date()}`);
+  console.group(`Snapshot ${snapshot.getID()} at ${Date()}`);
+
+  console.groupCollapsed("Modified nodes");
 
   for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
     const loadable = snapshot.getLoadable(node);
     if (loadable.state === "hasValue") console.log(node.key, loadable.contents);
   }
+
+  console.groupEnd();
+
+  console.groupCollapsed("Game state");
+
+  for (const stack of STACKS) {
+    const cards = snapshot.getLoadable(stackCardsState(stack)).valueMaybe();
+    const numCards = cards?.length;
+    const numFaceUpCards = snapshot
+      .getLoadable(stackNumFaceUpCardsState(stack))
+      .valueMaybe();
+
+    const cardsWithIndices = cards?.map((card, i) => {
+      const isFaceUp = snapshot
+        .getLoadable(cardIsFaceUpState(card))
+        .valueMaybe();
+      const stackIndex = snapshot
+        .getLoadable(cardStackIndexState(card))
+        .valueMaybe();
+
+      return `${card} (${isFaceUp ? "up" : "dn"}, ${stackIndex})`;
+    });
+
+    console.groupCollapsed(
+      `${stack} (${numCards} cards, ${numFaceUpCards} face up)`
+    );
+    cardsWithIndices?.forEach((card) => console.log(card));
+    console.groupEnd();
+  }
+
+  console.groupEnd();
 
   console.groupEnd();
 }
@@ -103,4 +138,12 @@ export function dumpHistoryStateToConsole(state: HistoryState) {
   }
 
   console.groupEnd();
+}
+
+export function assertSnapshotIsRetained(snapshot: Snapshot) {
+  if (!snapshot.isRetained()) {
+    throw new Error(
+      `Snapshot ${snapshot.getID()} is not retained, but should be.`
+    );
+  }
 }
