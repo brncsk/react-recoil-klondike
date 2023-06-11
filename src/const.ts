@@ -38,6 +38,6 @@ export const TRIVIAL_AUTOMOVE_INTERVAL_MS = 250;
 export const STACKS: Stack[] = [
   "deck",
   "waste",
-  ...[...Array(NUM_FOUNDATION_STACKS)].map((_, i) => foundationStack(i)),
-  ...[...Array(NUM_TABLEAU_STACKS)].map((_, i) => tableauStack(i)),
+  ...[...Array(NUM_FOUNDATION_STACKS)].map((_, i) => foundationStack(i + 1)),
+  ...[...Array(NUM_TABLEAU_STACKS)].map((_, i) => tableauStack(i + 1)),
 ];
