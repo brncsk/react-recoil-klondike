@@ -22,6 +22,7 @@ import {
   gamePausedState,
   gameStartedState,
 } from "../state/game";
+import { currentGameStatsState } from "../state/stats";
 
 import { shuffleDeck, generateDeck } from "../util/deck";
 import {
@@ -42,11 +43,13 @@ export function useNewGame() {
   return useRecoilCallback(
     ({ set, reset }) =>
       () => {
-        reset(gameIsWonState);
         reset(gameStartedState);
-        reset(gameElapsedSecondsState);
-        reset(gameMovesState);
         reset(gamePausedState);
+
+        // Resetting the game stats will push a new game onto the list of
+        // game stats, and sets the moves, time, and won state to 0, 0, and
+        // false respectively.
+        reset(currentGameStatsState);
 
         const deck = shuffleDeck(generateDeck());
 

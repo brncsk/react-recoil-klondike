@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { DefaultValue, atom, selector } from "recoil";
 
 import { NUM_TABLEAU_STACKS } from "../const";
 import { getCardRankIndex } from "../util/cards";
@@ -7,6 +7,7 @@ import { tableauStack } from "../util/stacks";
 
 import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
+import { currentGameStatsState } from "./stats";
 
 export type GameOverlayType = "paused" | "won";
 
@@ -37,21 +38,33 @@ export const gamePausedState = atom({
 });
 
 /** The number of seconds elapsed since the game started. */
-export const gameElapsedSecondsState = atom({
+export const gameElapsedSecondsState = selector({
   key: "game-elapsed-time",
-  default: 0,
+  get: ({ get }) => get(currentGameStatsState)?.time ?? 0,
+  set: ({ set }, time) => {
+    if (time instanceof DefaultValue) return;
+    set(currentGameStatsState, (s) => ({ ...s, time }));
+  },
 });
 
 /** The number of moves made in the game. */
-export const gameMovesState = atom({
+export const gameMovesState = selector({
   key: "game-moves",
-  default: 0,
+  get: ({ get }) => get(currentGameStatsState)?.moves ?? 0,
+  set: ({ set }, moves) => {
+    if (moves instanceof DefaultValue) return;
+    set(currentGameStatsState, (s) => ({ ...s, moves }));
+  },
 });
 
 /** Whether the game is won. */
-export const gameIsWonState = atom({
+export const gameIsWonState = selector({
   key: "game-is-won",
-  default: false,
+  get: ({ get }) => get(currentGameStatsState)?.won ?? false,
+  set: ({ set }, won) => {
+    if (won instanceof DefaultValue) return;
+    set(currentGameStatsState, (s) => ({ ...s, won }));
+  },
 });
 
 /**

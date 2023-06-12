@@ -1,12 +1,42 @@
-import { atom, selector, selectorFamily } from "recoil";
+import { DefaultValue, atom, selector, selectorFamily } from "recoil";
 
 import { GameStats } from "../types";
 import { localStorageEffect } from "../util/persistence";
+
+const NEW_GAME_STATS: GameStats = {
+  time: 0,
+  moves: 0,
+  won: false,
+};
 
 export const statsState = atom<GameStats[]>({
   key: "stats",
   default: [],
   effects: [localStorageEffect("stats")],
+});
+
+/** Returns the current game's stats. */
+export const currentGameStatsState = selector<GameStats>({
+  key: "current-game-stats",
+  get: ({ get }) => {
+    const stats = get(statsState);
+    return stats[stats.length - 1];
+  },
+
+  set: ({ set }, newStats) => {
+    if (newStats instanceof DefaultValue) {
+      // If the new stats are a `DefaultValue`, (e.g. when the state is reset),
+      // start a new game.
+      // (This is called from `useNewGame` in `src/hooks/game.ts`.)
+      set(statsState, (stats) => [...stats, { ...NEW_GAME_STATS }]);
+    } else {
+      // Otherwise, update the current game's stats.
+      set(statsState, (stats) => [
+        ...stats.slice(0, stats.length - 1),
+        newStats,
+      ]);
+    }
+  },
 });
 
 /** Returns the number of games played. */
