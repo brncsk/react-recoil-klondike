@@ -1,11 +1,12 @@
 import { useContext } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { ReactComponent as NewGameIcon } from "@material-design-icons/svg/filled/auto_awesome.svg";
 import { ReactComponent as UndoIcon } from "@material-design-icons/svg/filled/undo.svg";
 import { ReactComponent as RedoIcon } from "@material-design-icons/svg/filled/redo.svg";
 import { ReactComponent as PauseIcon } from "@material-design-icons/svg/filled/pause.svg";
 import { ReactComponent as RestartIcon } from "@material-design-icons/svg/filled/replay.svg";
+import { ReactComponent as StatsIcon } from "@material-design-icons/svg/filled/bar_chart.svg";
 
 import { useNewGame } from "../../hooks/game";
 import { HistoryContext } from "../../util/history";
@@ -17,6 +18,7 @@ import {
   gameMovesState,
   gameOverlayTypeState,
   gamePausedState,
+  statsOverlayVisibleState,
 } from "../../state/game";
 
 import { HudButton } from "./HudButton";
@@ -34,6 +36,8 @@ export function Hud() {
   const moves = useRecoilValue(gameMovesState);
 
   const [isGamePaused, setGamePaused] = useRecoilState(gamePausedState);
+
+  const toggleStatsOverlay = useSetRecoilState(statsOverlayVisibleState);
   const overlayType = useRecoilValue(gameOverlayTypeState);
   const hasOverlay = Boolean(overlayType);
 
@@ -76,7 +80,12 @@ export function Hud() {
         }
         caption={`Moves/Time (${isGamePaused ? "Continue" : "Pause"})`}
         onClick={() => setGamePaused((paused) => !paused)}
-        disabled={overlayType === "won"}
+        disabled={overlayType === "won" || overlayType === "stats"}
+      />
+      <HudButton
+        icon={<StatsIcon />}
+        caption="Stats"
+        onClick={() => toggleStatsOverlay((visible) => !visible)}
       />
 
       {isDevelopment && (

@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import clsx from "clsx";
 
 import { gameOverlayTypeState } from "../state/game";
+import { StatsOverlay } from "./StatsOverlay";
 
 const OVERLAY_DELAY_MS = 500;
 
@@ -26,7 +27,11 @@ export function GameOverlay() {
 
   return overlayType ? (
     <div className={clsx("game-overlay", overlayVisibleDelayed && "visible")}>
-      <span className="message">{overlayMessage}</span>
+      {overlayType === "stats" ? (
+        <StatsOverlay />
+      ) : (
+        <span className="message">{overlayMessage}</span>
+      )}
     </div>
   ) : null;
 }

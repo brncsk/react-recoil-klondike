@@ -9,7 +9,7 @@ import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
 import { currentGameStatsState } from "./stats";
 
-export type GameOverlayType = "paused" | "won";
+export type GameOverlayType = "paused" | "won" | "stats";
 
 /** Whether the game has started (i.e. the first valid move has been made). */
 export const gameStartedState = atom({
@@ -115,10 +115,20 @@ export const gameIsTriviallyWinnableState = selector({
   },
 });
 
+/** Returns whether the stats overlay should be shown. */
+export const statsOverlayVisibleState = atom({
+  key: "stats-overlay-visible",
+  default: false,
+});
+
 /** Returns whether the game overlay should be shown. */
 export const gameOverlayTypeState = selector<GameOverlayType | null>({
   key: "game-overlay-type",
   get: ({ get }) => {
-    return get(gamePausedState) ? "paused" : get(gameIsWonState) ? "won" : null;
+    if (get(statsOverlayVisibleState)) return "stats";
+    if (get(gamePausedState)) return "paused";
+    if (get(gameIsWonState)) return "won";
+
+    return null;
   },
 });

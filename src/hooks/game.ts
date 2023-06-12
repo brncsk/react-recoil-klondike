@@ -21,6 +21,7 @@ import {
   gameMovesState,
   gamePausedState,
   gameStartedState,
+  statsOverlayVisibleState,
 } from "../state/game";
 import { currentGameStatsState } from "../state/stats";
 
@@ -324,9 +325,10 @@ export function useUpdateElapsedTime() {
   const gameStarted = useRecoilValue(gameStartedState);
   const gamePaused = useRecoilValue(gamePausedState);
   const setElapsedSeconds = useSetRecoilState(gameElapsedSecondsState);
+  const statsOverlayVisible = useRecoilValue(statsOverlayVisibleState);
 
   useEffect(() => {
-    if (!gameStarted || gamePaused) {
+    if (!gameStarted || gamePaused || statsOverlayVisible) {
       return;
     }
 
@@ -335,7 +337,7 @@ export function useUpdateElapsedTime() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [gameStarted, gamePaused, setElapsedSeconds]);
+  }, [gameStarted, gamePaused, setElapsedSeconds, statsOverlayVisible]);
 }
 
 /**
