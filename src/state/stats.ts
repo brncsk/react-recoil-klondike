@@ -3,6 +3,8 @@ import { DefaultValue, atom, selector, selectorFamily } from "recoil";
 import { GameStats } from "../types";
 import { localStorageEffect } from "../util/persistence";
 
+const STATS_LOCALSTORAGE_KEY = "klondike-stats";
+
 const NEW_GAME_STATS: GameStats = {
   time: 0,
   moves: 0,
@@ -12,7 +14,7 @@ const NEW_GAME_STATS: GameStats = {
 export const statsState = atom<GameStats[]>({
   key: "stats",
   default: [],
-  effects: [localStorageEffect("stats")],
+  effects: [localStorageEffect(STATS_LOCALSTORAGE_KEY)],
 });
 
 /** Returns the current game's stats. */
