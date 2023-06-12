@@ -112,6 +112,11 @@
   font-weight: bold;
 }
 
+.hud .item .text .secondary {
+  font-size: 0.75em;
+  opacity: 0.5;
+}
+
 .hud .item .caption {
   flex: 1;
   display: block;

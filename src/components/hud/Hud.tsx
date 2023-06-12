@@ -71,18 +71,16 @@ export function Hud() {
           isGamePaused ? (
             <PauseIcon />
           ) : (
-            <span className="text">{formatTime(elapsedSeconds)}</span>
+            <span className="text">
+              {moves}
+              <br />
+              <span className="secondary">{formatTime(elapsedSeconds)}</span>
+            </span>
           )
         }
-        caption={`Time (${isGamePaused ? "Continue" : "Pause"})`}
+        caption={`Moves/Time (${isGamePaused ? "Continue" : "Pause"})`}
         onClick={() => setGamePaused((paused) => !paused)}
         disabled={overlayVisible === "WON"}
-      />
-      <HudButton
-        icon={<span className="text">{moves}</span>}
-        caption="Moves"
-        onClick={() => {}}
-        disabled={true}
       />
 
       {isDevelopment && (
