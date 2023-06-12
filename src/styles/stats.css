@@ -1,0 +1,22 @@
+table.stats {
+  border-collapse: collapse;
+  border: 1px solid white;
+}
+
+table.stats tr:first-of-type * {
+  padding-top: 1rem;
+}
+
+table.stats tbody:not(:last-child) tr:last-of-type * {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid white;
+}
+
+table.stats th {
+  text-align: right;
+  font-weight: normal;
+}
+
+table.stats :is(th, td) {
+  padding: 0.5rem 1rem;
+}
