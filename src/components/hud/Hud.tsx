@@ -41,12 +41,7 @@ export function Hud() {
 
   return (
     <div className="hud">
-      <HudButton
-        icon={<NewGameIcon />}
-        caption="Deal New"
-        onClick={newGame}
-        disabled={false}
-      />
+      <HudButton icon={<NewGameIcon />} caption="Deal New" onClick={newGame} />
       <HudButton
         icon={<RestartIcon />}
         caption="Restart"

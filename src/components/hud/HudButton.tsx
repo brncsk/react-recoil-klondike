@@ -4,12 +4,12 @@ export function HudButton({
   icon,
   caption,
   onClick,
-  disabled,
+  disabled = false,
 }: {
   icon: React.ReactNode;
   caption: string;
   onClick: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 }) {
   return (
     <button onClick={onClick} disabled={disabled} className="item">
