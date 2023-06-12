@@ -81,3 +81,9 @@ export interface HistoryContextType {
   canRedo: boolean;
   canRestart: boolean;
 }
+
+export interface GameStats {
+  moves: number;
+  time: number;
+  won: boolean;
+}
