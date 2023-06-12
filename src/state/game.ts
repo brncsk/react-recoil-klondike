@@ -4,8 +4,11 @@ import { NUM_TABLEAU_STACKS } from "../const";
 import { getCardRankIndex } from "../util/cards";
 import { isDevelopment } from "../util/env";
 import { tableauStack } from "../util/stacks";
+
 import { tableauNumFaceUpCardsState } from "./cards";
 import { stackCardsState } from "./stacks";
+
+export type GameOverlayType = "paused" | "won";
 
 /** Whether the game has started (i.e. the first valid move has been made). */
 export const gameStartedState = atom({
@@ -100,9 +103,9 @@ export const gameIsTriviallyWinnableState = selector({
 });
 
 /** Returns whether the game overlay should be shown. */
-export const gameOverlayVisibleState = selector({
-  key: "game-overlay-visible",
+export const gameOverlayTypeState = selector<GameOverlayType | null>({
+  key: "game-overlay-type",
   get: ({ get }) => {
-    return get(gamePausedState) ? "PAUSED" : get(gameIsWonState) ? "WON" : null;
+    return get(gamePausedState) ? "paused" : get(gameIsWonState) ? "won" : null;
   },
 });

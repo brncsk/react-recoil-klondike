@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import clsx from "clsx";
 
-import { gameOverlayVisibleState } from "../state/game";
+import { gameOverlayTypeState } from "../state/game";
 
 const OVERLAY_DELAY_MS = 500;
 
 export function GameOverlay() {
-  const overlayVisible = useRecoilValue(gameOverlayVisibleState);
+  const overlayType = useRecoilValue(gameOverlayTypeState);
   const [overlayVisibleDelayed, setOverlayVisibleDelayed] = useState(false);
 
   useEffect(() => {
-    if (overlayVisible) {
+    if (overlayType !== null) {
       const timeout = setTimeout(
         () => setOverlayVisibleDelayed(true),
         OVERLAY_DELAY_MS
@@ -20,11 +20,11 @@ export function GameOverlay() {
     } else {
       setOverlayVisibleDelayed(false);
     }
-  }, [overlayVisible]);
+  }, [overlayType]);
 
-  const overlayMessage = overlayVisible === "WON" ? "You Won!" : "Paused";
+  const overlayMessage = overlayType === "won" ? "You Won!" : "Paused";
 
-  return overlayVisible ? (
+  return overlayType ? (
     <div className={clsx("game-overlay", overlayVisibleDelayed && "visible")}>
       <span className="message">{overlayMessage}</span>
     </div>

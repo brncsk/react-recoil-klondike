@@ -15,7 +15,7 @@ import { formatTime } from "../../util/time";
 import {
   gameElapsedSecondsState,
   gameMovesState,
-  gameOverlayVisibleState,
+  gameOverlayTypeState,
   gamePausedState,
 } from "../../state/game";
 
@@ -34,7 +34,8 @@ export function Hud() {
   const moves = useRecoilValue(gameMovesState);
 
   const [isGamePaused, setGamePaused] = useRecoilState(gamePausedState);
-  const overlayVisible = useRecoilValue(gameOverlayVisibleState);
+  const overlayType = useRecoilValue(gameOverlayTypeState);
+  const hasOverlay = Boolean(overlayType);
 
   const newGame = useNewGame();
 
@@ -50,20 +51,20 @@ export function Hud() {
         icon={<RestartIcon />}
         caption="Restart"
         onClick={restart}
-        disabled={!canRestart || !!overlayVisible}
+        disabled={!canRestart || hasOverlay}
       />
       <HudSeparator />
       <HudButton
         icon={<UndoIcon />}
         caption="Undo"
         onClick={undo}
-        disabled={!canUndo || !!overlayVisible}
+        disabled={!canUndo || hasOverlay}
       />
       <HudButton
         icon={<RedoIcon />}
         caption="Redo"
         onClick={redo}
-        disabled={!canRedo || !!overlayVisible}
+        disabled={!canRedo || hasOverlay}
       />
       <HudSeparator />
       <HudButton
@@ -80,7 +81,7 @@ export function Hud() {
         }
         caption={`Moves/Time (${isGamePaused ? "Continue" : "Pause"})`}
         onClick={() => setGamePaused((paused) => !paused)}
-        disabled={overlayVisible === "WON"}
+        disabled={overlayType === "won"}
       />
 
       {isDevelopment && (
