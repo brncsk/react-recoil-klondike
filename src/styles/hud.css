@@ -50,7 +50,7 @@
   }
 }
 
-@media screen and (max-height: 600px) {
+@media screen and (max-height: 800px) {
   .hud {
     inset: auto 0 auto auto;
 
@@ -65,6 +65,18 @@
     border-radius: var(--hud-border-radius) 0 0 var(--hud-border-radius);
   }
 
+  .hud .separator {
+    width: 3em !important;
+    height: 1px !important;
+  }
+
+  .hud .item .primary svg {
+    width: 2em !important;
+    height: 2em !important;
+  }
+}
+
+@media screen and (max-height: 600px) {
   .hud :is(.item .caption, .separator) {
     display: none !important;
   }
@@ -83,7 +95,8 @@
   align-items: center;
 
   box-sizing: border-box;
-  padding: 1em 1.5em;
+  margin: 0.5em 0.75em;
+  padding: 0.5em 0.75em;
   border: none;
 
   background: transparent;
