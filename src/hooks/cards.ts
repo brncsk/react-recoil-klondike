@@ -26,8 +26,8 @@ export function useCardEventProps(
 
   const eventProps: React.HTMLAttributes<HTMLDivElement> = {
     onClick: topmost && stackType === "deck" ? () => dealFromDeck() : undefined,
-    onDoubleClick: topmost && faceUp ? () => autoMove(stack) : undefined,
-    onTouchEnd: topmost && faceUp ? () => autoMove(stack) : undefined,
+    onDoubleClick: faceUp ? () => autoMove(stack, { card }) : undefined,
+    onTouchEnd: faceUp ? () => autoMove(stack, { card }) : undefined,
   };
 
   return eventProps;

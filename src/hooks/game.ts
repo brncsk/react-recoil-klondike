@@ -201,27 +201,41 @@ export function useAutoMove() {
 
   return useRecoilCallback(
     ({ snapshot: { getLoadable: get } }) =>
-      (stack: Stack, foundationOnly = false): boolean => {
-        const card = get(topmostCardState(stack)).valueOrThrow();
+      (
+        stack: Stack,
+        {
+          foundationOnly = false,
+          card = get(topmostCardState(stack)).valueOrThrow(),
+        }: {
+          foundationOnly?: boolean;
+          card?: Card | null;
+        } = {}
+      ): boolean => {
+        const dragType =
+          get(topmostCardState(stack)).valueOrThrow() === card
+            ? "single"
+            : "multiple";
 
         if (!card) {
           return false;
         }
 
         const dragInfo: CardDragInfo = {
-          type: "single",
+          type: dragType,
           sourceStack: stack,
           card,
         };
 
-        for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
-          const topmostCardOnTarget = get(
-            topmostCardState(foundationStack(i))
-          ).valueOrThrow();
+        if (dragType === "single") {
+          for (let i = 1; i <= NUM_FOUNDATION_STACKS; i++) {
+            const topmostCardOnTarget = get(
+              topmostCardState(foundationStack(i))
+            ).valueOrThrow();
 
-          if (canDropOntoFoundation(dragInfo, topmostCardOnTarget)) {
-            moveCard(stack, foundationStack(i));
-            return true;
+            if (canDropOntoFoundation(dragInfo, topmostCardOnTarget)) {
+              moveCard(stack, foundationStack(i));
+              return true;
+            }
           }
         }
 
@@ -232,7 +246,7 @@ export function useAutoMove() {
             ).valueOrThrow();
 
             if (canDropOntoTableau(dragInfo, topmostCardOnTarget)) {
-              moveCard(stack, tableauStack(i));
+              moveCard(stack, tableauStack(i), card);
               return true;
             }
           }
@@ -356,12 +370,12 @@ export function useFinishTriviallyWinnableGame() {
       async () => {
         /** Moves the next card in the game to the foundations. */
         const moveNextCard = async () => {
-          if (autoMove("waste", true)) {
+          if (autoMove("waste", { foundationOnly: true })) {
             return true;
           }
 
           for (let i = 1; i <= NUM_TABLEAU_STACKS; i++) {
-            if (autoMove(tableauStack(i), true)) {
+            if (autoMove(tableauStack(i), { foundationOnly: true })) {
               return true;
             }
           }
